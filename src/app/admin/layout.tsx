@@ -108,6 +108,12 @@ export default async function AdminLayout({
           >
             Storage
           </Link>
+          <Link
+            href="/admin/test-upload"
+            className="block py-2 px-4 rounded-md hover:bg-primary/10 text-amber-600"
+          >
+            Test Upload
+          </Link>
         </nav>
         <div className="mt-auto pt-8">
           <form action="/api/auth/signout" method="post">

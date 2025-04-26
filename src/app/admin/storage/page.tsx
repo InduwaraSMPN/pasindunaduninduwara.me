@@ -40,9 +40,14 @@ export default async function StoragePage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Storage</h1>
-        <Button asChild>
-          <Link href="/admin/storage/upload">Upload New Image</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href="/admin/storage/policies">Manage Policies</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/admin/storage/upload">Upload New Image</Link>
+          </Button>
+        </div>
       </div>
 
       {error && (
