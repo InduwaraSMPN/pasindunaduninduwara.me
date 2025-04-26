@@ -4,9 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:watch": "bun --watch next dev",
+    "dev:hot": "bun --hot next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "start:watch": "bun --watch next start",
+    "lint": "next lint",
+    "server": "bun server.ts",
+    "server:watch": "bun --watch server.ts",
+    "server:hot": "bun --hot server.ts",
+    "watch:example": "bun --watch scripts/watch-example.ts",
+    "hot:example": "bun --hot scripts/watch-example.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.7",

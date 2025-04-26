@@ -18,6 +18,45 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Using Bun's Watch and Hot Reload
+
+This project includes scripts for using Bun's watch and hot reload features, which provide nodemon-like functionality:
+
+### Next.js Development Server with Watch Mode
+
+```bash
+# Run Next.js dev server with Bun's watch mode (hard restarts)
+bun run dev:watch
+```
+
+### Next.js Development Server with Hot Reload
+
+```bash
+# Run Next.js dev server with Bun's hot reload (soft reloads)
+bun run dev:hot
+```
+
+### Custom Bun Server with Watch Mode
+
+```bash
+# Run the custom Bun server with watch mode
+bun --watch server.ts
+```
+
+### Custom Bun Server with Hot Reload
+
+```bash
+# Run the custom Bun server with hot reload
+bun --hot server.ts
+```
+
+The difference between `--watch` and `--hot`:
+
+- `--watch` mode: Hard restarts the entire process when files change
+- `--hot` mode: Soft reloads the code without restarting the process, preserving state
+
+Try making changes to `server.ts` or `src/app/api/hello/route.ts` to see the different reload behaviors in action.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

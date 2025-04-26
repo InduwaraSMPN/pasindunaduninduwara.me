@@ -49,7 +49,7 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
               </li>
               <li>
                 <Link
-                  href={activePage === 'home' ? "#blog" : "/#blog"}
+                  href={activePage === 'home' ? "#blog" : "/blog"}
                   className={activePage === 'blog' ? "text-primary font-medium" : "hover:text-primary"}
                 >
                   Blog

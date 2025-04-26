@@ -2,10 +2,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import BlogPosts from "@/components/blog-posts";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Download } from "lucide-react";
+import SupabaseProjects from "@/components/supabase-projects";
+import SupabaseBlogPosts from "@/components/supabase-blog-posts";
 
 export default function Home() {
   return (
@@ -172,76 +173,7 @@ export default function Home() {
         <section id="projects" className="py-20 px-4 bg-muted/50">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Featured Projects</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="overflow-hidden">
-                <div className="relative h-48 bg-muted">
-                  <Image
-                    src="/placeholder-project-1.jpg"
-                    alt="Guidia - Full-Stack Career Guidance Platform"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle>Guidia</CardTitle>
-                  <CardDescription>Full-Stack Career Guidance Platform</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>A web application to digitize the University of Kelaniya's manual career guidance process with features like secure authentication, profile management, job board, and real-time messaging.</p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/projects/guidia">View Details</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              <Card className="overflow-hidden">
-                <div className="relative h-48 bg-muted">
-                  <Image
-                    src="/placeholder-project-2.jpg"
-                    alt="Personalized Ad-Copy Generation"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle>Ad-Copy Generator</CardTitle>
-                  <CardDescription>AI/NLP Project</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>Developed an AI system to generate personalized ad copy using FAISS for similarity search and T5 for text generation, with SentenceTransformers for added context.</p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/projects/ad-copy">View Details</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              <Card className="overflow-hidden">
-                <div className="relative h-48 bg-muted">
-                  <Image
-                    src="/placeholder-project-3.jpg"
-                    alt="Multi-Link Sharing Platform"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle>Linky</CardTitle>
-                  <CardDescription>Multi-Link Sharing Platform</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>Created a clean, intuitive platform for centralized linking pages with multiple external links. Deployed on Azure using Kubernetes for scalability and Docker for containerization.</p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/projects/linky">View Details</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
+            <SupabaseProjects limit={3} />
             <div className="mt-12 text-center">
               <Button variant="outline" asChild>
                 <Link href="/projects">View All Projects</Link>
@@ -254,8 +186,7 @@ export default function Home() {
         <section id="blog" className="py-20 px-4">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Latest from My Blog</h2>
-            {/* Replace 'your-medium-username' with your actual Medium username */}
-            <BlogPosts username="medium" />
+            <SupabaseBlogPosts />
           </div>
         </section>
 
