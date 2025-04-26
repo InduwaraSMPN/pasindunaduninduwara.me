@@ -3,20 +3,46 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { fetchBlogPostBySlug } from "@/lib/blog-service-supabase";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import CommentForm from "@/components/blog/comment-form";
+import CommentsList from "@/components/blog/comments-list";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import { Database } from "@/types/supabase";
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  let post;
-  
-  try {
-    post = await fetchBlogPostBySlug(params.slug);
-  } catch (error) {
-    console.error("Error fetching blog post:", error);
-  }
+  const cookieStore = await cookies();
 
-  if (!post) {
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: any) {
+          // This is a server component, so we can't set cookies
+        },
+        remove(name: string, options: any) {
+          // This is a server component, so we can't remove cookies
+        },
+      },
+    }
+  );
+
+  // Fetch the blog post
+  const { data: post, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('slug', params.slug)
+    .eq('published', true)
+    .single();
+
+  if (error || !post) {
+    console.error("Error fetching blog post:", error);
     notFound();
   }
 
@@ -34,7 +60,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </div>
 
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          
+
           <div className="flex items-center gap-4 text-muted-foreground mb-8">
             <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
             <div className="flex flex-wrap gap-2">
@@ -58,11 +84,22 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             </div>
           )}
 
-          <div className="prose prose-lg max-w-none">
-            {post.content.split('\n').map((paragraph, index) => (
+          <div className="prose prose-lg max-w-none mb-12">
+            {post.content.split('\n').map((paragraph: string, index: number) => (
               <p key={index}>{paragraph}</p>
             ))}
           </div>
+
+          {/* Comments Section */}
+          <Card className="mt-12">
+            <CardHeader>
+              <CardTitle>Comments</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <CommentsList postId={post.id} />
+              <CommentForm postId={post.id} />
+            </CardContent>
+          </Card>
         </div>
       </main>
 

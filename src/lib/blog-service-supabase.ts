@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from './supabase';
+import { createBrowserClient } from '@supabase/ssr';
+import { Database } from '@/types/supabase';
 
 export interface BlogPost {
   id: number;
@@ -14,36 +15,48 @@ export interface BlogPost {
   updated_at?: string;
 }
 
+// Create a Supabase client for the browser
+const createClient = () => {
+  return createBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+};
+
 // Fetch all blog posts
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
     .eq('published', true)
     .order('published_at', { ascending: false });
-  
+
   if (error) {
     console.error('Error fetching blog posts:', error);
-    throw new Error(error.message);
+    throw new Error(error.message || 'Error fetching blog posts');
   }
-  
+
   return data || [];
 }
 
 // Fetch a single blog post by slug
 export async function fetchBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
     .eq('slug', slug)
     .eq('published', true)
     .single();
-  
+
   if (error) {
     console.error(`Error fetching blog post with slug ${slug}:`, error);
-    throw new Error(error.message);
+    throw new Error(error.message || `Error fetching blog post with slug ${slug}`);
   }
-  
+
   return data;
 }
 
