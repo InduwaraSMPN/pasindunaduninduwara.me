@@ -1,12 +1,12 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
-import { CookieOptions } from '@/types/common'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const cookieStore = await cookies()
 
   const supabase = createServerClient(
@@ -56,7 +56,7 @@ export async function POST(
       published: true,
       published_at: new Date().toISOString()
     })
-    .eq('id', params.id)
+    .eq('id', id)
 
   if (error) {
     return NextResponse.json(

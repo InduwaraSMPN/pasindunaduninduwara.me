@@ -87,7 +87,7 @@ async function getProjects() {
 
 Next.js and Supabase make a powerful combination for building modern web applications. With Next.js handling the frontend and Supabase providing backend services, you can focus on building features rather than infrastructure.',
     'Learn how to integrate Next.js with Supabase to build modern web applications with server-side rendering and a powerful PostgreSQL database.',
-    '/blog/nextjs-supabase.jpg',
+    '/placeholder-project-1.jpg',
     ARRAY['Next.js', 'Supabase', 'Web Development'],
     TRUE,
     NOW()
@@ -121,7 +121,7 @@ Design with accessibility in mind from the start. This includes using sufficient
 
 Effective UI design requires a deep understanding of user needs and behaviors. By focusing on clarity, consistency, hierarchy, feedback, and accessibility, you can create interfaces that are both beautiful and functional.',
     'Explore the key principles of effective user interface design, from clarity and consistency to hierarchy and accessibility.',
-    '/blog/ui-design.jpg',
+    '/placeholder-project-2.jpg',
     ARRAY['UI/UX', 'Design', 'Accessibility'],
     TRUE,
     NOW() - INTERVAL '2 days'

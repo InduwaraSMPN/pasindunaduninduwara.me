@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { CookieOptions } from '@/types/common'
 
 export default async function BlogPostsPage() {
   const cookieStore = await cookies()
@@ -15,14 +14,13 @@ export default async function BlogPostsPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        getAll() {
+          return cookieStore.getAll()
         },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options })
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          )
         },
       },
     }
@@ -66,9 +64,9 @@ export default async function BlogPostsPage() {
                   <div className="flex items-center gap-2 mb-2">
                     <h2 className="text-xl font-semibold">{post.title}</h2>
                     {post.published ? (
-                      <Badge variant="success" className="bg-green-100 text-green-800">Published</Badge>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">Published</Badge>
                     ) : (
-                      <Badge variant="outline" className="bg-yellow-100 text-yellow-800">Draft</Badge>
+                      <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">Draft</Badge>
                     )}
                   </div>
                   <p className="text-muted-foreground text-sm mb-2 line-clamp-2">

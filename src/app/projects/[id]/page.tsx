@@ -43,7 +43,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   }
 
   // Split the full description into paragraphs
-  const paragraphs = project.full_description ? project.full_description.split('\n').filter(p => p.trim()) : [];
+  const paragraphs = project.full_description ? project.full_description.split('\n').filter((p: string) => p.trim()) : [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -103,7 +103,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
           <div className="prose prose-lg max-w-none mb-12">
             {paragraphs.length > 0 ? (
-              paragraphs.map((paragraph, index) => (
+              paragraphs.map((paragraph: string, index: number) => (
                 <p key={index}>{paragraph}</p>
               ))
             ) : (

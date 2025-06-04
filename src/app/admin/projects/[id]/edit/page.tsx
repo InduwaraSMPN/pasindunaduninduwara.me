@@ -12,7 +12,8 @@ import Link from 'next/link'
 import ImageUpload from '@/components/admin/image-upload'
 import { Loader2 } from 'lucide-react'
 
-export default function EditProjectPage({ params }: { params: { id: string } }) {
+export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -38,7 +39,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         const { data: project, error } = await supabase
           .from('projects')
           .select('*')
-          .eq('id', params.id)
+          .eq('id', id)
           .single()
 
         if (error) throw error
@@ -62,7 +63,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
     }
 
     fetchProject()
-  }, [params.id])
+  }, [id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -101,7 +102,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           image: formData.image,
           tags: tagsArray
         })
-        .eq('id', params.id)
+        .eq('id', id)
 
       if (error) throw error
 
