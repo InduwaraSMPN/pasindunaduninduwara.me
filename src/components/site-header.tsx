@@ -17,7 +17,7 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
           {showAvatar ? (
             <>
               <Avatar className="h-10 w-10">
-                <AvatarImage src="/avatar.jpg" alt="Pasindu Nadun Induwara" />
+                <AvatarImage src="/logo.png" alt="Pasindu Induwara logo" />
                 <AvatarFallback>PI</AvatarFallback>
               </Avatar>
               <span className="font-bold text-xl">Pasindu Induwara</span>

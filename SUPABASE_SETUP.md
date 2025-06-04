@@ -61,7 +61,7 @@ If you plan to add authentication to your site:
 bun run dev
 ```
 
-2. Visit http://localhost:3000 in your browser
+2. Visit http://localhost:4000 in your browser
 3. Verify that your projects and blog posts are loading from Supabase
 
 ## Troubleshooting

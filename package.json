@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:watch": "bun --watch next dev",
-    "dev:hot": "bun --hot next dev",
+    "dev": "next dev -p 3000",
+    "dev:watch": "bun --watch next dev -p 3000",
+    "dev:hot": "bun --hot next dev -p 3000",
     "build": "next build",
     "start": "next start",
     "start:watch": "bun --watch next start",
