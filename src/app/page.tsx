@@ -173,7 +173,7 @@ export default function Home() {
         <section id="projects" className="py-20 px-4 bg-muted/50">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Featured Projects</h2>
-            <SupabaseProjects limit={3} />
+            <SupabaseProjects limit={3} isHomePage={true} />
             <div className="mt-12 text-center">
               <Button variant="outline" asChild>
                 <Link href="/projects">View All Projects</Link>

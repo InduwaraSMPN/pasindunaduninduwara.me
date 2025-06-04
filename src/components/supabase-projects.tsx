@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 
-export default function SupabaseProjects({ limit = 3 }: { limit?: number }) {
+export default function SupabaseProjects({ limit = 3, isHomePage = false }: { limit?: number; isHomePage?: boolean }) {
   const { data: projects, isLoading, isError } = useProjects();
 
   if (isLoading) {
@@ -64,11 +64,24 @@ export default function SupabaseProjects({ limit = 3 }: { limit?: number }) {
           <CardHeader>
             <CardTitle>{project.title}</CardTitle>
             <div className="flex flex-wrap gap-2 mt-2">
-              {project.tags.map((tag, index) => (
-                <Badge key={index} variant="secondary">
-                  {tag}
-                </Badge>
-              ))}
+              {isHomePage && project.tags.length > 6 ? (
+                <>
+                  {project.tags.slice(0, 6).map((tag, index) => (
+                    <Badge key={index} variant="secondary">
+                      {tag}
+                    </Badge>
+                  ))}
+                  <Badge variant="outline" className="text-muted-foreground">
+                    ...
+                  </Badge>
+                </>
+              ) : (
+                project.tags.map((tag, index) => (
+                  <Badge key={index} variant="secondary">
+                    {tag}
+                  </Badge>
+                ))
+              )}
             </div>
           </CardHeader>
           <CardContent className="flex-grow">

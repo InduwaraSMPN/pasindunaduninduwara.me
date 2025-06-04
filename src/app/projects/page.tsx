@@ -15,7 +15,7 @@ export default function ProjectsPage() {
               A collection of my digital design work and projects.
             </p>
 
-            <SupabaseProjects limit={9} />
+            <SupabaseProjects limit={9} isHomePage={true} />
           </div>
         </section>
       </main>
