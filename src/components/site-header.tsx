@@ -15,16 +15,16 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           {showAvatar ? (
-            <>
+            <Avatar className="h-10 w-10">
+              <AvatarImage src="/logo.png" alt="Pasindu Induwara logo" />
+              <AvatarFallback>PI</AvatarFallback>
+            </Avatar>
+          ) : (
+            <Link href="/">
               <Avatar className="h-10 w-10">
                 <AvatarImage src="/logo.png" alt="Pasindu Induwara logo" />
                 <AvatarFallback>PI</AvatarFallback>
               </Avatar>
-              <span className="font-bold text-xl">Pasindu Induwara</span>
-            </>
-          ) : (
-            <Link href="/" className="font-bold text-xl">
-              Pasindu Induwara
             </Link>
           )}
         </div>

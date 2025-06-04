@@ -1,4 +1,3 @@
-
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import SupabaseProjects from "@/components/supabase-projects";

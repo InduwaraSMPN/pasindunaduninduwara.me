@@ -6,6 +6,30 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// Helper function to strip markdown and get clean text
+function stripMarkdown(markdown: string): string {
+  return markdown
+    // Remove headers
+    .replace(/^#{1,6}\s+/gm, '')
+    // Remove bold/italic
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    // Remove links
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // Remove code blocks
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove inline code
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove blockquotes
+    .replace(/^>\s+/gm, '')
+    // Remove list markers
+    .replace(/^[-*+]\s+/gm, '')
+    .replace(/^\d+\.\s+/gm, '')
+    // Clean up extra whitespace
+    .replace(/\n\s*\n/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 export default function SupabaseBlogPosts() {
   const { data: posts, isLoading, isError } = useBlogPosts();
@@ -72,7 +96,10 @@ export default function SupabaseBlogPosts() {
           </CardHeader>
           <CardContent>
             <p className="line-clamp-3">
-              {post.excerpt || post.content.substring(0, 150)}...
+              {post.excerpt
+                ? stripMarkdown(post.excerpt).substring(0, 150)
+                : stripMarkdown(post.content).substring(0, 150)
+              }...
             </p>
           </CardContent>
           <CardFooter>
