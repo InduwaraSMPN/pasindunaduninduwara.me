@@ -3,7 +3,6 @@ import { createServerClient } from '@supabase/ssr'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { CookieOptions } from '@/types/common'
 
 export default async function AdminDashboard() {
   const cookieStore = await cookies()
@@ -13,13 +12,11 @@ export default async function AdminDashboard() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
+        get: (name) => cookieStore.get(name)?.value,
+        set: (name, value, options) => {
           cookieStore.set({ name, value, ...options })
         },
-        remove(name: string, options: CookieOptions) {
+        remove: (name, options) => {
           cookieStore.set({ name, value: '', ...options })
         },
       },

@@ -14,13 +14,12 @@ export default async function BlogPostsPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll()
+        get: (name) => cookieStore.get(name)?.value,
+        set: (name, value, options) => {
+          cookieStore.set({ name, value, ...options })
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
+        remove: (name, options) => {
+          cookieStore.set({ name, value: '', ...options })
         },
       },
     }
@@ -73,7 +72,7 @@ export default async function BlogPostsPage() {
                     {post.excerpt || post.content.substring(0, 150)}...
                   </p>
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {post.categories && post.categories.map((category, index) => (
+                    {post.categories && post.categories.map((category: string, index: number) => (
                       <span key={index} className="bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">
                         {category}
                       </span>

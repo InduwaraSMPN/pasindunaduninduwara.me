@@ -2,7 +2,6 @@ import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
-import { CookieOptions } from '@/types/common'
 
 export default async function CommentsPage() {
   const cookieStore = await cookies()
@@ -12,13 +11,11 @@ export default async function CommentsPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
+        get: (name) => cookieStore.get(name)?.value,
+        set: (name, value, options) => {
           cookieStore.set({ name, value, ...options })
         },
-        remove(name: string, options: CookieOptions) {
+        remove: (name, options) => {
           cookieStore.set({ name, value: '', ...options })
         },
       },
