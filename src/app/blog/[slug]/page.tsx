@@ -13,7 +13,7 @@ import { createServerClient } from "@supabase/ssr";
 import { Database } from "@/types/supabase";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+  const { slug } = await params
   const cookieStore = await cookies();
 
   const supabase = createServerClient<Database>(
@@ -21,13 +21,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set() {
+        get: (name) => cookieStore.get(name)?.value,
+        set: () => {
           // This is a server component, so we can't set cookies
         },
-        remove() {
+        remove: () => {
           // This is a server component, so we can't remove cookies
         },
       },

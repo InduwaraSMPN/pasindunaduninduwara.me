@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
-import { CookieOptions } from '@/types/common';
 
 export async function GET() {
   try {
@@ -12,13 +11,11 @@ export async function GET() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-          set(name: string, value: string, options: CookieOptions) {
+          get: (name) => cookieStore.get(name)?.value,
+          set: (name, value, options) => {
             cookieStore.set({ name, value, ...options });
           },
-          remove(name: string, options: CookieOptions) {
+          remove: (name, options) => {
             cookieStore.set({ name, value: '', ...options });
           },
         },
@@ -92,16 +89,16 @@ export async function GET() {
         user: user ? { id: user.id, email: user.email } : null,
         buckets: buckets?.map(b => b.name) || []
       });
-    } catch (storageError: unknown) {
+    } catch (storageError) {
       return NextResponse.json(
-        { error: `Storage access error: ${(storageError as Error).message}` },
+        { error: `Storage access error: ${storageError instanceof Error ? storageError.message : 'Unknown error'}` },
         { status: 500 }
       );
     }
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('API test error:', error);
     return NextResponse.json(
-      { error: `Server error: ${(error as Error).message}` },
+      { error: `Server error: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     );
   }

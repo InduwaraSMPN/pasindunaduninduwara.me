@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,7 @@ import ImageUpload from '@/components/admin/image-upload'
 import { Loader2 } from 'lucide-react'
 
 export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+  const { id } = use(params)
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -54,9 +54,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           })
           setImageUrl(project.image || '')
         }
-      } catch (err: unknown) {
+      } catch (err) {
         console.error('Error fetching project:', err)
-        setError((err as Error).message || 'An error occurred while fetching the project')
+        setError(err instanceof Error ? err.message : 'An error occurred while fetching the project')
       } finally {
         setIsLoading(false)
       }
@@ -109,9 +109,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       // Redirect to the projects page
       router.push('/admin/projects')
       router.refresh()
-    } catch (err: unknown) {
+    } catch (err) {
       console.error('Error updating project:', err)
-      setError((err as Error).message || 'An error occurred while updating the project')
+      setError(err instanceof Error ? err.message : 'An error occurred while updating the project')
     } finally {
       setIsSubmitting(false)
     }

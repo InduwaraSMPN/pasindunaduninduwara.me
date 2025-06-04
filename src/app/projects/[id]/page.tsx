@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -9,7 +10,7 @@ import { createServerClient } from "@supabase/ssr";
 import { Database } from "@/types/supabase";
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+  const { id } = await params
   const cookieStore = await cookies();
 
   const supabase = createServerClient<Database>(
@@ -20,10 +21,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set() {
+        set(name: string, value: string, options: any) {
           // This is a server component, so we can't set cookies
         },
-        remove() {
+        remove(name: string, options: any) {
           // This is a server component, so we can't remove cookies
         },
       },
@@ -34,7 +35,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { data: project, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('id', id)
+    .eq('id', params.id)
     .single();
 
   if (error || !project) {
@@ -43,7 +44,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   }
 
   // Split the full description into paragraphs
-  const paragraphs = project.full_description ? project.full_description.split('\n').filter((p: string) => p.trim()) : [];
+  const paragraphs = project.full_description ? project.full_description.split('\n').filter(p => p.trim()) : [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -103,7 +104,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
           <div className="prose prose-lg max-w-none mb-12">
             {paragraphs.length > 0 ? (
-              paragraphs.map((paragraph: string, index: number) => (
+              paragraphs.map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
               ))
             ) : (

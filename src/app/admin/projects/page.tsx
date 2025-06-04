@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
-import { CookieOptions } from '@/types/common'
 
 export default async function ProjectsPage() {
   const cookieStore = await cookies()
@@ -14,13 +13,11 @@ export default async function ProjectsPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
+        get: (name) => cookieStore.get(name)?.value,
+        set: (name, value, options) => {
           cookieStore.set({ name, value, ...options })
         },
-        remove(name: string, options: CookieOptions) {
+        remove: (name, options) => {
           cookieStore.set({ name, value: '', ...options })
         },
       },
@@ -67,7 +64,7 @@ export default async function ProjectsPage() {
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {project.tags && project.tags.map((tag, index) => (
+                    {project.tags && project.tags.map((tag: string, index: number) => (
                       <span key={index} className="bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">
                         {tag}
                       </span>
