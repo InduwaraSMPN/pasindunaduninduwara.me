@@ -75,7 +75,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
 
           {post.thumbnail && (
-            <div className="relative w-full h-[400px] mb-8 rounded-lg overflow-hidden">
+            <div className="relative w-full h-[600px] mb-8 rounded-lg overflow-hidden">
               <Image
                 src={post.thumbnail}
                 alt={post.title}

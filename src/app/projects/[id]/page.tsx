@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { Database } from "@/types/supabase";
+import MarkdownPreviewComponent from "@/components/blog/markdown-preview";
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+  const { id } = await params;
   const cookieStore = await cookies();
 
   const supabase = createServerClient<Database>(
@@ -17,11 +18,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: () => {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set() {
           // This is a server component, so we can't set cookies
         },
-        remove: () => {
+        remove() {
           // This is a server component, so we can't remove cookies
         },
       },
@@ -40,8 +43,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     notFound();
   }
 
-  // Split the full description into paragraphs
-  const paragraphs = project.full_description ? project.full_description.split('\n').filter((p: string) => p.trim()) : [];
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,7 +58,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             </Link>
           </div>
 
-          <div className="relative w-full h-[400px] mb-8 rounded-lg overflow-hidden">
+          <div className="relative w-full h-[600px] mb-8 rounded-lg overflow-hidden">
             <Image
               src={project.image}
               alt={project.title}
@@ -100,13 +102,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           </div>
 
           <div className="prose prose-lg max-w-none mb-12">
-            {paragraphs.length > 0 ? (
-              paragraphs.map((paragraph: string, index: number) => (
-                <p key={index}>{paragraph}</p>
-              ))
-            ) : (
-              <p>{project.description}</p>
-            )}
+            <MarkdownPreviewComponent
+              content={project.full_description || project.description}
+              className="prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-blockquote:border-l-primary"
+            />
           </div>
         </div>
       </main>
