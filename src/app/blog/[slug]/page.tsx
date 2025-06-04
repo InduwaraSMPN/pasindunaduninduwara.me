@@ -11,9 +11,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { Database } from "@/types/supabase";
+import MarkdownPreviewComponent from "@/components/blog/markdown-preview";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+  const { slug } = await params;
   const cookieStore = await cookies();
 
   const supabase = createServerClient<Database>(
@@ -21,11 +22,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: () => {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set() {
           // This is a server component, so we can't set cookies
         },
-        remove: () => {
+        remove() {
           // This is a server component, so we can't remove cookies
         },
       },
@@ -84,9 +87,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           )}
 
           <div className="prose prose-lg max-w-none mb-12">
-            {post.content.split('\n').map((paragraph: string, index: number) => (
-              <p key={index}>{paragraph}</p>
-            ))}
+            <MarkdownPreviewComponent
+              content={post.content}
+              className="prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-blockquote:border-l-primary"
+            />
           </div>
 
           {/* Comments Section */}
