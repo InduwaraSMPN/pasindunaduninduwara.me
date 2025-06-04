@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,41 +17,48 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Create a Supabase client with server-side auth
+    // Create a Supabase client with server-side auth for user operations
     const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get: (name) => cookieStore.get(name)?.value,
-          set: (name, value, options) => {
-            cookieStore.set({ name, value, ...options });
+          getAll() {
+            return cookieStore.getAll();
           },
-          remove: (name, options) => {
-            cookieStore.set({ name, value: '', ...options });
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
           },
         },
       }
     );
-    
-    // Check if the bucket exists
-    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-    
+
+    // Create a service role client for administrative operations (bucket creation)
+    const serviceSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    // Check if the bucket exists using service role client (bypasses RLS)
+    const { data: buckets, error: listError } = await serviceSupabase.storage.listBuckets();
+
     if (listError) {
       return NextResponse.json(
         { error: `Error listing buckets: ${listError.message}` },
         { status: 500 }
       );
     }
-    
-    // Create the bucket if it doesn't exist
-    const bucketExists = buckets?.some(b => b.name === bucket);
+
+    // Create the bucket if it doesn't exist using service role client
+    const bucketExists = buckets?.some((b: { name: string }) => b.name === bucket);
     if (!bucketExists) {
-      const { error: createError } = await supabase.storage.createBucket(bucket, {
+      const { error: createError } = await serviceSupabase.storage.createBucket(bucket, {
         public: true
       });
-      
+
       if (createError) {
         return NextResponse.json(
           { error: `Error creating bucket: ${createError.message}` },
@@ -65,7 +73,7 @@ export async function POST(request: NextRequest) {
         await supabase.storage
           .from(bucket)
           .upload(`${folder}/.folder`, new Blob(['']));
-      } catch (folderError) {
+      } catch (folderError: unknown) {
         // Ignore error if folder already exists
         const errorMessage = folderError instanceof Error ? folderError.message : String(folderError);
         if (!errorMessage.includes('The resource already exists')) {
@@ -104,10 +112,11 @@ export async function POST(request: NextRequest) {
       .getPublicUrl(filePath);
     
     return NextResponse.json({ success: true, publicUrl });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Upload error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { error: `Server error: ${error instanceof Error ? error.message : 'Unknown error'}` },
+      { error: `Server error: ${errorMessage}` },
       { status: 500 }
     );
   }

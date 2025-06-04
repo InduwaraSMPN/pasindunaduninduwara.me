@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   experimental: {
     // Any experimental features can be added here
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ufnvbcgenocuydzzoxja.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
