@@ -39,15 +39,8 @@ export async function ensureBucketExists(bucketName: string, isPublic: boolean =
       console.log(`Created bucket: ${bucketName}`);
     }
     
-    // Update bucket policies to allow public access if needed
-    if (isPublic) {
-      const { error: policyError } = await supabase.storage.from(bucketName).getPublicUrl('test');
-      
-      if (policyError) {
-        console.error(`Error with bucket policy:`, policyError);
-        return { success: false, error: policyError };
-      }
-    }
+    // Note: Bucket policies are managed through Supabase dashboard
+    // The bucket is created as public, so files will be publicly accessible
     
     return { success: true };
   } catch (error) {

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -18,13 +17,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
+        get: (name) => cookieStore.get(name)?.value,
+        set: () => {
           // This is a server component, so we can't set cookies
         },
-        remove(name: string, options: any) {
+        remove: () => {
           // This is a server component, so we can't remove cookies
         },
       },
@@ -35,7 +32,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { data: project, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error || !project) {
@@ -44,7 +41,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   }
 
   // Split the full description into paragraphs
-  const paragraphs = project.full_description ? project.full_description.split('\n').filter(p => p.trim()) : [];
+  const paragraphs = project.full_description ? project.full_description.split('\n').filter((p: string) => p.trim()) : [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,7 +101,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
           <div className="prose prose-lg max-w-none mb-12">
             {paragraphs.length > 0 ? (
-              paragraphs.map((paragraph, index) => (
+              paragraphs.map((paragraph: string, index: number) => (
                 <p key={index}>{paragraph}</p>
               ))
             ) : (

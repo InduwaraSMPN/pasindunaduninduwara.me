@@ -8,7 +8,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Upload, X, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 
-
 interface ImageUploadProps {
   bucket: string
   folder?: string
@@ -67,10 +66,10 @@ export default function ImageUpload({
       }
 
       onUploadComplete(result.publicUrl)
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Upload error:', error)
-      setError((error as Error).message || 'Error uploading file')
-      setPreview(defaultImageUrl)
+      setError(error instanceof Error ? error.message : 'Error uploading file')
+      setPreview(defaultImageUrl || null)
     } finally {
       setUploading(false)
     }

@@ -180,8 +180,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Pasindu Nadun Induwara**
 - Website: [pasindunaduninduwara.me](https://pasindunaduninduwara.me)
-- Email: [your-email@example.com](mailto:your-email@example.com)
-- LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
+- Email: [your-email@example.com](mailto:pasindunaduninduwara@gmail.com)
+- LinkedIn: [https://www.linkedin.com/in/induwarasmpn/](https://www.linkedin.com/in/induwarasmpn/)
 
 ## 🙏 Acknowledgments
 
