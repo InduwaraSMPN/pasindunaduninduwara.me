@@ -4,6 +4,7 @@ import LoginForm from "@/components/auth/login-form";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
+import { CookieOptions } from "@/types/common";
 
 export default async function LoginPage() {
   // Check if user is already logged in
@@ -17,10 +18,10 @@ export default async function LoginPage() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: any) {
+        set(name: string, value: string, options: CookieOptions) {
           cookieStore.set({ name, value, ...options });
         },
-        remove(name: string, options: any) {
+        remove(name: string, options: CookieOptions) {
           cookieStore.set({ name, value: '', ...options });
         },
       },

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { CookieOptions } from '@/types/common';
 
 export async function GET() {
   try {
@@ -14,10 +15,10 @@ export async function GET() {
           get(name: string) {
             return cookieStore.get(name)?.value;
           },
-          set(name: string, value: string, options: any) {
+          set(name: string, value: string, options: CookieOptions) {
             cookieStore.set({ name, value, ...options });
           },
-          remove(name: string, options: any) {
+          remove(name: string, options: CookieOptions) {
             cookieStore.set({ name, value: '', ...options });
           },
         },
@@ -91,16 +92,16 @@ export async function GET() {
         user: user ? { id: user.id, email: user.email } : null,
         buckets: buckets?.map(b => b.name) || []
       });
-    } catch (storageError: any) {
+    } catch (storageError: unknown) {
       return NextResponse.json(
-        { error: `Storage access error: ${storageError.message}` },
+        { error: `Storage access error: ${(storageError as Error).message}` },
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API test error:', error);
     return NextResponse.json(
-      { error: `Server error: ${error.message}` },
+      { error: `Server error: ${(error as Error).message}` },
       { status: 500 }
     );
   }

@@ -23,10 +23,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: any) {
+        set() {
           // This is a server component, so we can't set cookies
         },
-        remove(name: string, options: any) {
+        remove() {
           // This is a server component, so we can't remove cookies
         },
       },

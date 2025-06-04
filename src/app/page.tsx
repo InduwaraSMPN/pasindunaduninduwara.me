@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -54,10 +54,10 @@ export default function Home() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">My Background</h3>
                 <p className="mb-4">
-                  I am a motivated and dynamic IT undergraduate with a strong passion for web development and a keen interest in UX/UI engineering. I'm currently pursuing my B.Sc. Honours in Information Technology at the University of Kelaniya (2023 - Present).
+                  I am a motivated and dynamic IT undergraduate with a strong passion for web development and a keen interest in UX/UI engineering. I&apos;m currently pursuing my B.Sc. Honours in Information Technology at the University of Kelaniya (2023 - Present).
                 </p>
                 <p className="mb-4">
-                  I'm experienced in designing and developing full-stack web applications, with a solid understanding of both frontend and backend technologies. Skilled in translating user needs into functional, visually engaging interfaces, while adhering to modern software development practices.
+                  I&apos;m experienced in designing and developing full-stack web applications, with a solid understanding of both frontend and backend technologies. Skilled in translating user needs into functional, visually engaging interfaces, while adhering to modern software development practices.
                 </p>
                 <p className="mb-4">
                   Proficient in code writing, testing, and debugging, with a commitment to continuous learning and staying current with the latest tools, frameworks, and industry trends.

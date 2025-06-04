@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { CookieOptions } from '@/types/common';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,10 +27,10 @@ export async function POST(request: NextRequest) {
           get(name: string) {
             return cookieStore.get(name)?.value;
           },
-          set(name: string, value: string, options: any) {
+          set(name: string, value: string, options: CookieOptions) {
             cookieStore.set({ name, value, ...options });
           },
-          remove(name: string, options: any) {
+          remove(name: string, options: CookieOptions) {
             cookieStore.set({ name, value: '', ...options });
           },
         },
@@ -67,9 +68,9 @@ export async function POST(request: NextRequest) {
         await supabase.storage
           .from(bucket)
           .upload(`${folder}/.folder`, new Blob(['']));
-      } catch (folderError: any) {
+      } catch (folderError: unknown) {
         // Ignore error if folder already exists
-        if (!folderError.message?.includes('The resource already exists')) {
+        if (!(folderError as Error).message?.includes('The resource already exists')) {
           console.error('Error creating folder:', folderError);
         }
       }
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     
     // Upload the file
-    const { error: uploadError, data } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from(bucket)
       .upload(filePath, arrayBuffer, {
         contentType: file.type,
@@ -105,10 +106,10 @@ export async function POST(request: NextRequest) {
       .getPublicUrl(filePath);
     
     return NextResponse.json({ success: true, publicUrl });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Upload error:', error);
     return NextResponse.json(
-      { error: `Server error: ${error.message}` },
+      { error: `Server error: ${(error as Error).message}` },
       { status: 500 }
     );
   }

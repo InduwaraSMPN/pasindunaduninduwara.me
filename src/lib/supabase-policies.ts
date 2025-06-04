@@ -101,7 +101,6 @@ const POLICY_TEMPLATES = {
 // Function to apply a policy to a bucket
 export async function applyPolicyToBucket(bucketName: string, policyType: keyof typeof POLICY_TEMPLATES) {
   try {
-    const supabase = createClient();
     
     // Get the policy template
     const policy = POLICY_TEMPLATES[policyType](bucketName);

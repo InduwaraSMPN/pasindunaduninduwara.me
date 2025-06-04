@@ -3,6 +3,7 @@
 
 // Global counter to demonstrate state persistence with --hot mode
 declare global {
+  // eslint-disable-next-line no-var
   var requestCount: number;
 }
 

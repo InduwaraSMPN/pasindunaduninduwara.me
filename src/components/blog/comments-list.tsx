@@ -39,8 +39,8 @@ export default function CommentsList({ postId, refreshTrigger = 0 }: CommentsLis
         if (error) throw error
 
         setComments(data || [])
-      } catch (error: any) {
-        setError(error.message || 'An error occurred while fetching comments.')
+      } catch (error: unknown) {
+        setError((error as Error).message || 'An error occurred while fetching comments.')
       } finally {
         setLoading(false)
       }

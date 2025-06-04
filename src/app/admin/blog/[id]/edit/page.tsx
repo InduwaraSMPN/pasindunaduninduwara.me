@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,8 @@ import Link from 'next/link'
 import ImageUpload from '@/components/admin/image-upload'
 import { Loader2 } from 'lucide-react'
 
-export default function EditBlogPostPage({ params }: { params: { id: string } }) {
+export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -41,7 +42,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         const { data: post, error } = await supabase
           .from('blog_posts')
           .select('*')
-          .eq('id', params.id)
+          .eq('id', id)
           .single()
 
         if (error) throw error
@@ -58,16 +59,16 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           })
           setImageUrl(post.thumbnail || '')
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching blog post:', err)
-        setError(err.message || 'An error occurred while fetching the blog post')
+        setError((err as Error).message || 'An error occurred while fetching the blog post')
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchBlogPost()
-  }, [params.id])
+  }, [id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -127,16 +128,16 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
       const { error } = await supabase
         .from('blog_posts')
         .update(postData)
-        .eq('id', params.id)
+        .eq('id', id)
 
       if (error) throw error
 
       // Redirect to the blog posts page
       router.push('/admin/blog')
       router.refresh()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating blog post:', err)
-      setError(err.message || 'An error occurred while updating the blog post')
+      setError((err as Error).message || 'An error occurred while updating the blog post')
     } finally {
       setIsSubmitting(false)
     }

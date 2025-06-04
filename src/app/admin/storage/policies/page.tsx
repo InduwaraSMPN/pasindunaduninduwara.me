@@ -42,8 +42,8 @@ export default function StoragePoliciesPage() {
         if (data) {
           setBuckets(data.map(bucket => bucket.name))
         }
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch buckets')
+      } catch (err: unknown) {
+        setError((err as Error).message || 'Failed to fetch buckets')
       } finally {
         setLoading(false)
       }
@@ -126,7 +126,7 @@ export default function StoragePoliciesPage() {
             </div>
             
             <div className="mb-6">
-              <h3 className="text-lg font-medium mb-2">Policy Templates for "{bucketName}"</h3>
+              <h3 className="text-lg font-medium mb-2">Policy Templates for &quot;{bucketName}&quot;</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Select a policy template and copy the SQL to run in the Supabase dashboard SQL editor.
                 You need to run these SQL commands in the Supabase dashboard to apply the policies.

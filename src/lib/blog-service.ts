@@ -9,6 +9,15 @@ interface BlogPost {
   categories: string[];
 }
 
+interface MediumRSSItem {
+  title: string;
+  link: string;
+  pubDate: string;
+  content: string;
+  thumbnail: string;
+  categories: string[];
+}
+
 // Function to fetch Medium RSS feed
 async function fetchMediumPosts(username: string): Promise<BlogPost[]> {
   // Medium RSS feed URL with CORS proxy
@@ -21,7 +30,7 @@ async function fetchMediumPosts(username: string): Promise<BlogPost[]> {
   const data = await response.json();
   
   // Transform the data into our BlogPost format
-  return data.items.map((item: any) => ({
+  return data.items.map((item: MediumRSSItem) => ({
     title: item.title,
     link: item.link,
     pubDate: new Date(item.pubDate).toLocaleDateString('en-US', {

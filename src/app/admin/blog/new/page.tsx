@@ -16,7 +16,6 @@ export default function NewBlogPostPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [imageUrl, setImageUrl] = useState('')
   
   const [formData, setFormData] = useState({
     title: '',
@@ -38,7 +37,6 @@ export default function NewBlogPostPage() {
   }
 
   const handleImageUpload = (url: string) => {
-    setImageUrl(url)
     setFormData(prev => ({ ...prev, thumbnail: url }))
   }
 
@@ -83,7 +81,7 @@ export default function NewBlogPostPage() {
       }
 
       // Insert the new blog post
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('blog_posts')
         .insert([postData])
         .select()
@@ -93,9 +91,9 @@ export default function NewBlogPostPage() {
       // Redirect to the blog posts page
       router.push('/admin/blog')
       router.refresh()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating blog post:', err)
-      setError(err.message || 'An error occurred while creating the blog post')
+      setError((err as Error).message || 'An error occurred while creating the blog post')
     } finally {
       setIsSubmitting(false)
     }

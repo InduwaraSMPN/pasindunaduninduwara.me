@@ -54,8 +54,8 @@ export default function CommentForm({ postId, onCommentSubmitted }: CommentFormP
       if (onCommentSubmitted) {
         onCommentSubmitted()
       }
-    } catch (error: any) {
-      setError(error.message || 'An error occurred while submitting your comment.')
+    } catch (error: unknown) {
+      setError((error as Error).message || 'An error occurred while submitting your comment.')
     } finally {
       setLoading(false)
     }

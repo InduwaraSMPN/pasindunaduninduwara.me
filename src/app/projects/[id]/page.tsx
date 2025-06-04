@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -9,7 +8,8 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { Database } from "@/types/supabase";
 
-export default async function ProjectPage({ params }: { params: { id: string } }) {
+export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const cookieStore = await cookies();
 
   const supabase = createServerClient<Database>(
@@ -20,10 +20,10 @@ export default async function ProjectPage({ params }: { params: { id: string } }
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: any) {
+        set() {
           // This is a server component, so we can't set cookies
         },
-        remove(name: string, options: any) {
+        remove() {
           // This is a server component, so we can't remove cookies
         },
       },
@@ -34,7 +34,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
   const { data: project, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error || !project) {

@@ -7,8 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Upload, X, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
-import { createBrowserClient } from '@supabase/ssr'
-import { Database } from '@/types/supabase'
+
 
 interface ImageUploadProps {
   bucket: string
@@ -29,7 +28,7 @@ export default function ImageUpload({
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const processFile = async (file: File) => {
+  const processFile = useCallback(async (file: File) => {
     if (!file.type.startsWith('image/')) {
       setError('Please upload an image file (JPEG, PNG, etc.)')
       return
@@ -68,14 +67,14 @@ export default function ImageUpload({
       }
 
       onUploadComplete(result.publicUrl)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Upload error:', error)
-      setError(error.message || 'Error uploading file')
+      setError((error as Error).message || 'Error uploading file')
       setPreview(defaultImageUrl)
     } finally {
       setUploading(false)
     }
-  }
+  }, [bucket, folder, onUploadComplete, defaultImageUrl])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -91,7 +90,7 @@ export default function ImageUpload({
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       await processFile(e.dataTransfer.files[0])
     }
-  }, [])
+  }, [processFile])
 
   const handleDragEnter = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()

@@ -53,9 +53,9 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           })
           setImageUrl(project.image || '')
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching project:', err)
-        setError(err.message || 'An error occurred while fetching the project')
+        setError((err as Error).message || 'An error occurred while fetching the project')
       } finally {
         setIsLoading(false)
       }
@@ -108,9 +108,9 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
       // Redirect to the projects page
       router.push('/admin/projects')
       router.refresh()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating project:', err)
-      setError(err.message || 'An error occurred while updating the project')
+      setError((err as Error).message || 'An error occurred while updating the project')
     } finally {
       setIsSubmitting(false)
     }

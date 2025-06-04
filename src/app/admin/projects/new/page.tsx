@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
+import Image from 'next/image'
 import ImageUpload from '@/components/admin/image-upload'
 
 export default function NewProjectPage() {
@@ -53,7 +54,7 @@ export default function NewProjectPage() {
         .filter(tag => tag.length > 0)
 
       // Insert the new project
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('projects')
         .insert([
           {
@@ -71,9 +72,9 @@ export default function NewProjectPage() {
       // Redirect to the projects page
       router.push('/admin/projects')
       router.refresh()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating project:', err)
-      setError(err.message || 'An error occurred while creating the project')
+      setError((err as Error).message || 'An error occurred while creating the project')
     } finally {
       setIsSubmitting(false)
     }
@@ -160,11 +161,14 @@ export default function NewProjectPage() {
               {imageUrl && (
                 <div className="mt-2">
                   <p className="text-sm text-muted-foreground mb-2">Preview:</p>
-                  <img
-                    src={imageUrl}
-                    alt="Project preview"
-                    className="w-full max-w-md h-auto rounded-md border"
-                  />
+                  <div className="relative w-full max-w-md h-48 rounded-md border overflow-hidden">
+                    <Image
+                      src={imageUrl}
+                      alt="Project preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 </div>
               )}
             </div>

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
+import { CookieOptions } from '@/types/common'
 
 export default async function BlogPostsPage() {
   const cookieStore = await cookies()
@@ -17,10 +18,10 @@ export default async function BlogPostsPage() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: any) {
+        set(name: string, value: string, options: CookieOptions) {
           cookieStore.set({ name, value, ...options })
         },
-        remove(name: string, options: any) {
+        remove(name: string, options: CookieOptions) {
           cookieStore.set({ name, value: '', ...options })
         },
       },

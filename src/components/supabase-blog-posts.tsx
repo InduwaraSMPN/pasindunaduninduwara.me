@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatDate } from '@/lib/utils';
+
 
 export default function SupabaseBlogPosts() {
   const { data: posts, isLoading, isError } = useBlogPosts();

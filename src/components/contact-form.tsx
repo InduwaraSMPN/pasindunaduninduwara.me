@@ -47,8 +47,8 @@ export default function ContactForm() {
       setEmail('')
       setSubject('')
       setMessage('')
-    } catch (error: any) {
-      setError(error.message || 'An error occurred while sending your message.')
+    } catch (error: unknown) {
+      setError((error as Error).message || 'An error occurred while sending your message.')
     } finally {
       setLoading(false)
     }

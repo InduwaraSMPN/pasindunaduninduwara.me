@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
+import Image from 'next/image'
 import ImageUpload from '@/components/admin/image-upload'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, ArrowLeft } from 'lucide-react'
@@ -39,7 +40,7 @@ export default function TestUploadPage() {
 
       if (!imagesBucketExists) {
         // Try to create the bucket
-        const { data, error: createError } = await supabase.storage.createBucket('images', {
+        const { error: createError } = await supabase.storage.createBucket('images', {
           public: true
         })
 
@@ -65,13 +66,13 @@ export default function TestUploadPage() {
 
         const result = await testResponse.json()
         setError(prev => `${prev || ''}\n\nAPI test: ${result.message}`)
-      } catch (apiError: any) {
+      } catch (apiError: unknown) {
         console.error('API test error:', apiError)
-        setError(prev => `${prev || ''}\n\nAPI test error: ${apiError.message}`)
+        setError(prev => `${prev || ''}\n\nAPI test error: ${(apiError as Error).message}`)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Bucket test error:', err)
-      setError(`Error: ${err.message}`)
+      setError(`Error: ${(err as Error).message}`)
     }
   }
 
@@ -149,7 +150,7 @@ export default function TestUploadPage() {
               <div className="border-t pt-4">
                 <h3 className="text-sm font-medium mb-2">Storage Policies</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  If you're having upload issues, you may need to configure storage policies.
+                  If you&apos;re having upload issues, you may need to configure storage policies.
                 </p>
                 <Button asChild variant="outline">
                   <Link href="/admin/storage/policies">
@@ -162,11 +163,12 @@ export default function TestUploadPage() {
             {uploadedUrl && (
               <div className="mt-4">
                 <p className="text-sm font-medium mb-2">Preview:</p>
-                <div className="border rounded-md overflow-hidden">
-                  <img
+                <div className="border rounded-md overflow-hidden relative h-[300px]">
+                  <Image
                     src={uploadedUrl}
                     alt="Uploaded preview"
-                    className="w-full h-auto max-h-[300px] object-contain"
+                    fill
+                    className="object-contain"
                   />
                 </div>
               </div>

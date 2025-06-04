@@ -38,8 +38,8 @@ export default function LoginForm() {
 
       router.push('/admin')
       router.refresh()
-    } catch (error: any) {
-      setError(error.message || 'An error occurred during login')
+    } catch (error: unknown) {
+      setError((error as Error).message || 'An error occurred during login')
     } finally {
       setLoading(false)
     }
