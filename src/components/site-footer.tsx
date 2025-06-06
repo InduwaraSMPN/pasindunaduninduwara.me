@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Download } from "lucide-react";
 import { FlickeringGrid } from "@/components/ui/flickering-grid";
+import TextPressure from "@/components/TextPressure/TextPressure";
 
 export function SiteFooter() {
   return (
@@ -91,10 +92,19 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
-        <div className="pt-6 text-center">
-          <p className="text-muted-foreground">
-
-          </p>
+        <div className="text-center">
+          <div className="w-full mx-auto">
+            <TextPressure
+              text="PASINDU INDUWARA"
+              textColor="#ffffff"
+              minFontSize={240}
+              width={true}
+              weight={true}
+              italic={true}
+              flex={true}
+              scale={true}
+            />
+          </div>
         </div>
       </div>
     </footer>
