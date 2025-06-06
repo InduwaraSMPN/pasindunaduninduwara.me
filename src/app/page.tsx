@@ -46,7 +46,7 @@ export default function Home() {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20 px-4 bg-muted/20">
+        <section id="about" className="py-20 px-4 bg-muted/50">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">About Me</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -183,7 +183,7 @@ export default function Home() {
         </section>
 
         {/* Blog Section */}
-        <section id="blog" className="py-20 px-4 bg-muted/20">
+        <section id="blog" className="py-20 px-4 bg-muted/50">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Latest from My Blog</h2>
             <SupabaseBlogPosts />

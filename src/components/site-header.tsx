@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { FlickeringGrid } from "@/components/ui/flickering-grid";
 
 interface SiteHeaderProps {
   showAvatar?: boolean;
@@ -13,16 +12,7 @@ interface SiteHeaderProps {
 export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeaderProps) {
   return (
     <header className="relative overflow-hidden">
-      {/* FlickeringGrid Background */}
-      <FlickeringGrid
-        className="absolute inset-0 z-0"
-        squareSize={4}
-        gridGap={6}
-        color="#6B7280"
-        maxOpacity={0.1}
-        flickerChance={1}
-      />
-
+      
       {/* Content */}
       <div className="container mx-auto px-4 py-4 flex justify-between items-center relative z-10">
         <div className="flex items-center gap-2">

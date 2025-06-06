@@ -5,15 +5,23 @@ import { FlickeringGrid } from "@/components/ui/flickering-grid";
 export function SiteFooter() {
   return (
     <footer className="py-8 relative overflow-hidden">
-      {/* FlickeringGrid Background */}
-      <FlickeringGrid
+      {/* FlickeringGrid Background with TopFadeOpacity */}
+      <div
         className="absolute inset-0 z-0"
-        squareSize={4}
-        gridGap={6}
-        color="#6B7280"
-        maxOpacity={0.1}
-        flickerChance={1}
-      />
+        style={{
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,1) 50%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,1) 50%)'
+        }}
+      >
+        <FlickeringGrid
+          className="w-full h-full"
+          squareSize={4}
+          gridGap={6}
+          color="#6B7280"
+          maxOpacity={0.1}
+          flickerChance={1}
+        />
+      </div>
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
@@ -83,9 +91,9 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
-        <div className="border-t pt-6 text-center">
+        <div className="pt-6 text-center">
           <p className="text-muted-foreground">
-            © {new Date().getFullYear()} Pasindu Nadun Induwara. All rights reserved.
+
           </p>
         </div>
       </div>
