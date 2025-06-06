@@ -1,10 +1,22 @@
 import Link from "next/link";
 import { Download } from "lucide-react";
+import { FlickeringGrid } from "@/components/ui/flickering-grid";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t py-8">
-      <div className="container mx-auto px-4">
+    <footer className="py-8 relative overflow-hidden">
+      {/* FlickeringGrid Background */}
+      <FlickeringGrid
+        className="absolute inset-0 z-0"
+        squareSize={4}
+        gridGap={6}
+        color="#6B7280"
+        maxOpacity={0.1}
+        flickerChance={1}
+      />
+
+      {/* Content */}
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <h3 className="font-semibold text-lg mb-4">Contact</h3>
@@ -48,10 +60,10 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a href="/Pasindu_Induwara_CV.pdf" download="Pasindu_Induwara_CV.pdf" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary flex items-center">
+                <Link href="/Pasindu_Induwara_CV.pdf" download className="text-muted-foreground hover:text-primary flex items-center">
                   <Download className="h-4 w-4 mr-2" />
                   Download CV
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

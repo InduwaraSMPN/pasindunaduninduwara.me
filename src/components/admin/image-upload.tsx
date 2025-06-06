@@ -149,7 +149,7 @@ export default function ImageUpload({
       ) : (
         <div
           className={`border border-dashed rounded-md p-8 text-center cursor-pointer transition-colors ${
-            dragActive ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
+            dragActive ? 'bg-primary/10 border-primary' : 'hover:bg-muted/20'
           }`}
           onClick={triggerFileInput}
           onDrop={handleDrop}

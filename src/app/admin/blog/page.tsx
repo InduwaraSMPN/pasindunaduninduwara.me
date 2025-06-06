@@ -115,7 +115,7 @@ export default async function BlogPostsPage() {
             </div>
           ))
         ) : (
-          <div className="text-center py-12 bg-muted/50 rounded-lg">
+          <div className="text-center py-12 bg-muted/20 rounded-lg">
             <h3 className="text-lg font-medium mb-2">No blog posts found</h3>
             <p className="text-muted-foreground mb-4">
               Get started by creating your first blog post.

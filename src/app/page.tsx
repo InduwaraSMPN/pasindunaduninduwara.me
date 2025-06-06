@@ -46,7 +46,7 @@ export default function Home() {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20 px-4 bg-muted/50">
+        <section id="about" className="py-20 px-4 bg-muted/20">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">About Me</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -63,10 +63,10 @@ export default function Home() {
                 </p>
                 <div className="mt-6">
                   <Button variant="outline" asChild>
-                    <a href="/Pasindu_Induwara_CV.pdf" download="Pasindu_Induwara_CV.pdf" target="_blank" rel="noopener noreferrer">
+                    <Link href="/Pasindu_Induwara_CV.pdf" download>
                       <Download className="h-4 w-4 mr-2" />
                       Download Full CV
-                    </a>
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -170,7 +170,7 @@ export default function Home() {
         </section>
 
         {/* Projects Section */}
-        <section id="projects" className="py-20 px-4 bg-muted/50">
+        <section id="projects" className="py-20 px-4">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Featured Projects</h2>
             <SupabaseProjects limit={3} isHomePage={true} />
@@ -183,20 +183,20 @@ export default function Home() {
         </section>
 
         {/* Blog Section */}
-        <section id="blog" className="py-20 px-4">
+        <section id="blog" className="py-20 px-4 bg-muted/20">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Latest from My Blog</h2>
             <SupabaseBlogPosts />
             <div className="mt-12 text-center">
               <Button variant="outline" asChild>
-                <Link href="/blog">View All Blog Posts</Link>
+                <Link href="/blog">View All Posts</Link>
               </Button>
             </div>
           </div>
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 px-4 bg-muted/50">
+        <section id="contact" className="py-20 px-4">
           <div className="container mx-auto max-w-3xl">
             <h2 className="text-3xl font-bold mb-4 text-center">Get In Touch</h2>
             <p className="text-muted-foreground mb-8 text-center">
