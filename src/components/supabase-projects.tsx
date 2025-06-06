@@ -52,7 +52,7 @@ export default function SupabaseProjects({ limit = 3, isHomePage = false }: { li
       {projects?.slice(0, limit).map((project) => (
         <Card key={project.id} className="overflow-hidden flex flex-col">
           {project.image && (
-            <div className="relative h-48 w-full">
+            <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
               <Image
                 src={project.image}
                 alt={project.title}

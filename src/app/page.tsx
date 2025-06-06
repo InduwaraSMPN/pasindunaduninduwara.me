@@ -187,6 +187,11 @@ export default function Home() {
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Latest from My Blog</h2>
             <SupabaseBlogPosts />
+            <div className="mt-12 text-center">
+              <Button variant="outline" asChild>
+                <Link href="/blog">View All Posts</Link>
+              </Button>
+            </div>
           </div>
         </section>
 

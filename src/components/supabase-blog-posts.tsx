@@ -75,7 +75,7 @@ export default function SupabaseBlogPosts() {
       {posts?.slice(0, 4).map((post) => (
         <Card key={post.id}>
           {post.thumbnail && (
-            <div className="relative h-48 w-full">
+            <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
               <Image
                 src={post.thumbnail}
                 alt={post.title}
