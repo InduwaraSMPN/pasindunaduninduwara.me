@@ -48,10 +48,10 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/Pasindu_Induwara_CV.pdf" download className="text-muted-foreground hover:text-primary flex items-center">
+                <a href="/Pasindu_Induwara_CV.pdf" download="Pasindu_Induwara_CV.pdf" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary flex items-center">
                   <Download className="h-4 w-4 mr-2" />
                   Download CV
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

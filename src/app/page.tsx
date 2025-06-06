@@ -63,10 +63,10 @@ export default function Home() {
                 </p>
                 <div className="mt-6">
                   <Button variant="outline" asChild>
-                    <Link href="/Pasindu_Induwara_CV.pdf" download>
+                    <a href="/Pasindu_Induwara_CV.pdf" download="Pasindu_Induwara_CV.pdf" target="_blank" rel="noopener noreferrer">
                       <Download className="h-4 w-4 mr-2" />
                       Download Full CV
-                    </Link>
+                    </a>
                   </Button>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function Home() {
             <SupabaseBlogPosts />
             <div className="mt-12 text-center">
               <Button variant="outline" asChild>
-                <Link href="/blog">View All Posts</Link>
+                <Link href="/blog">View All Blog Posts</Link>
               </Button>
             </div>
           </div>

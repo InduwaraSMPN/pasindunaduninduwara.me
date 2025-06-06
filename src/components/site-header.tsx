@@ -66,10 +66,10 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
             </ul>
           </nav>
           <Button variant="outline" size="sm" asChild className="mr-2">
-            <Link href="/Pasindu_Induwara_CV.pdf" download>
+            <a href="/Pasindu_Induwara_CV.pdf" download="Pasindu_Induwara_CV.pdf" target="_blank" rel="noopener noreferrer">
               <Download className="h-4 w-4 mr-2" />
               CV
-            </Link>
+            </a>
           </Button>
           <ThemeToggle />
         </div>
