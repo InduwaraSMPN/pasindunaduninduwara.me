@@ -130,7 +130,7 @@ const TextPressure = ({
           };
 
           const wdth = width ? Math.floor(getAttr(d, 5, 200)) : 100;
-          const wght = weight ? Math.floor(getAttr(d, 100, 900)) : 400;
+          const wght = weight ? Math.floor(getAttr(d, 300, 900)) : 500;
           const italVal = italic ? getAttr(d, 0, 1).toFixed(2) : 0;
           const alphaVal = alpha ? getAttr(d, 0, 1).toFixed(2) : 1;
 
@@ -185,7 +185,7 @@ const TextPressure = ({
           transform: `scale(1, ${scaleY})`,
           transformOrigin: "center top",
           margin: 0,
-          fontWeight: 100,
+          fontWeight: 500,
           color: stroke ? undefined : textColor,
         }}
       >

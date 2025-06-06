@@ -95,9 +95,9 @@ export function SiteFooter() {
         <div className="text-center">
           <div className="w-full mx-auto">
             <TextPressure
-              text="PASINDU INDUWARA"
-              textColor="#ffffff"
-              minFontSize={240}
+              text="pasindunaduninduwara"
+              textColor="#f2f2f2"
+              minFontSize={242}
               width={true}
               weight={true}
               italic={true}
