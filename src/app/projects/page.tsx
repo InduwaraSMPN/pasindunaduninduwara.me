@@ -20,7 +20,7 @@ export default function ProjectsPage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter activePage="projects" />
     </div>
   );
 }

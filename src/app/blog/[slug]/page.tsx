@@ -107,7 +107,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </main>
 
       <div className="mt-12">
-        <SiteFooter />
+        <SiteFooter activePage="blog" />
       </div>
     </div>
   );

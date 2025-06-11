@@ -6,7 +6,7 @@ import { Download } from "lucide-react";
 
 interface SiteHeaderProps {
   showAvatar?: boolean;
-  activePage?: 'home' | 'projects' | 'blog' | 'contact';
+  activePage?: 'home' | 'projects' | 'blog' | 'contact' | 'cv';
 }
 
 export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeaderProps) {
@@ -55,6 +55,14 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
                   className={activePage === 'blog' ? "text-primary font-medium" : "hover:text-primary"}
                 >
                   Blog
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cv"
+                  className={activePage === 'cv' ? "text-primary font-medium" : "hover:text-primary"}
+                >
+                  CV
                 </Link>
               </li>
               <li>

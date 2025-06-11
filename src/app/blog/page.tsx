@@ -20,7 +20,7 @@ export default function BlogPage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter activePage="blog" />
     </div>
   );
 }

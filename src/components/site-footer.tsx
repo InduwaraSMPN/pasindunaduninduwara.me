@@ -3,7 +3,11 @@ import { Download } from "lucide-react";
 import { FlickeringGrid } from "@/components/ui/flickering-grid";
 import TextPressure from "@/components/TextPressure/TextPressure";
 
-export function SiteFooter() {
+interface SiteFooterProps {
+  activePage?: 'home' | 'projects' | 'blog' | 'contact' | 'cv';
+}
+
+export function SiteFooter({ activePage = 'home' }: SiteFooterProps) {
   return (
     <footer className="py-8 relative overflow-hidden">
       {/* FlickeringGrid Background with TopFadeOpacity */}
@@ -92,20 +96,22 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
-        <div className="text-center">
-          <div className="w-full mx-auto">
-            <TextPressure
-              text="pasindunaduninduwara"
-              textColor="#f2f2f2"
-              minFontSize={242}
-              width={true}
-              weight={true}
-              italic={true}
-              flex={true}
-              scale={true}
-            />
+        {activePage === 'home' && (
+          <div className="text-center">
+            <div className="w-full mx-auto">
+              <TextPressure
+                text="pasindunaduninduwara"
+                textColor="#f2f2f2"
+                minFontSize={242}
+                width={true}
+                weight={true}
+                italic={true}
+                flex={true}
+                scale={true}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </footer>
   );

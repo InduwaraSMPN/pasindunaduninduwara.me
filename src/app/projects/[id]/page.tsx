@@ -111,7 +111,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       </main>
 
       <div className="mt-12">
-        <SiteFooter />
+        <SiteFooter activePage="projects" />
       </div>
     </div>
   );

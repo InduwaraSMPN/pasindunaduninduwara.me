@@ -42,7 +42,7 @@ export default async function LoginPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter activePage="contact" />
     </div>
   );
 }

@@ -20,7 +20,8 @@ export default function Home() {
             <div className="flex-1">
               <h1 className="text-4xl md:text-6xl font-bold mb-4">Full Stack Developer & IT Undergraduate</h1>
               <p className="text-xl text-muted-foreground mb-8">
-                Creating functional, visually engaging web applications with a focus on user experience.
+                Motivated and dynamic IT undergraduate with a strong passion for web development and UX/UI engineering.
+                Experienced in designing and developing full-stack web applications with modern technologies.
               </p>
               <div className="flex gap-4">
                 <Button asChild>
@@ -61,11 +62,35 @@ export default function Home() {
                 <p className="mb-4">
                   Proficient in code writing, testing, and debugging, with a commitment to continuous learning and staying current with the latest tools, frameworks, and industry trends.
                 </p>
-                <div className="mt-6">
+
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold mb-3">Education & Qualifications</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="font-medium">University of Kelaniya (2023 - Present)</p>
+                      <p className="text-sm text-muted-foreground">B.Sc. Honours in Information Technology</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">University of Moratuwa - Centre for Open & Distance Learning</p>
+                      <p className="text-sm text-muted-foreground">Trainee Full Stack Developer - Completed comprehensive training in Python programming, web development, and professional practice</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Niwaththakachethiya National College (2012 - 2019)</p>
+                      <p className="text-sm text-muted-foreground">GCE Advanced Level & Ordinary Level</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
                   <Button variant="outline" asChild>
                     <Link href="/Pasindu_Induwara_CV.pdf" download>
                       <Download className="h-4 w-4 mr-2" />
                       Download Full CV
+                    </Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href="/cv">
+                      View Complete CV
                     </Link>
                   </Button>
                 </div>
@@ -164,6 +189,28 @@ export default function Home() {
                     </ul>
                   </div>
                 </div>
+
+                <div className="mt-8">
+                  <h4 className="font-medium mb-3">Recent Achievements</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
+                      <span><strong>First Runners-Up</strong> - J&apos;PURA EXPO 2023, Inter University Export-Oriented Innovation Competition</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
+                      <span><strong>Semi-Finalist</strong> - Venture Verse Startup Challenge (Ceylon Treasure project)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
+                      <span>Assistant Media Director at Industrial Management Science Students&apos; Association (IMSSA)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
+                      <span>Active member of AIESEC Colombo North and Gavel Club - University of Kelaniya</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -250,7 +297,7 @@ export default function Home() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter activePage="home" />
     </div>
   );
 }
