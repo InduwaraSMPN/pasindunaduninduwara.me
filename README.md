@@ -27,7 +27,7 @@ A modern, full-stack portfolio website showcasing projects, blog posts, and prof
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ or Bun
+- [Bun](https://bun.sh/) (latest)
 - Supabase account and project
 
 ### Installation
@@ -40,8 +40,6 @@ A modern, full-stack portfolio website showcasing projects, blog posts, and prof
 
 2. **Install dependencies**
    ```bash
-   npm install
-   # or
    bun install
    ```
 
@@ -62,8 +60,6 @@ A modern, full-stack portfolio website showcasing projects, blog posts, and prof
 
 5. **Start Development Server**
    ```bash
-   npm run dev
-   # or
    bun run dev
    ```
 
@@ -75,14 +71,14 @@ A modern, full-stack portfolio website showcasing projects, blog posts, and prof
 
 ```bash
 # Development
-npm run dev              # Start development server on port 3000
-bun run dev:watch        # Development with Bun watch mode
-bun run dev:hot          # Development with Bun hot reload
+bun run dev              # Start development server on port 3000
+bun run dev:watch        # Development with watch mode
+bun run dev:hot          # Development with hot reload
 
 # Production
-npm run build            # Build for production
-npm run start            # Start production server
-npm run lint             # Run ESLint
+bun run build            # Build for production
+bun run start            # Start production server
+bun run lint             # Run ESLint
 
 # Custom Server
 bun run server           # Run custom Bun server
