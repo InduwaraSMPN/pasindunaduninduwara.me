@@ -38,6 +38,7 @@ export default function Home() {
                   src="/placeholder-profile.jpg"
                   alt="Pasindu Nadun Induwara"
                   fill
+                  sizes="(max-width: 768px) 256px, 320px"
                   className="object-cover"
                   priority
                 />
