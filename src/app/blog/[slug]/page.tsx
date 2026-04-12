@@ -8,43 +8,30 @@ import { Badge } from "@/components/ui/badge";
 import CommentForm from "@/components/blog/comment-form";
 import CommentsList from "@/components/blog/comments-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
-import { Database } from "@/types/supabase";
+import { createServerClient, DATABASE_ID, COLLECTIONS } from "@/lib/appwrite";
+import { Query } from "node-appwrite";
+import type { BlogPost } from "@/types/appwrite";
 import MarkdownPreviewComponent from "@/components/blog/markdown-preview";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const cookieStore = await cookies();
 
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set() {
-          // This is a server component, so we can't set cookies
-        },
-        remove() {
-          // This is a server component, so we can't remove cookies
-        },
-      },
-    }
-  );
+  const { databases } = createServerClient();
 
   // Fetch the blog post
-  const { data: post, error } = await supabase
-    .from('blog_posts')
-    .select('*')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single();
-
-  if (error || !post) {
+  let post: BlogPost | undefined;
+  try {
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.BLOG_POSTS, [
+      Query.equal('slug', slug),
+      Query.equal('published', true),
+      Query.limit(1),
+    ]);
+    post = result.documents[0] as unknown as BlogPost | undefined;
+  } catch (error) {
     console.error("Error fetching blog post:", error);
+  }
+
+  if (!post) {
     notFound();
   }
 
@@ -64,7 +51,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
 
           <div className="flex items-center gap-4 text-muted-foreground mb-8">
-            <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
+            <time dateTime={post.published_at ?? undefined}>{formatDate(post.published_at ?? post.$createdAt)}</time>
             <div className="flex flex-wrap gap-2">
               {post.categories.map((category: string, index: number) => (
                 <Badge key={index} variant="outline">
@@ -99,8 +86,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <CardTitle>Comments</CardTitle>
             </CardHeader>
             <CardContent className="space-y-8">
-              <CommentsList postId={post.id} />
-              <CommentForm postId={post.id} />
+              <CommentsList postId={post.$id} />
+              <CommentForm postId={post.$id} />
             </CardContent>
           </Card>
         </div>

@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/lib/utils'
-import { Comment } from '@/types/supabase'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
-import { createBrowserClient } from '@supabase/ssr'
-import { Database } from '@/types/supabase'
+import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { Query } from 'appwrite'
+import type { Comment } from '@/types/appwrite'
 
 interface CommentsListProps {
-  postId: number
+  postId: string
   refreshTrigger?: number
 }
 
@@ -24,21 +24,18 @@ export default function CommentsList({ postId, refreshTrigger = 0 }: CommentsLis
       setError(null)
 
       try {
-        const supabase = createBrowserClient<Database>(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        const response = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTIONS.COMMENTS,
+          [
+            Query.equal('post_id', postId),
+            Query.equal('approved', true),
+            Query.orderDesc('created_at'),
+            Query.limit(100),
+          ]
         )
 
-        const { data, error } = await supabase
-          .from('comments')
-          .select('*')
-          .eq('post_id', postId)
-          .eq('approved', true)
-          .order('created_at', { ascending: false })
-
-        if (error) throw error
-
-        setComments(data || [])
+        setComments(response.documents as unknown as Comment[])
       } catch (error: unknown) {
         setError((error as Error).message || 'An error occurred while fetching comments.')
       } finally {
@@ -76,7 +73,7 @@ export default function CommentsList({ postId, refreshTrigger = 0 }: CommentsLis
   return (
     <div className="space-y-6">
       {comments.map((comment) => (
-        <div key={comment.id} className="border-b pb-6">
+        <div key={comment.$id} className="border-b pb-6">
           <div className="flex justify-between items-start mb-2">
             <h4 className="font-medium">{comment.name}</h4>
             <time className="text-sm text-muted-foreground">

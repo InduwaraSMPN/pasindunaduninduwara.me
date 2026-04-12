@@ -1,5 +1,5 @@
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { Query } from 'node-appwrite'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -7,29 +7,13 @@ import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
 export default async function BlogPostsPage() {
-  const cookieStore = await cookies()
+  const { databases } = createServerClient()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
-
-  // Get all blog posts
-  const { data: posts, error } = await supabase
-    .from('blog_posts')
-    .select('*')
-    .order('created_at', { ascending: false })
+  const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.BLOG_POSTS, [
+    Query.orderDesc('$createdAt'),
+    Query.limit(100),
+  ])
+  const posts = result.documents
 
   return (
     <div>
@@ -40,16 +24,10 @@ export default async function BlogPostsPage() {
         </Button>
       </div>
 
-      {error && (
-        <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
-          Error loading blog posts: {error.message}
-        </div>
-      )}
-
       <div className="grid grid-cols-1 gap-6">
         {posts && posts.length > 0 ? (
           posts.map((post) => (
-            <div key={post.id} className="bg-card rounded-lg shadow-sm border p-4">
+            <div key={post.$id} className="bg-card rounded-lg shadow-sm border p-4">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative w-full md:w-48 h-32 rounded-md overflow-hidden">
                   <Image
@@ -79,27 +57,27 @@ export default async function BlogPostsPage() {
                     ))}
                   </div>
                   <div className="text-xs text-muted-foreground mb-4">
-                    Created: {formatDate(post.created_at)} • 
+                    Created: {formatDate(post.$createdAt)} •
                     {post.published ? ` Published: ${formatDate(post.published_at)}` : ' Not published yet'}
                   </div>
                   <div className="flex gap-2">
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/admin/blog/${post.id}/edit`}>Edit</Link>
+                      <Link href={`/admin/blog/${post.$id}/edit`}>Edit</Link>
                     </Button>
                     {post.published ? (
-                      <form action={`/api/blog/${post.id}/unpublish`} method="post">
+                      <form action={`/api/blog/${post.$id}/unpublish`} method="post">
                         <Button type="submit" variant="outline" size="sm">
                           Unpublish
                         </Button>
                       </form>
                     ) : (
-                      <form action={`/api/blog/${post.id}/publish`} method="post">
+                      <form action={`/api/blog/${post.$id}/publish`} method="post">
                         <Button type="submit" variant="outline" size="sm">
                           Publish
                         </Button>
                       </form>
                     )}
-                    <form action={`/api/blog/${post.id}/delete`} method="post">
+                    <form action={`/api/blog/${post.$id}/delete`} method="post">
                       <Button type="submit" variant="destructive" size="sm">
                         Delete
                       </Button>

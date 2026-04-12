@@ -34,3 +34,6 @@ pnpm-lock.yaml
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# appwrite CLI config
+appwrite.config.json

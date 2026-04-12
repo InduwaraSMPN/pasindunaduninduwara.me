@@ -9,9 +9,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ufnvbcgenocuydzzoxja.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
+        hostname: 'sgp.cloud.appwrite.io',
       },
     ],
   },

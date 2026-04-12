@@ -1,53 +1,33 @@
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { Query } from 'node-appwrite'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
 
 export default async function CommentsPage() {
-  const cookieStore = await cookies()
+  const { databases } = createServerClient()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
-    }
+  // Fetch all comments
+  const commentsResult = await databases.listDocuments(DATABASE_ID, COLLECTIONS.COMMENTS, [
+    Query.orderDesc('$createdAt'),
+    Query.limit(100),
+  ])
+  const comments = commentsResult.documents
+
+  // Fetch all blog posts to build a lookup map (no joins in Appwrite)
+  const postsResult = await databases.listDocuments(DATABASE_ID, COLLECTIONS.BLOG_POSTS, [
+    Query.limit(100),
+  ])
+  const postMap = new Map<string, { title: string; slug: string }>(
+    postsResult.documents.map((post) => [post.$id, { title: post.title, slug: post.slug }])
   )
 
-  // Get all comments with blog post info
-  const { data: comments, error } = await supabase
-    .from('comments')
-    .select(`
-      *,
-      blog_posts (
-        id,
-        title,
-        slug
-      )
-    `)
-    .order('created_at', { ascending: false })
-
   // Group comments by approval status
-  const pendingComments = comments?.filter(comment => !comment.approved) || []
-  const approvedComments = comments?.filter(comment => comment.approved) || []
+  const pendingComments = comments.filter(comment => !comment.approved)
+  const approvedComments = comments.filter(comment => comment.approved)
 
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8">Comments</h1>
-
-      {error && (
-        <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
-          Error loading comments: {error.message}
-        </div>
-      )}
 
       <div className="space-y-8">
         <div>
@@ -57,51 +37,58 @@ export default async function CommentsPage() {
             <p className="text-muted-foreground">No comments pending approval.</p>
           ) : (
             <div className="border rounded-md divide-y">
-              {pendingComments.map((comment) => (
-                <div key={comment.id} className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <span className="font-medium">{comment.name}</span>
-                      <span className="text-muted-foreground ml-2">{comment.email}</span>
+              {pendingComments.map((comment) => {
+                const post = postMap.get(comment.post_id)
+                return (
+                  <div key={comment.$id} className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <span className="font-medium">{comment.name}</span>
+                        <span className="text-muted-foreground ml-2">{comment.email}</span>
+                      </div>
+                      <time className="text-sm text-muted-foreground">
+                        {formatDate(comment.$createdAt)}
+                      </time>
                     </div>
-                    <time className="text-sm text-muted-foreground">
-                      {formatDate(comment.created_at)}
-                    </time>
-                  </div>
 
-                  <p className="mb-2 whitespace-pre-line">{comment.content}</p>
+                    <p className="mb-2 whitespace-pre-line">{comment.content}</p>
 
-                  <div className="flex justify-between items-center mt-4">
-                    <Link
-                      href={`/blog/${comment.blog_posts.slug}`}
-                      className="text-sm text-primary hover:underline"
-                      target="_blank"
-                    >
-                      On: {comment.blog_posts.title}
-                    </Link>
-
-                    <div className="flex gap-2">
-                      <form action={`/api/comments/${comment.id}/approve`} method="post">
-                        <button
-                          type="submit"
-                          className="px-3 py-1 bg-primary text-primary-foreground text-sm rounded-md hover:bg-primary/90"
+                    <div className="flex justify-between items-center mt-4">
+                      {post ? (
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="text-sm text-primary hover:underline"
+                          target="_blank"
                         >
-                          Approve
-                        </button>
-                      </form>
+                          On: {post.title}
+                        </Link>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">Unknown post</span>
+                      )}
 
-                      <form action={`/api/comments/${comment.id}/delete`} method="post">
-                        <button
-                          type="submit"
-                          className="px-3 py-1 bg-destructive text-destructive-foreground text-sm rounded-md hover:bg-destructive/90"
-                        >
-                          Delete
-                        </button>
-                      </form>
+                      <div className="flex gap-2">
+                        <form action={`/api/comments/${comment.$id}/approve`} method="post">
+                          <button
+                            type="submit"
+                            className="px-3 py-1 bg-primary text-primary-foreground text-sm rounded-md hover:bg-primary/90"
+                          >
+                            Approve
+                          </button>
+                        </form>
+
+                        <form action={`/api/comments/${comment.$id}/delete`} method="post">
+                          <button
+                            type="submit"
+                            className="px-3 py-1 bg-destructive text-destructive-foreground text-sm rounded-md hover:bg-destructive/90"
+                          >
+                            Delete
+                          </button>
+                        </form>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
@@ -113,40 +100,47 @@ export default async function CommentsPage() {
             <p className="text-muted-foreground">No approved comments.</p>
           ) : (
             <div className="border rounded-md divide-y">
-              {approvedComments.map((comment) => (
-                <div key={comment.id} className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <span className="font-medium">{comment.name}</span>
-                      <span className="text-muted-foreground ml-2">{comment.email}</span>
+              {approvedComments.map((comment) => {
+                const post = postMap.get(comment.post_id)
+                return (
+                  <div key={comment.$id} className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <span className="font-medium">{comment.name}</span>
+                        <span className="text-muted-foreground ml-2">{comment.email}</span>
+                      </div>
+                      <time className="text-sm text-muted-foreground">
+                        {formatDate(comment.$createdAt)}
+                      </time>
                     </div>
-                    <time className="text-sm text-muted-foreground">
-                      {formatDate(comment.created_at)}
-                    </time>
+
+                    <p className="mb-2 whitespace-pre-line">{comment.content}</p>
+
+                    <div className="flex justify-between items-center mt-4">
+                      {post ? (
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="text-sm text-primary hover:underline"
+                          target="_blank"
+                        >
+                          On: {post.title}
+                        </Link>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">Unknown post</span>
+                      )}
+
+                      <form action={`/api/comments/${comment.$id}/delete`} method="post">
+                        <button
+                          type="submit"
+                          className="px-3 py-1 bg-destructive text-destructive-foreground text-sm rounded-md hover:bg-destructive/90"
+                        >
+                          Delete
+                        </button>
+                      </form>
+                    </div>
                   </div>
-
-                  <p className="mb-2 whitespace-pre-line">{comment.content}</p>
-
-                  <div className="flex justify-between items-center mt-4">
-                    <Link
-                      href={`/blog/${comment.blog_posts.slug}`}
-                      className="text-sm text-primary hover:underline"
-                      target="_blank"
-                    >
-                      On: {comment.blog_posts.title}
-                    </Link>
-
-                    <form action={`/api/comments/${comment.id}/delete`} method="post">
-                      <button
-                        type="submit"
-                        className="px-3 py-1 bg-destructive text-destructive-foreground text-sm rounded-md hover:bg-destructive/90"
-                      >
-                        Delete
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

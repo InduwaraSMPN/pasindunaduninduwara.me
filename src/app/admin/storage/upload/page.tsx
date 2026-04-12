@@ -10,15 +10,15 @@ import Link from 'next/link'
 export default function UploadPage() {
   const [uploadedUrl, setUploadedUrl] = useState<string>('')
   const router = useRouter()
-  
+
   const handleUploadComplete = (url: string) => {
     setUploadedUrl(url)
   }
-  
+
   const handleDone = () => {
     router.push('/admin/storage')
   }
-  
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
@@ -27,18 +27,16 @@ export default function UploadPage() {
           <Link href="/admin/storage">Cancel</Link>
         </Button>
       </div>
-      
+
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Upload to Storage</CardTitle>
         </CardHeader>
         <CardContent>
           <ImageUpload
-            bucket="images"
-            folder="public"
             onUploadComplete={handleUploadComplete}
           />
-          
+
           {uploadedUrl && (
             <div className="mt-6">
               <p className="text-sm font-medium mb-2">Image URL:</p>
@@ -61,7 +59,7 @@ export default function UploadPage() {
               </div>
             </div>
           )}
-          
+
           <div className="mt-8 flex justify-end">
             <Button onClick={handleDone} disabled={!uploadedUrl}>
               Done

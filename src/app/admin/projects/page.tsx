@@ -1,34 +1,18 @@
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { Query } from 'node-appwrite'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 
 export default async function ProjectsPage() {
-  const cookieStore = await cookies()
+  const { databases } = createServerClient()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
-
-  // Get all projects
-  const { data: projects, error } = await supabase
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false })
+  const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.PROJECTS, [
+    Query.orderDesc('$createdAt'),
+    Query.limit(100),
+  ])
+  const projects = result.documents
 
   return (
     <div>
@@ -39,16 +23,10 @@ export default async function ProjectsPage() {
         </Button>
       </div>
 
-      {error && (
-        <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
-          Error loading projects: {error.message}
-        </div>
-      )}
-
       <div className="grid grid-cols-1 gap-6">
         {projects && projects.length > 0 ? (
           projects.map((project) => (
-            <div key={project.id} className="bg-card rounded-lg shadow-sm border p-4">
+            <div key={project.$id} className="bg-card rounded-lg shadow-sm border p-4">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative w-full md:w-48 h-32 rounded-md overflow-hidden">
                   <Image
@@ -71,19 +49,19 @@ export default async function ProjectsPage() {
                     ))}
                   </div>
                   <div className="text-xs text-muted-foreground mb-4">
-                    Created: {formatDate(project.created_at)} • Updated: {formatDate(project.updated_at)}
+                    Created: {formatDate(project.$createdAt)} • Updated: {formatDate(project.$updatedAt)}
                   </div>
                   <div className="flex gap-2">
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/admin/projects/${project.id}/edit`}>Edit</Link>
+                      <Link href={`/admin/projects/${project.$id}/edit`}>Edit</Link>
                     </Button>
-                    <form action={`/api/projects/${project.id}/delete`} method="post">
+                    <form action={`/api/projects/${project.$id}/delete`} method="post">
                       <Button type="submit" variant="destructive" size="sm">
                         Delete
                       </Button>
                     </form>
                     <Button asChild variant="ghost" size="sm">
-                      <Link href={`/projects/${project.id}`} target="_blank">View</Link>
+                      <Link href={`/projects/${project.$id}`} target="_blank">View</Link>
                     </Button>
                   </div>
                 </div>

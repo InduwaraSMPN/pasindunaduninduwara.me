@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import SupabaseProjects from "@/components/supabase-projects";
+import ProjectsList from "@/components/projects-list";
 
 export default function ProjectsPage() {
   return (
@@ -15,7 +15,7 @@ export default function ProjectsPage() {
               A collection of my digital design work and projects.
             </p>
 
-            <SupabaseProjects limit={9} isHomePage={true} />
+            <ProjectsList limit={9} isHomePage={true} />
           </div>
         </section>
       </main>

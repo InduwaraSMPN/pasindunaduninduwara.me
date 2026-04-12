@@ -1,6 +1,6 @@
 'use client'
 
-import { useBlogPosts } from '@/lib/blog-service-supabase';
+import { useBlogPosts } from '@/lib/blog-service';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -31,7 +31,7 @@ function stripMarkdown(markdown: string): string {
     .trim();
 }
 
-export default function SupabaseBlogPosts() {
+export default function BlogPosts() {
   const { data: posts, isLoading, isError } = useBlogPosts();
 
   if (isLoading) {
@@ -73,7 +73,7 @@ export default function SupabaseBlogPosts() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {posts?.slice(0, 4).map((post) => (
-        <Card key={post.id}>
+        <Card key={post.$id}>
           {post.thumbnail && (
             <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
               <Image
@@ -87,7 +87,7 @@ export default function SupabaseBlogPosts() {
           <CardHeader>
             <CardTitle>{post.title}</CardTitle>
             <CardDescription>
-              {new Date(post.published_at).toLocaleDateString('en-US', {
+              {new Date(post.published_at ?? post.$createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+// Note: databases import kept for client-side reads (getDocument); writes go through API routes
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -31,18 +32,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const supabase = createBrowserClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        )
-
-        const { data: project, error } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('id', id)
-          .single()
-
-        if (error) throw error
+        const project = await databases.getDocument(DATABASE_ID, COLLECTIONS.PROJECTS, id)
 
         if (project) {
           setFormData({
@@ -81,30 +71,26 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     setError(null)
 
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-
       // Process tags into an array
       const tagsArray = formData.tags
         .split(',')
         .map(tag => tag.trim())
         .filter(tag => tag.length > 0)
 
-      // Update the project
-      const { error } = await supabase
-        .from('projects')
-        .update({
+      // Update the project via API route
+      const res = await fetch(`/api/projects/${id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           title: formData.title,
           description: formData.description,
           full_description: formData.full_description,
           image: formData.image,
           tags: tagsArray
-        })
-        .eq('id', id)
-
-      if (error) throw error
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
 
       // Redirect to the projects page
       router.push('/admin/projects')
@@ -197,9 +183,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
             <div className="space-y-2">
               <Label>Project Image</Label>
-              <ImageUpload 
-                bucket="images" 
-                folder="public" 
+              <ImageUpload
                 onUploadComplete={handleImageUpload}
                 defaultImageUrl={imageUrl}
               />

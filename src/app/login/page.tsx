@@ -3,31 +3,12 @@ import { SiteFooter } from "@/components/site-footer";
 import LoginForm from "@/components/auth/login-form";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
 
 export default async function LoginPage() {
-  // Check if user is already logged in
   const cookieStore = await cookies();
+  const session = cookieStore.get('appwrite-session')?.value;
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options });
-        },
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (user) {
+  if (session) {
     redirect('/admin');
   }
 

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+// Note: databases import kept for client-side reads (getDocument); writes go through API routes
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,6 +22,8 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const [error, setError] = useState<string | null>(null)
   const [imageUrl, setImageUrl] = useState('')
   
+  const [originalPublishedAt, setOriginalPublishedAt] = useState<string | null>(null)
+  const [wasPublished, setWasPublished] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -34,18 +37,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   useEffect(() => {
     const fetchBlogPost = async () => {
       try {
-        const supabase = createBrowserClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        )
-
-        const { data: post, error } = await supabase
-          .from('blog_posts')
-          .select('*')
-          .eq('id', id)
-          .single()
-
-        if (error) throw error
+        const post = await databases.getDocument(DATABASE_ID, COLLECTIONS.BLOG_POSTS, id)
 
         if (post) {
           setFormData({
@@ -58,6 +50,8 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
             published: post.published || false
           })
           setImageUrl(post.thumbnail || '')
+          setOriginalPublishedAt(post.published_at || null)
+          setWasPublished(post.published || false)
         }
       } catch (err: unknown) {
         console.error('Error fetching blog post:', err)
@@ -101,11 +95,6 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     setError(null)
 
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-
       // Process categories into an array
       const categoriesArray = formData.categories
         .split(',')
@@ -121,16 +110,19 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
         categories: categoriesArray,
         thumbnail: formData.thumbnail,
         published: formData.published,
-        published_at: formData.published ? new Date().toISOString() : null
+        published_at: formData.published
+          ? (wasPublished ? originalPublishedAt : new Date().toISOString())
+          : null
       }
 
-      // Update the blog post
-      const { error } = await supabase
-        .from('blog_posts')
-        .update(postData)
-        .eq('id', id)
-
-      if (error) throw error
+      // Update the blog post via API route
+      const res = await fetch(`/api/blog/${id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
 
       // Redirect to the blog posts page
       router.push('/admin/blog')
@@ -247,9 +239,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
 
             <div className="space-y-2">
               <Label>Featured Image</Label>
-              <ImageUpload 
-                bucket="images" 
-                folder="public" 
+              <ImageUpload
                 onUploadComplete={handleImageUpload}
                 defaultImageUrl={imageUrl}
               />

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
 import { redirect } from 'next/navigation'
+import { createSessionClient, isAdmin } from '@/lib/appwrite'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
@@ -9,46 +9,21 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = await cookies();
+  const cookieStore = await cookies()
+  const session = cookieStore.get('appwrite-session')?.value
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options });
-        },
-      },
-    }
-  );
+  if (!session) redirect('/login')
 
-  // Get the authenticated user
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
+  let user;
+  try {
+    const { account } = createSessionClient(session)
+    user = await account.get()
+  } catch {
     redirect('/login')
   }
 
-  console.log("Authenticated user:", user.id, user.email)
-
-  // Check if the user is an admin
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-
-  console.log("Profile data:", profile)
-  console.log("Profile error:", error)
-
-  if (!profile?.is_admin) {
-    // User is logged in but not an admin
-    console.log("Access denied: is_admin =", profile?.is_admin)
+  const admin = await isAdmin(user.$id)
+  if (!admin) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
@@ -105,12 +80,6 @@ export default async function AdminLayout({
             className="block py-2 px-4 rounded-md hover:bg-primary/10"
           >
             Storage
-          </Link>
-          <Link
-            href="/admin/test-upload"
-            className="block py-2 px-4 rounded-md hover:bg-primary/10 text-amber-600"
-          >
-            Test Upload
           </Link>
         </nav>
         <div className="mt-auto pt-8">

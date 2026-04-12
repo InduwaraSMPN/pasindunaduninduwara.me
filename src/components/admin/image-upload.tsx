@@ -9,15 +9,11 @@ import { Loader2, Upload, X, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 
 interface ImageUploadProps {
-  bucket: string
-  folder?: string
   onUploadComplete: (url: string) => void
   defaultImageUrl?: string
 }
 
 export default function ImageUpload({
-  bucket,
-  folder = '',
   onUploadComplete,
   defaultImageUrl,
 }: ImageUploadProps) {
@@ -42,13 +38,8 @@ export default function ImageUpload({
       setPreview(objectUrl)
 
       // Use the server-side API route to handle the upload
-      // This bypasses client-side RLS policies
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('bucket', bucket)
-      if (folder) {
-        formData.append('folder', folder)
-      }
 
       const response = await fetch('/api/upload', {
         method: 'POST',
@@ -73,7 +64,7 @@ export default function ImageUpload({
     } finally {
       setUploading(false)
     }
-  }, [bucket, folder, onUploadComplete, defaultImageUrl])
+  }, [onUploadComplete, defaultImageUrl])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files

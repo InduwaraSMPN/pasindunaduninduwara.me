@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
+import { createSessionClient, createServerClient, isAdmin, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 
 export async function POST(
   request: Request,
@@ -8,54 +8,27 @@ export async function POST(
 ) {
   const { id } = await params
   const cookieStore = await cookies()
+  const session = cookieStore.get('appwrite-session')?.value
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
-
-  // Check if user is authenticated and is an admin
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
+  const { account } = createSessionClient(session)
+  const user = await account.get()
+  const admin = await isAdmin(user.$id)
 
-  if (!profile?.is_admin) {
-    return NextResponse.json(
-      { error: 'Forbidden' },
-      { status: 403 }
-    )
+  if (!admin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  // Delete the blog post
-  const { error } = await supabase
-    .from('blog_posts')
-    .delete()
-    .eq('id', id)
+  const { databases } = createServerClient()
 
-  if (error) {
+  try {
+    await databases.deleteDocument(DATABASE_ID, COLLECTIONS.BLOG_POSTS, id)
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message },
+      { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

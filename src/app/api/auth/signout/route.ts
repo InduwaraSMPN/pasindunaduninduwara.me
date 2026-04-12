@@ -1,31 +1,32 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { createSessionClient } from '@/lib/appwrite';
 
 export async function POST(request: Request) {
-  const cookieStore = await cookies()
+  try {
+    const cookieStore = await cookies();
+    const session = cookieStore.get('appwrite-session')?.value;
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
+    if (session) {
+      try {
+        const { account } = createSessionClient(session);
+        await account.deleteSession('current');
+      } catch {
+        // Session may already be invalid
+      }
     }
-  )
 
-  // Sign out the user
-  await supabase.auth.signOut()
+    const response = NextResponse.redirect(new URL('/', request.url), { status: 302 });
+    response.cookies.set('appwrite-session', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0,
+    });
 
-  // Redirect to the home page
-  return NextResponse.redirect(new URL('/', request.url), {
-    status: 302,
-  })
+    return response;
+  } catch {
+    return NextResponse.redirect(new URL('/', request.url), { status: 302 });
+  }
 }

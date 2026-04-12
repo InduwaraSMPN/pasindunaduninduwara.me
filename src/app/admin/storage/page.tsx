@@ -1,80 +1,49 @@
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, BUCKET_ID, getFileUrl } from '@/lib/appwrite'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import CopyUrlButton from '@/components/admin/copy-url-button'
 
 export default async function StoragePage() {
-  const cookieStore = await cookies()
+  const { storage } = createServerClient()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-
-  // Get all files from the images bucket
-  const { data: files, error } = await supabase
-    .storage
-    .from('images')
-    .list('public', {
-      limit: 100,
-      offset: 0,
-      sortBy: { column: 'created_at', order: 'desc' }
-    })
+  const files = await storage.listFiles(BUCKET_ID)
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Storage</h1>
         <div className="flex gap-2">
-          <Button asChild variant="outline">
-            <Link href="/admin/storage/policies">Manage Policies</Link>
-          </Button>
           <Button asChild>
             <Link href="/admin/storage/upload">Upload New Image</Link>
           </Button>
         </div>
       </div>
 
-      {error && (
-        <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
-          Error loading files: {error.message}
-        </div>
-      )}
-
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {files && files.length > 0 ? (
-          files.map((file) => {
-            // Skip folders and non-image files
-            if (file.id === null) return null
-
-            const { data: { publicUrl } } = supabase
-              .storage
-              .from('images')
-              .getPublicUrl(`public/${file.name}`)
+        {files.files && files.files.length > 0 ? (
+          files.files.map((file) => {
+            const publicUrl = getFileUrl(file.$id)
+            const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name)
 
             return (
-              <Card key={file.id} className="overflow-hidden">
+              <Card key={file.$id} className="overflow-hidden">
                 <div className="relative h-40">
-                  <Image
-                    src={publicUrl}
-                    alt={file.name}
-                    fill
-                    className="object-cover"
-                  />
+                  {isImage ? (
+                    <Image
+                      src={publicUrl}
+                      alt={file.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full bg-muted">
+                      <span className="text-sm text-muted-foreground uppercase">
+                        {file.name.split('.').pop()}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <CardContent className="p-3">
                   <p className="text-sm truncate" title={file.name}>
@@ -82,18 +51,11 @@ export default async function StoragePage() {
                   </p>
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-xs text-muted-foreground">
-                      {Math.round(file.metadata.size / 1024)} KB
+                      {file.sizeOriginal < 1024
+                        ? `${file.sizeOriginal} B`
+                        : `${Math.round(file.sizeOriginal / 1024)} KB`}
                     </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 px-2"
-                      onClick={() => {
-                        navigator.clipboard.writeText(publicUrl)
-                      }}
-                    >
-                      Copy URL
-                    </Button>
+                    <CopyUrlButton url={publicUrl} />
                   </div>
                 </CardContent>
               </Card>

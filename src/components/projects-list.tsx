@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 
-export default function SupabaseProjects({ limit = 3, isHomePage = false }: { limit?: number; isHomePage?: boolean }) {
+export default function ProjectsList({ limit = 3, isHomePage = false }: { limit?: number; isHomePage?: boolean }) {
   const { data: projects, isLoading, isError } = useProjects();
 
   if (isLoading) {
@@ -50,7 +50,7 @@ export default function SupabaseProjects({ limit = 3, isHomePage = false }: { li
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {projects?.slice(0, limit).map((project) => (
-        <Card key={project.id} className="overflow-hidden flex flex-col">
+        <Card key={project.$id} className="overflow-hidden flex flex-col">
           {project.image && (
             <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
               <Image
@@ -89,7 +89,7 @@ export default function SupabaseProjects({ limit = 3, isHomePage = false }: { li
           </CardContent>
           <CardFooter>
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/projects/${project.id}`}>
+              <Link href={`/projects/${project.$id}`}>
                 View Project
               </Link>
             </Button>

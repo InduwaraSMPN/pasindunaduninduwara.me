@@ -1,52 +1,17 @@
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { Query } from 'node-appwrite'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 export default async function AdminDashboard() {
-  const cookieStore = await cookies()
+  const { databases } = createServerClient()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove: (name, options) => {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
-
-  // Get counts for dashboard
-  const { count: projectCount } = await supabase
-    .from('projects')
-    .select('*', { count: 'exact', head: true })
-
-  const { count: publishedPostCount } = await supabase
-    .from('blog_posts')
-    .select('*', { count: 'exact', head: true })
-    .eq('published', true)
-
-  const { count: draftPostCount } = await supabase
-    .from('blog_posts')
-    .select('*', { count: 'exact', head: true })
-    .eq('published', false)
-
-  const { count: pendingCommentCount } = await supabase
-    .from('comments')
-    .select('*', { count: 'exact', head: true })
-    .eq('approved', false)
-
-  const { count: unreadMessageCount } = await supabase
-    .from('messages')
-    .select('*', { count: 'exact', head: true })
-    .eq('read', false)
+  const projects = await databases.listDocuments(DATABASE_ID, COLLECTIONS.PROJECTS, [Query.limit(1)])
+  const publishedPosts = await databases.listDocuments(DATABASE_ID, COLLECTIONS.BLOG_POSTS, [Query.equal('published', true), Query.limit(1)])
+  const draftPosts = await databases.listDocuments(DATABASE_ID, COLLECTIONS.BLOG_POSTS, [Query.equal('published', false), Query.limit(1)])
+  const pendingComments = await databases.listDocuments(DATABASE_ID, COLLECTIONS.COMMENTS, [Query.equal('approved', false), Query.limit(1)])
+  const unreadMessages = await databases.listDocuments(DATABASE_ID, COLLECTIONS.MESSAGES, [Query.equal('read', false), Query.limit(1)])
 
   return (
     <div>
@@ -59,7 +24,7 @@ export default async function AdminDashboard() {
             <CardDescription>Total projects in your portfolio</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{projectCount || 0}</div>
+            <div className="text-3xl font-bold">{projects.total}</div>
             <Button asChild variant="link" className="p-0 h-auto mt-2">
               <Link href="/admin/projects">Manage Projects</Link>
             </Button>
@@ -72,9 +37,9 @@ export default async function AdminDashboard() {
             <CardDescription>Published and draft posts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{(publishedPostCount || 0) + (draftPostCount || 0)}</div>
+            <div className="text-3xl font-bold">{publishedPosts.total + draftPosts.total}</div>
             <div className="text-sm text-muted-foreground mt-1">
-              {publishedPostCount || 0} published · {draftPostCount || 0} drafts
+              {publishedPosts.total} published · {draftPosts.total} drafts
             </div>
             <Button asChild variant="link" className="p-0 h-auto mt-2">
               <Link href="/admin/blog">Manage Blog Posts</Link>
@@ -88,7 +53,7 @@ export default async function AdminDashboard() {
             <CardDescription>Pending approval</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{pendingCommentCount || 0}</div>
+            <div className="text-3xl font-bold">{pendingComments.total}</div>
             <Button asChild variant="link" className="p-0 h-auto mt-2">
               <Link href="/admin/comments">Moderate Comments</Link>
             </Button>
@@ -101,7 +66,7 @@ export default async function AdminDashboard() {
             <CardDescription>Unread contact messages</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{unreadMessageCount || 0}</div>
+            <div className="text-3xl font-bold">{unreadMessages.total}</div>
             <Button asChild variant="link" className="p-0 h-auto mt-2">
               <Link href="/admin/messages">View Messages</Link>
             </Button>

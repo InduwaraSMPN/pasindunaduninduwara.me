@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -42,32 +41,26 @@ export default function NewProjectPage() {
     setError(null)
 
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-
       // Process tags into an array
       const tagsArray = formData.tags
         .split(',')
         .map(tag => tag.trim())
         .filter(tag => tag.length > 0)
 
-      // Insert the new project
-      const { error } = await supabase
-        .from('projects')
-        .insert([
-          {
-            title: formData.title,
-            description: formData.description,
-            full_description: formData.full_description,
-            image: formData.image,
-            tags: tagsArray
-          }
-        ])
-        .select()
-
-      if (error) throw error
+      // Insert the new project via API route
+      const res = await fetch('/api/projects/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          full_description: formData.full_description,
+          image: formData.image,
+          tags: tagsArray
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
 
       // Redirect to the projects page
       router.push('/admin/projects')
@@ -153,8 +146,6 @@ export default function NewProjectPage() {
             <div className="space-y-2">
               <Label>Project Image</Label>
               <ImageUpload
-                bucket="images"
-                folder="public"
                 onUploadComplete={handleImageUpload}
               />
 

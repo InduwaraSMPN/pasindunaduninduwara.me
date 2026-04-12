@@ -4,46 +4,26 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
-import { Database } from "@/types/supabase";
+import { createServerClient, DATABASE_ID, COLLECTIONS } from "@/lib/appwrite";
+import type { Project } from "@/types/appwrite";
 import MarkdownPreviewComponent from "@/components/blog/markdown-preview";
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const cookieStore = await cookies();
 
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set() {
-          // This is a server component, so we can't set cookies
-        },
-        remove() {
-          // This is a server component, so we can't remove cookies
-        },
-      },
-    }
-  );
+  const { databases } = createServerClient();
 
   // Fetch the project
-  const { data: project, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error || !project) {
+  let project: Project | undefined;
+  try {
+    project = await databases.getDocument(DATABASE_ID, COLLECTIONS.PROJECTS, id) as unknown as Project;
+  } catch (error) {
     console.error("Error fetching project:", error);
-    notFound();
   }
 
-
+  if (!project) {
+    notFound();
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -82,7 +62,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <div>
               <h3 className="text-lg font-medium mb-2">Created</h3>
               <p className="text-muted-foreground">
-                {new Date(project.created_at).toLocaleDateString('en-US', {
+                {new Date(project.$createdAt).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
@@ -92,7 +72,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <div>
               <h3 className="text-lg font-medium mb-2">Last Updated</h3>
               <p className="text-muted-foreground">
-                {new Date(project.updated_at).toLocaleDateString('en-US', {
+                {new Date(project.$updatedAt).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'

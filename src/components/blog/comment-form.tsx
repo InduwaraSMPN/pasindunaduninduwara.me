@@ -7,11 +7,11 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
-import { createBrowserClient } from '@supabase/ssr'
-import { Database } from '@/types/supabase'
+import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { ID } from 'appwrite'
 
 interface CommentFormProps {
-  postId: number
+  postId: string
   onCommentSubmitted?: () => void
 }
 
@@ -30,21 +30,12 @@ export default function CommentForm({ postId, onCommentSubmitted }: CommentFormP
     setLoading(true)
 
     try {
-      const supabase = createBrowserClient<Database>(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      await databases.createDocument(
+        DATABASE_ID,
+        COLLECTIONS.COMMENTS,
+        ID.unique(),
+        { post_id: postId, name, email, content, approved: false, created_at: new Date().toISOString() }
       )
-
-      const { error } = await supabase
-        .from('comments')
-        .insert({
-          post_id: postId,
-          name,
-          email,
-          content,
-        })
-
-      if (error) throw error
 
       setSuccess('Your comment has been submitted and is awaiting approval.')
       setName('')

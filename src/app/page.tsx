@@ -4,8 +4,8 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Download } from "lucide-react";
-import SupabaseProjects from "@/components/supabase-projects";
-import SupabaseBlogPosts from "@/components/supabase-blog-posts";
+import ProjectsList from "@/components/projects-list";
+import BlogPosts from "@/components/blog-posts";
 import ContactForm from "@/components/contact-form";
 
 export default function Home() {
@@ -220,7 +220,7 @@ export default function Home() {
         <section id="projects" className="py-20 px-4">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Featured Projects</h2>
-            <SupabaseProjects limit={3} isHomePage={true} />
+            <ProjectsList limit={3} isHomePage={true} />
             <div className="mt-12 text-center">
               <Button variant="outline" asChild>
                 <Link href="/projects">View All Projects</Link>
@@ -233,7 +233,7 @@ export default function Home() {
         <section id="blog" className="py-20 px-4 bg-muted/50">
           <div className="container mx-auto max-w-5xl">
             <h2 className="text-3xl font-bold mb-12 text-center">Latest from My Blog</h2>
-            <SupabaseBlogPosts />
+            <BlogPosts />
             <div className="mt-12 text-center">
               <Button variant="outline" asChild>
                 <Link href="/blog">View All Posts</Link>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -57,11 +56,6 @@ export default function NewBlogPostPage() {
     setError(null)
 
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-
       // Process categories into an array
       const categoriesArray = formData.categories
         .split(',')
@@ -80,13 +74,14 @@ export default function NewBlogPostPage() {
         published_at: formData.published ? new Date().toISOString() : null
       }
 
-      // Insert the new blog post
-      const { error } = await supabase
-        .from('blog_posts')
-        .insert([postData])
-        .select()
-
-      if (error) throw error
+      // Insert the new blog post via API route
+      const res = await fetch('/api/blog/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
 
       // Redirect to the blog posts page
       router.push('/admin/blog')
@@ -195,10 +190,8 @@ export default function NewBlogPostPage() {
 
             <div className="space-y-2">
               <Label>Featured Image</Label>
-              <ImageUpload 
-                bucket="images" 
-                folder="public" 
-                onUploadComplete={handleImageUpload} 
+              <ImageUpload
+                onUploadComplete={handleImageUpload}
               />
             </div>
 
