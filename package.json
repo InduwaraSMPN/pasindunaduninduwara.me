@@ -13,9 +13,7 @@
     "lint": "next lint",
     "server": "bun server.ts",
     "server:watch": "bun --watch server.ts",
-    "server:hot": "bun --hot server.ts",
-    "watch:example": "bun --watch scripts/watch-example.ts",
-    "hot:example": "bun --hot scripts/watch-example.ts"
+    "server:hot": "bun --hot server.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.7",
