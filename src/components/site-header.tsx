@@ -89,6 +89,7 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
             className="h-9 w-9"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <span className="sr-only">{mobileOpen ? 'Close menu' : 'Open menu'}</span>
           </Button>
         </div>
       </div>

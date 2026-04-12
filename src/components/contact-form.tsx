@@ -68,7 +68,6 @@ export default function ContactForm() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
               required
-              className="focus-visible:ring-accent-warm/30 focus-visible:border-accent-warm/50"
             />
           </div>
 
@@ -81,7 +80,6 @@ export default function ContactForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="focus-visible:ring-accent-warm/30 focus-visible:border-accent-warm/50"
             />
           </div>
         </div>
@@ -94,7 +92,6 @@ export default function ContactForm() {
             onChange={(e) => setSubject(e.target.value)}
             placeholder="What's this about?"
             required
-            className="focus-visible:ring-accent-warm/30 focus-visible:border-accent-warm/50"
           />
         </div>
 
@@ -107,7 +104,7 @@ export default function ContactForm() {
             placeholder="Tell me about your project or idea..."
             rows={5}
             required
-            className="resize-none focus-visible:ring-accent-warm/30 focus-visible:border-accent-warm/50"
+            className="resize-none"
           />
         </div>
 

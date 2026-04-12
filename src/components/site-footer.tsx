@@ -101,7 +101,7 @@ export function SiteFooter({ activePage = 'home' }: SiteFooterProps) {
             <div className="w-full mx-auto">
               <TextPressure
                 text="pasindunaduninduwara"
-                textColor="#f2f2f2"
+                textColor="var(--foreground)"
                 minFontSize={242}
                 width={true}
                 weight={true}

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { StaggerContainer, StaggerItem } from '@/components/ui/scroll-reveal';
 
@@ -58,6 +58,17 @@ export default function BlogPosts() {
           <p>Unable to load blog posts. Please try again later.</p>
         </CardContent>
       </Card>
+    );
+  }
+
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="py-16 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-muted mb-4">
+          <FileText className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <p className="text-muted-foreground">No blog posts published yet. Stay tuned!</p>
+      </div>
     );
   }
 

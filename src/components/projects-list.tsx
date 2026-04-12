@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, FolderOpen } from 'lucide-react';
 import { StaggerContainer, StaggerItem } from '@/components/ui/scroll-reveal';
 
 export default function ProjectsList({ limit = 3, isHomePage = false }: { limit?: number; isHomePage?: boolean }) {
@@ -42,6 +42,17 @@ export default function ProjectsList({ limit = 3, isHomePage = false }: { limit?
           <p>Unable to load projects. Please try again later.</p>
         </CardContent>
       </Card>
+    );
+  }
+
+  if (!projects || projects.length === 0) {
+    return (
+      <div className="py-16 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-muted mb-4">
+          <FolderOpen className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <p className="text-muted-foreground">No projects to show yet. Check back soon!</p>
+      </div>
     );
   }
 

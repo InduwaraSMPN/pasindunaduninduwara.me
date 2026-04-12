@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Send, CheckCircle2 } from 'lucide-react'
 
 interface CommentFormProps {
   postId: string
@@ -52,63 +52,75 @@ export default function CommentForm({ postId, onCommentSubmitted }: CommentFormP
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold">Leave a Comment</h3>
+      <h3 className="text-lg font-heading font-semibold">Leave a Comment</h3>
 
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="border-destructive/30 bg-destructive/5">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {success && (
-        <Alert>
-          <AlertDescription>{success}</AlertDescription>
+        <Alert className="border-accent-warm/30 bg-accent-warm/5">
+          <CheckCircle2 className="h-4 w-4 text-accent-warm" />
+          <AlertDescription className="text-accent-warm">{success}</AlertDescription>
         </Alert>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="comment-name" className="text-sm font-medium">Name</Label>
             <Input
-              id="name"
+              id="comment-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="comment-email" className="text-sm font-medium">Email</Label>
             <Input
-              id="email"
+              id="comment-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
               required
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="content">Comment</Label>
+          <Label htmlFor="comment-content" className="text-sm font-medium">Comment</Label>
           <Textarea
-            id="content"
+            id="comment-content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            placeholder="Share your thoughts..."
             rows={4}
             required
+            className="resize-none"
           />
         </div>
 
-        <Button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading font-semibold"
+        >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Submitting...
             </>
           ) : (
-            'Submit Comment'
+            <>
+              <Send className="mr-2 h-4 w-4" />
+              Submit Comment
+            </>
           )}
         </Button>
       </form>

@@ -16,7 +16,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 function TimelineItem({ title, subtitle, children }: { title: string; subtitle?: string; children?: React.ReactNode }) {
   return (
-    <div className="relative pl-6 before:absolute before:left-0 before:top-2.5 before:w-2 before:h-2 before:rounded-full before:bg-accent-warm before:ring-4 before:ring-accent-warm/10">
+    <div className="relative pl-6 before:absolute before:-left-[5px] before:top-2.5 before:w-2 before:h-2 before:rounded-full before:bg-accent-warm before:ring-4 before:ring-accent-warm/10">
       <h3 className="text-lg font-heading font-semibold">{title}</h3>
       {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
       {children && <div className="mt-2 text-muted-foreground leading-relaxed text-sm">{children}</div>}
