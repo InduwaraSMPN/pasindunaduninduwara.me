@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Syne, Outfit } from "next/font/google";
+import { Bricolage_Grotesque, Outfit } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { DevelopmentBanner } from "@/components/development-banner";
 
 
-const syne = Syne({
-  variable: "--font-syne",
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${syne.variable} ${outfit.variable} antialiased`}
+        className={`${bricolage.variable} ${outfit.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

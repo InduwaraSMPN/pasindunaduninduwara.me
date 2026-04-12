@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Download, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SiteHeaderProps {
@@ -14,15 +14,55 @@ interface SiteHeaderProps {
 }
 
 const navLinks = [
-  { label: 'About', href: '/#about', page: 'home' as const },
-  { label: 'Projects', href: '/projects', homeHref: '#projects', page: 'projects' as const },
-  { label: 'Blog', href: '/blog', homeHref: '#blog', page: 'blog' as const },
-  { label: 'CV', href: '/cv', page: 'cv' as const },
-  { label: 'Contact', href: '/#contact', homeHref: '#contact', page: 'contact' as const },
+  { label: 'About', href: '/#about', page: 'home' as const, sectionId: 'about' },
+  { label: 'Projects', href: '/projects', homeHref: '#projects', page: 'projects' as const, sectionId: 'projects' },
+  { label: 'Blog', href: '/blog', homeHref: '#blog', page: 'blog' as const, sectionId: 'blog' },
+  { label: 'Contact', href: '/#contact', homeHref: '#contact', page: 'contact' as const, sectionId: 'contact' },
+  { label: 'CV', href: '/cv', page: 'cv' as const, sectionId: null },
 ];
+
+function useActiveSection(enabled: boolean) {
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const sectionIds = navLinks.map(l => l.sectionId).filter(Boolean) as string[];
+    const elements = sectionIds.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible.length > 0) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+    );
+
+    elements.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [enabled]);
+
+  return activeSection;
+}
 
 export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isHome = activePage === 'home';
+  const activeSection = useActiveSection(isHome);
+
+  const getIsActive = (link: typeof navLinks[number]) => {
+    if (isHome && activeSection) {
+      return link.sectionId === activeSection;
+    }
+    return activePage === link.page;
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl backdrop-saturate-150">
@@ -33,9 +73,6 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
             <AvatarImage src="/logo.png" alt="Pasindu Induwara logo" />
             <AvatarFallback className="bg-accent-warm text-accent-warm-foreground font-heading font-bold text-sm">PI</AvatarFallback>
           </Avatar>
-          <span className="font-heading font-semibold text-sm tracking-tight hidden sm:block">
-            Pasindu<span className="text-accent-warm">.</span>
-          </span>
         </Link>
 
         {/* Desktop Nav */}
@@ -43,8 +80,8 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
           <nav>
             <ul className="flex gap-1">
               {navLinks.map((link) => {
-                const href = activePage === 'home' && link.homeHref ? link.homeHref : link.href;
-                const isActive = activePage === link.page;
+                const href = isHome && link.homeHref ? link.homeHref : link.href;
+                const isActive = getIsActive(link);
                 return (
                   <li key={link.label}>
                     <Link
@@ -59,6 +96,7 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
                       {isActive && (
                         <motion.span
                           layoutId="nav-indicator"
+                          initial={false}
                           className="absolute bottom-0 left-3 right-3 h-0.5 bg-accent-warm rounded-full"
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                         />
@@ -107,8 +145,8 @@ export function SiteHeader({ showAvatar = true, activePage = 'home' }: SiteHeade
             <nav className="container mx-auto px-4 py-4">
               <ul className="flex flex-col gap-1">
                 {navLinks.map((link) => {
-                  const href = activePage === 'home' && link.homeHref ? link.homeHref : link.href;
-                  const isActive = activePage === link.page;
+                  const href = isHome && link.homeHref ? link.homeHref : link.href;
+                  const isActive = getIsActive(link);
                   return (
                     <li key={link.label}>
                       <Link
