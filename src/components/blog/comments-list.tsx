@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { formatDate } from '@/lib/utils'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
-import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
 import type { Comment } from '@/types/appwrite'
 
 interface CommentsListProps {
@@ -24,18 +22,10 @@ export default function CommentsList({ postId, refreshTrigger = 0 }: CommentsLis
       setError(null)
 
       try {
-        const response = await databases.listDocuments(
-          DATABASE_ID,
-          COLLECTIONS.COMMENTS,
-          [
-            Query.equal('post_id', postId),
-            Query.equal('approved', true),
-            Query.orderDesc('created_at'),
-            Query.limit(100),
-          ]
-        )
-
-        setComments(response.documents as unknown as Comment[])
+        const response = await fetch(`/api/comments?postId=${postId}`)
+        if (!response.ok) throw new Error('Failed to fetch comments')
+        const data = await response.json()
+        setComments(data as Comment[])
       } catch (error: unknown) {
         setError((error as Error).message || 'An error occurred while fetching comments.')
       } finally {

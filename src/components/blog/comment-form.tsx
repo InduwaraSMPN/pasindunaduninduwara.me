@@ -7,8 +7,6 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
-import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
-import { ID } from 'appwrite'
 
 interface CommentFormProps {
   postId: string
@@ -30,12 +28,12 @@ export default function CommentForm({ postId, onCommentSubmitted }: CommentFormP
     setLoading(true)
 
     try {
-      await databases.createDocument(
-        DATABASE_ID,
-        COLLECTIONS.COMMENTS,
-        ID.unique(),
-        { post_id: postId, name, email, content, approved: false, created_at: new Date().toISOString() }
-      )
+      const response = await fetch('/api/comments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, name, email, content }),
+      })
+      if (!response.ok) throw new Error('Failed to submit comment')
 
       setSuccess('Your comment has been submitted and is awaiting approval.')
       setName('')

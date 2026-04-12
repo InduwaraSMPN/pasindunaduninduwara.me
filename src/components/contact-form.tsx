@@ -7,8 +7,6 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
-import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
-import { ID } from 'appwrite'
 
 export default function ContactForm() {
   const [name, setName] = useState('')
@@ -26,12 +24,12 @@ export default function ContactForm() {
     setLoading(true)
 
     try {
-      await databases.createDocument(
-        DATABASE_ID,
-        COLLECTIONS.MESSAGES,
-        ID.unique(),
-        { name, email, subject, message, read: false, created_at: new Date().toISOString() }
-      )
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message }),
+      })
+      if (!response.ok) throw new Error('Failed to send message')
 
       setSuccess('Your message has been sent. I will get back to you as soon as possible.')
       setName('')

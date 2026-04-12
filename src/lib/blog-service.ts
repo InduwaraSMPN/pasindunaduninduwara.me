@@ -1,34 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { Query } from 'appwrite';
-import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite';
 import { BlogPost } from '@/types/appwrite';
 
-// Fetch all published blog posts
+// Fetch all published blog posts via server-side API route (avoids CORS)
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
-  const response = await databases.listDocuments(
-    DATABASE_ID,
-    COLLECTIONS.BLOG_POSTS,
-    [
-      Query.equal('published', true),
-      Query.orderDesc('published_at'),
-      Query.limit(100),
-    ]
-  );
-  return response.documents as unknown as BlogPost[];
+  const response = await fetch('/api/blog');
+  if (!response.ok) throw new Error('Failed to fetch blog posts');
+  return response.json();
 }
 
 // Fetch a single blog post by slug
 export async function fetchBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  const response = await databases.listDocuments(
-    DATABASE_ID,
-    COLLECTIONS.BLOG_POSTS,
-    [
-      Query.equal('slug', slug),
-      Query.equal('published', true),
-      Query.limit(1),
-    ]
-  );
-  return (response.documents[0] as unknown as BlogPost) ?? null;
+  const response = await fetch(`/api/blog/by-slug/${slug}`);
+  if (!response.ok) return null;
+  return response.json();
 }
 
 // Custom hook to use blog posts

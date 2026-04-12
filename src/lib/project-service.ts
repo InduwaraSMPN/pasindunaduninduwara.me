@@ -1,30 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { Query } from 'appwrite';
-import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite';
 import { Project } from '@/types/appwrite';
 
-// Fetch all projects
+// Fetch all projects via server-side API route (avoids CORS)
 export async function fetchProjects(): Promise<Project[]> {
-  const response = await databases.listDocuments(
-    DATABASE_ID,
-    COLLECTIONS.PROJECTS,
-    [
-      Query.orderDesc('created_at'),
-      Query.limit(100),
-    ]
-  );
-  return response.documents as unknown as Project[];
+  const response = await fetch('/api/projects');
+  if (!response.ok) throw new Error('Failed to fetch projects');
+  return response.json();
 }
 
 // Fetch a single project by ID
 export async function fetchProjectById(id: string): Promise<Project | null> {
   try {
-    const doc = await databases.getDocument(
-      DATABASE_ID,
-      COLLECTIONS.PROJECTS,
-      id
-    );
-    return doc as unknown as Project;
+    const response = await fetch(`/api/projects/${id}`);
+    if (!response.ok) return null;
+    return response.json();
   } catch {
     return null;
   }
