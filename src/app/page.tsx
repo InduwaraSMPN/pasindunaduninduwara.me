@@ -26,7 +26,7 @@ export default function Home() {
           <div className="container mx-auto max-w-5xl flex flex-col md:flex-row items-center gap-12 md:gap-16">
             <ScrollReveal variant="slide-left" className="flex-1">
               <p className="text-accent-warm font-heading font-semibold text-sm tracking-widest uppercase mb-4">
-                Full Stack Developer
+                Software Engineer
               </p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-6 leading-[1.1] tracking-tight">
                 Crafting Digital
@@ -36,8 +36,8 @@ export default function Home() {
                 <span className="text-accent-warm">Purpose</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                IT undergraduate with a passion for building full-stack web applications
-                that merge clean engineering with thoughtful, engaging interfaces.
+                Software Engineer and open source contributor building scalable full-stack
+                applications with clean code and thoughtful, engaging interfaces.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button asChild size="lg" className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading font-semibold">
@@ -109,30 +109,30 @@ export default function Home() {
                 <h3 className="text-xl font-heading font-semibold mb-4">My Background</h3>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    I am a motivated and dynamic IT undergraduate with a strong passion for web development and a keen interest in UX/UI engineering. I&apos;m currently pursuing my B.Sc. Honours in Information Technology at the University of Kelaniya (2023 - Present).
+                    Software Engineer and active open source contributor with a passion for web development and building scalable solutions. Industry experience as a Software Engineer Intern at WSO2, specializing in Internal Developer Portals using Backstage and OpenChoreo.
                   </p>
                   <p>
-                    Experienced in designing and developing full-stack web applications, with a solid understanding of both frontend and backend technologies. Skilled in translating user needs into functional, visually engaging interfaces.
+                    Experienced in designing full-stack applications, cloud deployments, and modern DevOps practices. Skilled in translating user needs into functional interfaces while adhering to clean code standards.
                   </p>
                   <p>
-                    Proficient in code writing, testing, and debugging, with a commitment to continuous learning and staying current with the latest tools, frameworks, and industry trends.
+                    Proficient in multiple technology stacks and committed to continuous learning and open source collaboration.
                   </p>
                 </div>
 
                 <div className="mt-8">
-                  <h4 className="text-lg font-heading font-semibold mb-4">Education</h4>
+                  <h4 className="text-lg font-heading font-semibold mb-4">Experience & Education</h4>
                   <div className="space-y-4">
                     <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-accent-warm">
-                      <p className="font-medium">University of Kelaniya (2023 - Present)</p>
-                      <p className="text-sm text-muted-foreground">B.Sc. Honours in Information Technology</p>
+                      <p className="font-medium">WSO2 (July 2025 - December 2025)</p>
+                      <p className="text-sm text-muted-foreground">Software Engineer Intern</p>
                     </div>
                     <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-accent-warm/60">
-                      <p className="font-medium">University of Moratuwa - CODL</p>
-                      <p className="text-sm text-muted-foreground">Trainee Full Stack Developer</p>
+                      <p className="font-medium">University of Kelaniya (2023 - Present)</p>
+                      <p className="text-sm text-muted-foreground">B.Sc. Honours in Information Technology | GPA: 3.7</p>
                     </div>
                     <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-accent-warm/30">
-                      <p className="font-medium">Niwaththakachethiya National College</p>
-                      <p className="text-sm text-muted-foreground">GCE Advanced Level & Ordinary Level</p>
+                      <p className="font-medium">University of Moratuwa - CODL</p>
+                      <p className="text-sm text-muted-foreground">Trainee Full Stack Developer</p>
                     </div>
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export default function Home() {
                   <StaggerItem>
                     <h4 className="font-heading font-medium text-sm text-accent-warm uppercase tracking-wider mb-3">Frameworks</h4>
                     <div className="flex flex-wrap gap-2">
-                      {['React', 'Node.js', 'Angular', 'Spring Boot', 'Flutter', 'PyTorch'].map(s => (
+                      {['React', 'Next.js', 'Node.js', 'Angular', 'Spring Boot', 'Flutter'].map(s => (
                         <span key={s} className="px-3 py-1.5 text-xs font-medium rounded-full bg-secondary text-secondary-foreground border border-border">
                           {s}
                         </span>
@@ -179,7 +179,7 @@ export default function Home() {
                   <StaggerItem>
                     <h4 className="font-heading font-medium text-sm text-accent-warm uppercase tracking-wider mb-3">Tools & Platforms</h4>
                     <div className="flex flex-wrap gap-2">
-                      {['MySQL', 'MongoDB', 'Docker', 'Kubernetes', 'Azure', 'Firebase', 'Git'].map(s => (
+                      {['MySQL', 'PostgreSQL', 'MongoDB', 'Docker', 'Kubernetes', 'Azure', 'Git'].map(s => (
                         <span key={s} className="px-3 py-1.5 text-xs font-medium rounded-full bg-secondary text-secondary-foreground border border-border">
                           {s}
                         </span>

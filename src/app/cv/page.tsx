@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Download, Mail, Phone, MapPin } from "lucide-react";
+import { Download, Mail, Phone, MapPin, Globe } from "lucide-react";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -37,7 +37,7 @@ export default function CVPage() {
               <div className="text-center mb-16">
                 <p className="text-accent-warm font-heading font-semibold text-sm tracking-widest uppercase mb-3">Curriculum Vitae</p>
                 <h1 className="text-4xl md:text-5xl font-heading font-bold mb-2 tracking-tight">PASINDU INDUWARA</h1>
-                <p className="text-lg text-muted-foreground mb-8">IT Undergraduate</p>
+                <p className="text-lg text-muted-foreground mb-8">Software Engineer</p>
 
                 <div className="flex flex-wrap items-center justify-center gap-4 mb-6 text-sm text-muted-foreground">
                   <a href="mailto:pasindunaduninduwara@gmail.com" className="inline-flex items-center gap-1.5 hover:text-accent-warm transition-colors">
@@ -47,6 +47,10 @@ export default function CVPage() {
                   <a href="tel:+94703477582" className="inline-flex items-center gap-1.5 hover:text-accent-warm transition-colors">
                     <Phone className="h-3.5 w-3.5" />
                     (+94) 703 477 582
+                  </a>
+                  <a href="https://pasindunaduninduwara.me" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-accent-warm transition-colors">
+                    <Globe className="h-3.5 w-3.5" />
+                    pasindunaduninduwara.me
                   </a>
                   <a href="https://github.com/InduwaraSMPN" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-accent-warm transition-colors">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
@@ -60,7 +64,7 @@ export default function CVPage() {
 
                 <div className="flex items-center justify-center gap-1.5 mb-8 text-sm text-muted-foreground">
                   <MapPin className="h-3.5 w-3.5" />
-                  No 72, Thissa Mawatha, Old Town, Anuradhapura
+                  No 185/7D Lumbini Lane, Colombo, Sri Lanka
                 </div>
 
                 <Button asChild className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading">
@@ -78,12 +82,50 @@ export default function CVPage() {
                 <section>
                   <SectionTitle>Profile</SectionTitle>
                   <p className="text-muted-foreground leading-relaxed">
-                    Motivated and dynamic IT undergraduate with a strong passion for web development and a keen interest in UX/UI
-                    engineering. Experienced in designing and developing full-stack web applications, with a solid understanding of both frontend
-                    and backend technologies. Skilled in translating user needs into functional, visually engaging interfaces, while adhering to
-                    modern software development practices. Proficient in code writing, testing, and debugging, with a commitment to continuous
-                    learning and staying current with the latest tools, frameworks, and industry trends.
+                    Software Engineer and active open source contributor with a passion for web development and building scalable solutions.
+                    Industry experience as a Software Engineer Intern at WSO2, where I specialized in building Internal Developer Portals (IDP)
+                    using Backstage and OpenChoreo. Experienced in designing full-stack applications, cloud deployments, and modern DevOps
+                    practices. Skilled in translating user needs into functional interfaces while adhering to clean code standards. Proficient in
+                    multiple technology stacks and committed to continuous learning and open source collaboration.
                   </p>
+                </section>
+              </ScrollReveal>
+
+              {/* Work Experience */}
+              <ScrollReveal>
+                <section>
+                  <SectionTitle>Work Experience</SectionTitle>
+                  <div className="space-y-6 border-l-2 border-accent-warm/15 ml-1">
+                    <TimelineItem title="Software Engineer Intern" subtitle="WSO2 | July 2025 - December 2025">
+                      <ul className="list-disc list-inside space-y-1.5 mt-2">
+                        <li>Engineered a full-stack plugin for Backstage that integrated WSO2 Choreo&apos;s deployment workflows, significantly streamlining application provisioning via the Software Catalog.</li>
+                        <li>As a core contributor to the open source Internal Developer Portal Platform OpenChoreo, developed a scalable Incremental Entity Ingestion module to optimize Kubernetes resource synchronization for enterprise-scale systems.</li>
+                        <li>Eliminated critical API bottlenecks by implementing cursor-based pagination, which successfully resolved timeout issues during high-volume data processing and ingestion cycles.</li>
+                      </ul>
+                    </TimelineItem>
+                  </div>
+                </section>
+              </ScrollReveal>
+
+              {/* Open Source Contributions */}
+              <ScrollReveal>
+                <section>
+                  <SectionTitle>Open Source Contributions</SectionTitle>
+                  <div className="space-y-4">
+                    <div className="p-5 rounded-xl bg-card border border-border/50 hover:border-accent-warm/20 transition-colors">
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <h3 className="text-base font-heading font-semibold">SRT (Serverless Stack)</h3>
+                        <span className="text-[10px] font-medium text-accent-warm bg-accent-warm/10 px-2 py-0.5 rounded-full whitespace-nowrap">Active Contributor</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">Active contributor to the models.dev repository. Integrated multiple AI providers and configured high-demand models, optimizing both backend configurations and frontend UI consistency.</p>
+                    </div>
+                    <div className="p-5 rounded-xl bg-card border border-border/50 hover:border-accent-warm/20 transition-colors">
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <h3 className="text-base font-heading font-semibold">KiloCode</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">Contributed to documentation improvements regarding model-initiated slash commands and editor interactions.</p>
+                    </div>
+                  </div>
                 </section>
               </ScrollReveal>
 
@@ -92,7 +134,9 @@ export default function CVPage() {
                 <section>
                   <SectionTitle>Education</SectionTitle>
                   <div className="space-y-6 border-l-2 border-accent-warm/15 ml-1">
-                    <TimelineItem title="University of Kelaniya | 2023 - Present" subtitle="B.Sc. Honours in Information Technology" />
+                    <TimelineItem title="University of Kelaniya | 2023 - Present" subtitle="B.Sc. Honours in Information Technology">
+                      <p>Current GPA: 3.7 | Expected Graduation: October 2026</p>
+                    </TimelineItem>
                     <TimelineItem title="Niwaththakachethiya National College | 2012 - 2019" subtitle="GCE Advanced Level & Ordinary Level" />
                   </div>
                 </section>
@@ -102,16 +146,19 @@ export default function CVPage() {
               <ScrollReveal>
                 <section>
                   <SectionTitle>Professional Qualifications</SectionTitle>
-                  <TimelineItem
-                    title="Trainee Full Stack Developer"
-                    subtitle="University of Moratuwa | Centre for Open & Distance Learning"
-                  >
-                    <p>
-                      Completed a Full Stack Developer training program covering Python programming, web development, and professional practice.
-                      Gained hands-on experience in both frontend and backend technologies. The program emphasized real-world problem solving,
-                      modern software tools, and soft skills such as communication, teamwork, and project management.
-                    </p>
-                  </TimelineItem>
+                  <div className="border-l-2 border-accent-warm/15 ml-1">
+                    <TimelineItem
+                      title="Trainee Full Stack Developer"
+                      subtitle="University of Moratuwa | Centre for Open & Distance Learning"
+                    >
+                      <p>
+                        Completed a full-stack developer training program covering Python programming, web development, and professional practice.
+                        Gained hands-on experience in frontend and backend technologies through Python Programming, Web Design, and Server-Side
+                        Development courses. Emphasized real-world problem-solving, modern software tools, and soft skills including
+                        communication, teamwork, and project management.
+                      </p>
+                    </TimelineItem>
+                  </div>
                 </section>
               </ScrollReveal>
 
@@ -124,11 +171,12 @@ export default function CVPage() {
                       <h3 className="text-lg font-heading font-semibold mb-5">Tech Skills</h3>
                       <div className="space-y-4">
                         {[
-                          { label: 'Programming Languages', items: 'HTML, CSS, JavaScript, TypeScript, Python, Java, C/C++, SQL' },
-                          { label: 'Frameworks & Libraries', items: 'React, Node.js, Angular, Spring Boot, Flutter' },
-                          { label: 'Tools & Platforms', items: 'MySQL, MongoDB Atlas, Docker, Kubernetes, Azure, Firebase, Git, Maven, Apache Tomcat, Vite, Sentry' },
-                          { label: 'Web Development', items: 'Responsive Design, UX/UI, RESTful APIs, JWT/OAuth, Real-Time Messaging' },
-                          { label: 'Other', items: 'SFML, spaCy, Transformers, SentenceTransformers, PyTorch, Pandas' },
+                          { label: 'Programming Languages', items: 'HTML, CSS, JavaScript, TypeScript, Python, Java, C/C++, SQL, XML' },
+                          { label: 'Frameworks & Libraries', items: 'React, Next.js, Tailwind CSS, Node.js, Express.js, TS-Rest, Angular, Spring Boot, Flutter, React Native, Expo, Java Servlets, JSP, jQuery, shadcn/ui, React Hook Form, Zod, Recharts, Socket.IO, FastMCP, FastAPI, WebSockets' },
+                          { label: 'Tools & Platforms', items: 'MySQL, PostgreSQL, MongoDB, Docker, Kubernetes, Azure, Firebase, Git, Maven, Apache Tomcat, Vite, Sentry, Axios, Figma, Supabase, Twilio, Faker, Hoppscotch, Eclipse, Backstage.io, WSO2 Choreo, OpenChoreo' },
+                          { label: 'Testing & QA', items: 'Selenium, TestNG, Postman, API Testing, Automation Testing, CI/CD Test Integration, Cross-browser Testing' },
+                          { label: 'AI/ML Technologies', items: 'LangChain, FAISS, Transformers, PyTorch, spaCy, Pandas, Sentence Transformers, Azure AI Services' },
+                          { label: 'Web Development', items: 'Responsive Design, UX/UI, Cross-Browser Compatibility, RESTful APIs, WebSocket Services, Authentication (JWT, OAuth, OTP), Real-Time Messaging, Cloud Deployment (Azure)' },
                         ].map((group) => (
                           <div key={group.label}>
                             <h4 className="text-sm font-heading font-medium text-accent-warm uppercase tracking-wider mb-1.5">{group.label}</h4>
@@ -140,7 +188,7 @@ export default function CVPage() {
                     <div>
                       <h3 className="text-lg font-heading font-semibold mb-5">Soft Skills</h3>
                       <div className="flex flex-wrap gap-2">
-                        {['Effective Communication', 'Critical Thinking', 'Problem Solving', 'Team Collaboration', 'Project Management', 'Time Management', 'Adaptability', 'Creativity', 'Self-Motivation', 'Lifelong Learning'].map((skill) => (
+                        {['Adaptability', 'Creativity', 'Critical Thinking', 'Effective Communication', 'Emotional Intelligence', 'Lifelong Learning', 'Problem Solving', 'Team Collaboration', 'Time Management'].map((skill) => (
                           <span key={skill} className="px-3 py-1.5 text-xs font-medium rounded-full bg-secondary text-secondary-foreground border border-border">
                             {skill}
                           </span>
@@ -160,42 +208,37 @@ export default function CVPage() {
                       {
                         title: 'Guidia - Full-Stack Career Guidance Platform',
                         type: 'Individual Project',
-                        desc: 'Web application to digitize career guidance connecting students, counselors, and employers. Features secure role-based authentication (JWT, bcrypt), email OTP verification, profile management with Azure Blob Storage, job board, appointment scheduling, and real-time messaging. Built with React, Node.js, MySQL.',
+                        desc: 'Comprehensive career guidance platform to digitize the University of Kelaniya\'s recruitment and counseling processes. Built a robust full-stack solution using React, TypeScript, and Zod for the frontend, backed by an Express and MySQL architecture with Socket.IO for real-time messaging. Deployed the application on Azure Container Apps with Azure Blob Storage, integrating multi-AI services to connect students, counselors, and companies effectively.',
+                      },
+                      {
+                        title: 'Browtrix - MCP Browser Automation Ecosystem',
+                        type: 'Individual Project',
+                        desc: 'Real-time AI automation ecosystem using the Model Context Protocol (MCP) to bridge AI assistants with web browsers. Engineered a high-performance backend using Python FastMCP, FastAPI, and WebSockets within a Turbo monorepo to enable complex human-in-the-loop workflows. Built a cutting-edge frontend with Next.js 15, React 19, and Tailwind CSS 4, featuring HTML5 manufacturing, interactive configuration modals, and connections pooling for seamless automation.',
+                      },
+                      {
+                        title: 'Quota.app - Fuel Quota Management System',
+                        type: 'Group Project',
+                        desc: 'Microservice-based fuel management system connecting vehicle owners, stations, and administrators. Developed a Spring Boot backend with JWT authentication and JPA, integrated with three Next.js frontends and an Expo/React Native mobile app. Implemented QR-based transaction processing, SMS notifications via Twilio, and PostgreSQL reporting to handle real-time quota tracking and fuel distribution.',
                       },
                       {
                         title: 'Personalized Ad-Copy Generation',
                         type: 'AI/NLP Group Project',
-                        desc: 'AI system generating personalized ad copy using RAG approach with FAISS for similarity search and T5 for text generation. Built with Python, PyTorch, Transformers, spaCy, and Pandas.',
+                        desc: 'RAG-based ad generator using T5, FAISS, and LangChain deployed on Azure AI. Optimized NLP pipelines with FP16, gradient accumulation, and dynamic GPU memory for high-performance inference.',
                       },
                       {
                         title: 'Multi-Link Sharing Platform ("Linky")',
                         type: 'Group Project',
-                        desc: 'Cloud-native platform for personalized landing pages. Deployed on Azure with Kubernetes, Docker, and MongoDB Atlas. Focused on high availability, load balancing, and TLS encryption.',
+                        desc: 'Cloud-native platform for personalized landing pages with multiple external links. Deployed on Azure using Kubernetes and Docker with MongoDB Atlas. Ensured high availability, load balancing, and TLS encryption.',
                       },
                       {
-                        title: 'Employee Management Web Application',
+                        title: 'Hela Rasa Recipe Android Mobile Application',
                         type: 'Group Project',
-                        desc: 'Spring Boot-based web app with RESTful APIs, CRUD operations, input validation, and security against SQL injection/XSS. Deployed on Azure with caching for performance.',
+                        desc: 'Android app for managing and sharing recipes with user login, multimedia-supported recipe creation/editing, and social sharing. Designed UI/UX with wireframes, used Firebase for cloud storage with thorough testing.',
                       },
                       {
-                        title: 'Hela Rasa Recipe Android App',
+                        title: 'Automated QA Testing Framework',
                         type: 'Group Project',
-                        desc: 'Android app for managing and sharing recipes with multimedia support, social sharing, Firebase cloud storage, and intuitive UI/UX.',
-                      },
-                      {
-                        title: 'Calky - Calculator Mobile App',
-                        type: 'Individual Project',
-                        desc: 'Cross-platform Flutter calculator with clean responsive UI for Android and iOS, input validation, and error handling.',
-                      },
-                      {
-                        title: 'Zombie Jumper - 2D Platformer Game',
-                        type: 'Group Project',
-                        desc: '2D game built with C++ and SFML featuring player movement, platform generation, collision detection, scoring, and state-managed game loop.',
-                      },
-                      {
-                        title: 'BLOOD LINK - Donation Management System',
-                        type: 'Group Project',
-                        desc: 'Java-MySQL system for managing donor registrations, inventory, and donation tracking with OOP principles and strong database design.',
+                        desc: 'Developed automated testing framework using Selenium, TestNG, and Eclipse for cross-browser testing. Implemented testing techniques including Equivalence Partitioning, Boundary Value Analysis, and Decision Table Testing. Executed automated test suites via Azure DevOps CI/CD pipelines with Postman for API testing and generated comprehensive test reports.',
                       },
                     ].map((project) => (
                       <div key={project.title} className="p-5 rounded-xl bg-card border border-border/50 hover:border-accent-warm/20 transition-colors">
@@ -216,7 +259,7 @@ export default function CVPage() {
                   <SectionTitle>Achievements</SectionTitle>
                   <div className="space-y-4">
                     <div className="p-5 rounded-xl bg-accent-warm/5 border border-accent-warm/15">
-                      <h3 className="font-heading font-semibold"><span className="text-accent-warm">First Runners-Up</span> — J&apos;PURA EXPO 2023</h3>
+                      <h3 className="font-heading font-semibold"><span className="text-accent-warm">First Runner-Up</span> — J&apos;PURA EXPO 2023</h3>
                       <p className="text-sm text-muted-foreground mt-1">Inter University Export-Oriented Innovation Competition</p>
                     </div>
                     <div className="p-5 rounded-xl bg-accent-warm/5 border border-accent-warm/15">
@@ -233,10 +276,10 @@ export default function CVPage() {
                   <SectionTitle>Volunteer Work & Affiliations</SectionTitle>
                   <div className="space-y-2">
                     {[
-                      'Assistant Media Director, IMSSA (2024-2025)',
-                      'Member, AIESEC Colombo North Local Committee (2023-2025)',
-                      'Member, Gavel Club - University of Kelaniya (2023-2025)',
-                      'Volunteer, Sasnaka Sansada Foundation (2022-2024)',
+                      'Assistant Media Director, Industrial Management Science Students\' Association (IMSSA), 2024-2025',
+                      'Member, AIESEC Colombo North Local Committee, 2023-2025',
+                      'Member, Gavel Club - University of Kelaniya, 2023-2025',
+                      'Volunteer, Sasnaka Sansada Foundation, 2022-2024',
                     ].map((item) => (
                       <p key={item} className="text-sm text-muted-foreground pl-4 relative before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-accent-warm/40">
                         {item}
@@ -252,7 +295,7 @@ export default function CVPage() {
                   <SectionTitle>Languages</SectionTitle>
                   <div className="flex gap-4">
                     <span className="px-4 py-2 rounded-xl bg-card border border-border text-sm font-medium">English <span className="text-muted-foreground">(Fluent)</span></span>
-                    <span className="px-4 py-2 rounded-xl bg-card border border-border text-sm font-medium">Sinhala <span className="text-muted-foreground">(Native)</span></span>
+                    <span className="px-4 py-2 rounded-xl bg-card border border-border text-sm font-medium">Sinhala <span className="text-muted-foreground">(Native Speaker)</span></span>
                   </div>
                 </section>
               </ScrollReveal>
@@ -265,7 +308,7 @@ export default function CVPage() {
                     <div className="p-5 rounded-xl bg-card border border-border/50">
                       <h3 className="font-heading font-semibold">Chathumini Nandadewa</h3>
                       <p className="text-sm text-muted-foreground mt-1">Project Manager | Spire Solutions DMCC</p>
-                      <p className="text-sm text-muted-foreground">Dubai, UAE</p>
+                      <p className="text-sm text-muted-foreground">Dubai, United Arab Emirates</p>
                       <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                         <p className="flex items-center gap-1.5"><Phone className="h-3 w-3 text-accent-warm" /> (+971) 581 086 505</p>
                         <p className="flex items-center gap-1.5"><Mail className="h-3 w-3 text-accent-warm" /> chathumini@spiresolutions.com</p>
@@ -273,7 +316,7 @@ export default function CVPage() {
                     </div>
                     <div className="p-5 rounded-xl bg-card border border-border/50">
                       <h3 className="font-heading font-semibold">Dr. Ruwan Wickramarachchi</h3>
-                      <p className="text-sm text-muted-foreground mt-1">Senior Lecturer | Dept. of Industrial Management</p>
+                      <p className="text-sm text-muted-foreground mt-1">Senior Lecturer | Department of Industrial Management</p>
                       <p className="text-sm text-muted-foreground">University of Kelaniya, Sri Lanka</p>
                       <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                         <p className="flex items-center gap-1.5"><Phone className="h-3 w-3 text-accent-warm" /> (+94) 11 291 4482</p>
