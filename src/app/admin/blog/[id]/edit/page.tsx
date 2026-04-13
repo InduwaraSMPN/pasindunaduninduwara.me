@@ -1,270 +1,281 @@
-'use client'
+"use client";
 
-import { useState, useEffect, use } from 'react'
-import { useRouter } from 'next/navigation'
-import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
+import ImageUpload from "@/components/admin/image-upload";
 // Note: databases import kept for client-side reads (getDocument); writes go through API routes
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-import Link from 'next/link'
-import ImageUpload from '@/components/admin/image-upload'
-import { Loader2 } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { COLLECTIONS, DATABASE_ID, databases } from "@/lib/appwrite";
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [imageUrl, setImageUrl] = useState('')
-  
-  const [originalPublishedAt, setOriginalPublishedAt] = useState<string | null>(null)
-  const [wasPublished, setWasPublished] = useState(false)
-  const [formData, setFormData] = useState({
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    categories: '',
-    thumbnail: '',
-    published: false
-  })
+	const { id } = use(params);
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(true);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [imageUrl, setImageUrl] = useState("");
 
-  useEffect(() => {
-    const fetchBlogPost = async () => {
-      try {
-        const post = await databases.getDocument(DATABASE_ID, COLLECTIONS.BLOG_POSTS, id)
+	const [originalPublishedAt, setOriginalPublishedAt] = useState<string | null>(null);
+	const [wasPublished, setWasPublished] = useState(false);
+	const [formData, setFormData] = useState({
+		title: "",
+		slug: "",
+		excerpt: "",
+		content: "",
+		categories: "",
+		thumbnail: "",
+		published: false,
+	});
 
-        if (post) {
-          setFormData({
-            title: post.title || '',
-            slug: post.slug || '',
-            excerpt: post.excerpt || '',
-            content: post.content || '',
-            categories: post.categories ? post.categories.join(', ') : '',
-            thumbnail: post.thumbnail || '',
-            published: post.published || false
-          })
-          setImageUrl(post.thumbnail || '')
-          setOriginalPublishedAt(post.published_at || null)
-          setWasPublished(post.published || false)
-        }
-      } catch (err: unknown) {
-        console.error('Error fetching blog post:', err)
-        setError((err as Error).message || 'An error occurred while fetching the blog post')
-      } finally {
-        setIsLoading(false)
-      }
-    }
+	useEffect(() => {
+		const fetchBlogPost = async () => {
+			try {
+				const post = await databases.getDocument(DATABASE_ID, COLLECTIONS.BLOG_POSTS, id);
 
-    fetchBlogPost()
-  }, [id])
+				if (post) {
+					setFormData({
+						title: post.title || "",
+						slug: post.slug || "",
+						excerpt: post.excerpt || "",
+						content: post.content || "",
+						categories: post.categories ? post.categories.join(", ") : "",
+						thumbnail: post.thumbnail || "",
+						published: post.published || false,
+					});
+					setImageUrl(post.thumbnail || "");
+					setOriginalPublishedAt(post.published_at || null);
+					setWasPublished(post.published || false);
+				}
+			} catch (err: unknown) {
+				console.error("Error fetching blog post:", err);
+				setError((err as Error).message || "An error occurred while fetching the blog post");
+			} finally {
+				setIsLoading(false);
+			}
+		};
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+		fetchBlogPost();
+	}, [id]);
 
-  const handleSwitchChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, published: checked }))
-  }
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({ ...prev, [name]: value }));
+	};
 
-  const handleImageUpload = (url: string) => {
-    setImageUrl(url)
-    setFormData(prev => ({ ...prev, thumbnail: url }))
-  }
+	const handleSwitchChange = (checked: boolean) => {
+		setFormData((prev) => ({ ...prev, published: checked }));
+	};
 
-  const generateSlug = () => {
-    if (!formData.title) return
-    
-    const slug = formData.title
-      .toLowerCase()
-      .replace(/[^\w\s]/gi, '')
-      .replace(/\s+/g, '-')
-    
-    setFormData(prev => ({ ...prev, slug }))
-  }
+	const handleImageUpload = (url: string) => {
+		setImageUrl(url);
+		setFormData((prev) => ({ ...prev, thumbnail: url }));
+	};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError(null)
+	const generateSlug = () => {
+		if (!formData.title) return;
 
-    try {
-      // Process categories into an array
-      const categoriesArray = formData.categories
-        .split(',')
-        .map(category => category.trim())
-        .filter(category => category.length > 0)
+		const slug = formData.title
+			.toLowerCase()
+			.replace(/[^\w\s]/gi, "")
+			.replace(/\s+/g, "-");
 
-      // Prepare the post data
-      const postData = {
-        title: formData.title,
-        slug: formData.slug,
-        excerpt: formData.excerpt,
-        content: formData.content,
-        categories: categoriesArray,
-        thumbnail: formData.thumbnail,
-        published: formData.published,
-        published_at: formData.published
-          ? (wasPublished ? originalPublishedAt : new Date().toISOString())
-          : null
-      }
+		setFormData((prev) => ({ ...prev, slug }));
+	};
 
-      // Update the blog post via API route
-      const res = await fetch(`/api/blog/${id}/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setIsSubmitting(true);
+		setError(null);
 
-      // Redirect to the blog posts page
-      router.push('/admin/blog')
-      router.refresh()
-    } catch (err: unknown) {
-      console.error('Error updating blog post:', err)
-      setError((err as Error).message || 'An error occurred while updating the blog post')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+		try {
+			// Process categories into an array
+			const categoriesArray = formData.categories
+				.split(",")
+				.map((category) => category.trim())
+				.filter((category) => category.length > 0);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
-  }
+			// Prepare the post data
+			const postData = {
+				title: formData.title,
+				slug: formData.slug,
+				excerpt: formData.excerpt,
+				content: formData.content,
+				categories: categoriesArray,
+				thumbnail: formData.thumbnail,
+				published: formData.published,
+				published_at: formData.published
+					? wasPublished
+						? originalPublishedAt
+						: new Date().toISOString()
+					: null,
+			};
 
-  return (
-    <div>
-      <div className="flex items-center mb-8">
-        <Link 
-          href="/admin/blog" 
-          className="text-primary hover:underline flex items-center gap-2 mr-4"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-          Back
-        </Link>
-        <h1 className="text-3xl font-bold">Edit Blog Post</h1>
-      </div>
+			// Update the blog post via API route
+			const res = await fetch(`/api/blog/${id}/update`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(postData),
+			});
+			const data = await res.json();
+			if (!res.ok) throw new Error(data.error);
 
-      {error && (
-        <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
-          {error}
-        </div>
-      )}
+			// Redirect to the blog posts page
+			router.push("/admin/blog");
+			router.refresh();
+		} catch (err: unknown) {
+			console.error("Error updating blog post:", err);
+			setError((err as Error).message || "An error occurred while updating the blog post");
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Blog Post Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-              />
-            </div>
+	if (isLoading) {
+		return (
+			<div className="flex justify-center items-center h-64">
+				<Loader2 className="h-8 w-8 animate-spin" />
+			</div>
+		);
+	}
 
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="slug">Slug</Label>
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={generateSlug}
-                  className="text-xs"
-                >
-                  Generate from title
-                </Button>
-              </div>
-              <Input
-                id="slug"
-                name="slug"
-                value={formData.slug}
-                onChange={handleChange}
-                required
-                placeholder="my-blog-post"
-              />
-            </div>
+	return (
+		<div>
+			<div className="flex items-center mb-8">
+				<Link
+					href="/admin/blog"
+					className="text-primary hover:underline flex items-center gap-2 mr-4"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="2"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						className="lucide lucide-arrow-left"
+					>
+						<path d="m12 19-7-7 7-7" />
+						<path d="M19 12H5" />
+					</svg>
+					Back
+				</Link>
+				<h1 className="text-3xl font-bold">Edit Blog Post</h1>
+			</div>
 
-            <div className="space-y-2">
-              <Label htmlFor="excerpt">Excerpt</Label>
-              <Textarea
-                id="excerpt"
-                name="excerpt"
-                value={formData.excerpt}
-                onChange={handleChange}
-                rows={2}
-                placeholder="A brief summary of your post"
-              />
-            </div>
+			{error && (
+				<div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">{error}</div>
+			)}
 
-            <div className="space-y-2">
-              <Label htmlFor="content">Content</Label>
-              <Textarea
-                id="content"
-                name="content"
-                value={formData.content}
-                onChange={handleChange}
-                required
-                rows={10}
-              />
-            </div>
+			<Card>
+				<CardHeader>
+					<CardTitle>Blog Post Details</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<form onSubmit={handleSubmit} className="space-y-6">
+						<div className="space-y-2">
+							<Label htmlFor="title">Title</Label>
+							<Input
+								id="title"
+								name="title"
+								value={formData.title}
+								onChange={handleChange}
+								required
+							/>
+						</div>
 
-            <div className="space-y-2">
-              <Label htmlFor="categories">Categories (comma separated)</Label>
-              <Input
-                id="categories"
-                name="categories"
-                value={formData.categories}
-                onChange={handleChange}
-                placeholder="web development, design, technology"
-              />
-            </div>
+						<div className="space-y-2">
+							<div className="flex justify-between items-center">
+								<Label htmlFor="slug">Slug</Label>
+								<Button
+									type="button"
+									variant="ghost"
+									size="sm"
+									onClick={generateSlug}
+									className="text-xs"
+								>
+									Generate from title
+								</Button>
+							</div>
+							<Input
+								id="slug"
+								name="slug"
+								value={formData.slug}
+								onChange={handleChange}
+								required
+								placeholder="my-blog-post"
+							/>
+						</div>
 
-            <div className="space-y-2">
-              <Label>Featured Image</Label>
-              <ImageUpload
-                onUploadComplete={handleImageUpload}
-                defaultImageUrl={imageUrl}
-              />
-            </div>
+						<div className="space-y-2">
+							<Label htmlFor="excerpt">Excerpt</Label>
+							<Textarea
+								id="excerpt"
+								name="excerpt"
+								value={formData.excerpt}
+								onChange={handleChange}
+								rows={2}
+								placeholder="A brief summary of your post"
+							/>
+						</div>
 
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="published"
-                checked={formData.published}
-                onCheckedChange={handleSwitchChange}
-              />
-              <Label htmlFor="published">Published</Label>
-            </div>
+						<div className="space-y-2">
+							<Label htmlFor="content">Content</Label>
+							<Textarea
+								id="content"
+								name="content"
+								value={formData.content}
+								onChange={handleChange}
+								required
+								rows={10}
+							/>
+						</div>
 
-            <div className="flex gap-4 pt-4">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save Changes'}
-              </Button>
-              <Button type="button" variant="outline" asChild>
-                <Link href="/admin/blog">Cancel</Link>
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  )
+						<div className="space-y-2">
+							<Label htmlFor="categories">Categories (comma separated)</Label>
+							<Input
+								id="categories"
+								name="categories"
+								value={formData.categories}
+								onChange={handleChange}
+								placeholder="web development, design, technology"
+							/>
+						</div>
+
+						<div className="space-y-2">
+							<Label>Featured Image</Label>
+							<ImageUpload onUploadComplete={handleImageUpload} defaultImageUrl={imageUrl} />
+						</div>
+
+						<div className="flex items-center space-x-2">
+							<Switch
+								id="published"
+								checked={formData.published}
+								onCheckedChange={handleSwitchChange}
+							/>
+							<Label htmlFor="published">Published</Label>
+						</div>
+
+						<div className="flex gap-4 pt-4">
+							<Button type="submit" disabled={isSubmitting}>
+								{isSubmitting ? "Saving..." : "Save Changes"}
+							</Button>
+							<Button type="button" variant="outline" asChild>
+								<Link href="/admin/blog">Cancel</Link>
+							</Button>
+						</div>
+					</form>
+				</CardContent>
+			</Card>
+		</div>
+	);
 }

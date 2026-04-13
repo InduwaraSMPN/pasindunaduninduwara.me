@@ -7,7 +7,18 @@
       "mcp__chrome-devtools__take_screenshot",
       "mcp__chrome-devtools__evaluate_script",
       "Bash(grep -v \"^\\\\.$\")",
-      "Bash(grep -v \"^\\\\.\\\\.$\")"
+      "Bash(grep -v \"^\\\\.\\\\.$\")",
+      "Bash(bun add:*)",
+      "Bash(bun remove:*)",
+      "Bash(bunx @biomejs/biome init)",
+      "Bash(bunx @biomejs/biome check --write)",
+      "Bash(bunx @biomejs/biome check --write --unsafe --max-diagnostics=200)",
+      "Bash(bunx @biomejs/biome check --max-diagnostics=200)",
+      "Bash(bunx @biomejs/biome check src/components/TextPressure/TextPressure.jsx --max-diagnostics=20)",
+      "Bash(bunx @biomejs/biome check --write --max-diagnostics=200)",
+      "Bash(bunx @biomejs/biome check src/app/globals.css --max-diagnostics=10)",
+      "Bash(bunx @biomejs/biome check)",
+      "Bash(bunx biome:*)"
     ]
   }
 }

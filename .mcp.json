@@ -1,17 +1,12 @@
 {
-    "mcpServers": {
-        "chrome-devtools": {
-            "type": "stdio",
-            "command": "cmd",
-            "args": [
-                "/c",
-                "npx",
-                "-y",
-                "chrome-devtools-mcp@latest"
-            ],
-            "env": {},
-            "disabled": false,
-            "alwaysAllow": []
-        }
-    }
+	"mcpServers": {
+		"chrome-devtools": {
+			"type": "stdio",
+			"command": "cmd",
+			"args": ["/c", "npx", "-y", "chrome-devtools-mcp@latest"],
+			"env": {},
+			"disabled": false,
+			"alwaysAllow": []
+		}
+	}
 }
