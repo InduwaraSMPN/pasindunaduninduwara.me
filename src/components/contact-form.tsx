@@ -44,24 +44,24 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {error && (
-        <Alert variant="destructive" className="border-destructive/30 bg-destructive/5">
+        <Alert variant="destructive" className="border-destructive/20 bg-destructive/5 rounded-xl">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {success && (
-        <Alert className="border-accent-warm/30 bg-accent-warm/5">
+        <Alert className="border-accent-warm/20 bg-accent-warm/5 rounded-xl">
           <CheckCircle2 className="h-4 w-4 text-accent-warm" />
           <AlertDescription className="text-accent-warm">{success}</AlertDescription>
         </Alert>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium">Name</Label>
+            <Label htmlFor="name" className="text-xs font-medium tracking-wide uppercase text-muted-foreground">Name</Label>
             <Input
               id="name"
               value={name}
@@ -72,7 +72,7 @@ export default function ContactForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+            <Label htmlFor="email" className="text-xs font-medium tracking-wide uppercase text-muted-foreground">Email</Label>
             <Input
               id="email"
               type="email"
@@ -85,7 +85,7 @@ export default function ContactForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="subject" className="text-sm font-medium">Subject</Label>
+          <Label htmlFor="subject" className="text-xs font-medium tracking-wide uppercase text-muted-foreground">Subject</Label>
           <Input
             id="subject"
             value={subject}
@@ -96,7 +96,7 @@ export default function ContactForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="message" className="text-sm font-medium">Message</Label>
+          <Label htmlFor="message" className="text-xs font-medium tracking-wide uppercase text-muted-foreground">Message</Label>
           <Textarea
             id="message"
             value={message}
@@ -111,7 +111,7 @@ export default function ContactForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading font-semibold w-full sm:w-auto"
+          className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading font-semibold w-full sm:w-auto shadow-lg shadow-accent-warm/15 hover:shadow-accent-warm/25 transition-all duration-300"
         >
           {loading ? (
             <>

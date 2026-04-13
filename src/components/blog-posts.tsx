@@ -2,7 +2,6 @@
 
 import { useBlogPosts } from '@/lib/blog-service';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, FileText } from 'lucide-react';
@@ -33,14 +32,14 @@ export default function BlogPosts() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {[1, 2].map((i) => (
           <Card key={i} className="animate-pulse">
-            <div className="h-48 bg-muted rounded-t-xl" />
+            <div className="h-48 bg-muted/60 rounded-t-xl" />
             <CardHeader>
-              <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-muted rounded w-1/2"></div>
+              <div className="h-5 bg-muted/60 rounded-lg w-3/4 mb-2"></div>
+              <div className="h-4 bg-muted/40 rounded-lg w-1/2"></div>
             </CardHeader>
             <CardContent>
-              <div className="h-4 bg-muted rounded w-full mb-2"></div>
-              <div className="h-4 bg-muted rounded w-3/4"></div>
+              <div className="h-3.5 bg-muted/40 rounded-lg w-full mb-2.5"></div>
+              <div className="h-3.5 bg-muted/30 rounded-lg w-3/4"></div>
             </CardContent>
           </Card>
         ))}
@@ -63,11 +62,11 @@ export default function BlogPosts() {
 
   if (!posts || posts.length === 0) {
     return (
-      <div className="py-16 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-muted mb-4">
-          <FileText className="h-6 w-6 text-muted-foreground" />
+      <div className="py-20 text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-muted/60 mb-5">
+          <FileText className="h-7 w-7 text-muted-foreground/60" />
         </div>
-        <p className="text-muted-foreground">No blog posts published yet. Stay tuned!</p>
+        <p className="text-muted-foreground text-sm">No blog posts published yet. Stay tuned!</p>
       </div>
     );
   }
@@ -75,56 +74,57 @@ export default function BlogPosts() {
   return (
     <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6" staggerDelay={0.12}>
       {posts?.slice(0, 4).map((post) => (
-        <StaggerItem key={post.$id}>
-          <Card className="group overflow-hidden">
-            {post.thumbnail && (
-              <div className="relative h-48 w-full overflow-hidden">
-                <Image
-                  src={post.thumbnail}
-                  alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-            )}
-            <CardHeader>
-              <CardTitle className="font-heading text-lg leading-snug">{post.title}</CardTitle>
-              <CardDescription className="flex items-center gap-2 flex-wrap">
-                <time className="text-xs">
-                  {new Date(post.published_at ?? post.$createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                  })}
-                </time>
-                <span className="text-border">|</span>
-                <div className="flex gap-1.5">
-                  {post.categories.slice(0, 2).map((cat, i) => (
-                    <Badge key={i} variant="default" className="text-[10px] px-2 py-0">
-                      {cat}
-                    </Badge>
-                  ))}
+        <StaggerItem key={post.$id} className="h-full">
+          <Link href={`/blog/${post.slug}`} className="block h-full">
+            <Card className="group overflow-hidden flex flex-col h-full cursor-pointer">
+              {post.thumbnail && (
+                <div className="relative h-48 w-full overflow-hidden">
+                  <Image
+                    src={post.thumbnail}
+                    alt={post.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-all duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground line-clamp-3">
-                {post.excerpt
-                  ? stripMarkdown(post.excerpt).substring(0, 150)
-                  : stripMarkdown(post.content).substring(0, 150)
-                }...
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button variant="ghost" size="sm" asChild className="text-accent-warm hover:text-accent-warm hover:bg-accent-warm/10 -ml-2 font-heading">
-                <Link href={`/blog/${post.slug}`}>
+              )}
+              <CardHeader>
+                <CardTitle className="font-heading text-lg leading-snug group-hover:text-accent-warm transition-colors duration-300">{post.title}</CardTitle>
+                <CardDescription className="flex items-center gap-2 flex-wrap">
+                  <time className="text-[11px] text-muted-foreground/70">
+                    {new Date(post.published_at ?? post.$createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </time>
+                  <span className="text-border/60">|</span>
+                  <div className="flex gap-1.5">
+                    {post.categories.slice(0, 2).map((cat, i) => (
+                      <Badge key={i} variant="default" className="text-[10px] px-2 py-0">
+                        {cat}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm text-muted-foreground/80 line-clamp-3 leading-relaxed">
+                  {post.excerpt
+                    ? stripMarkdown(post.excerpt).substring(0, 150)
+                    : stripMarkdown(post.content).substring(0, 150)
+                  }...
+                </p>
+              </CardContent>
+              <CardFooter>
+                <span className="text-accent-warm text-sm font-heading font-medium inline-flex items-center gap-1">
                   Read More
-                  <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
+                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
+              </CardFooter>
+            </Card>
+          </Link>
         </StaggerItem>
       ))}
     </StaggerContainer>

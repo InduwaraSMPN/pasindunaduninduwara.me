@@ -28,12 +28,18 @@ const slideRight: Variants = {
   visible: { opacity: 1, x: 0 },
 }
 
+const blurIn: Variants = {
+  hidden: { opacity: 0, filter: 'blur(8px)', y: 16 },
+  visible: { opacity: 1, filter: 'blur(0px)', y: 0 },
+}
+
 const variantMap = {
   'fade-up': fadeUp,
   'fade-in': fadeIn,
   'scale-in': scaleIn,
   'slide-left': slideLeft,
   'slide-right': slideRight,
+  'blur-in': blurIn,
 }
 
 interface ScrollRevealProps {

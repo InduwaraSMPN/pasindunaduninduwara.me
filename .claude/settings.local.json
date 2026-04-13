@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(ts|js|json|css|mjs\\)$\")",
+      "Bash(bun run:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__evaluate_script",
+      "Bash(grep -v \"^\\\\.$\")",
+      "Bash(grep -v \"^\\\\.\\\\.$\")"
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 'use client'
 
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { useTheme } from 'next-themes';
 
 interface MarkdownPreviewComponentProps {
   content: string;
@@ -11,20 +12,22 @@ export default function MarkdownPreviewComponent({
   content,
   className = ""
 }: MarkdownPreviewComponentProps) {
+  const { resolvedTheme } = useTheme();
+  const colorMode = resolvedTheme === 'dark' ? 'dark' : 'light';
+
   return (
     <div className={`markdown-preview ${className}`}>
       <MarkdownPreview
-        source={content}
+        source={content.replace(/\\n/g, '\n')}
         style={{
           backgroundColor: 'transparent',
           color: 'inherit',
         }}
         wrapperElement={{
-          'data-color-mode': 'light'
+          'data-color-mode': colorMode
         }}
-        data-color-mode="light"
+        data-color-mode={colorMode}
         rehypeRewrite={(node, index, parent) => {
-          // Ensure proper styling for dark/light mode
           if (node.type === 'element' && node.tagName === 'pre') {
             node.properties = {
               ...node.properties,
