@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 994 528" width="994" height="528" role="img" aria-label="Code excerpt: OpenChoreoIncrementalEntityProvider.ts">
+  <rect x="0" y="0" width="994" height="528" rx="8" ry="8" fill="#1e1f29"/>
+  <rect x="0" y="0" width="994" height="28" rx="8" ry="8" fill="#282a36"/>
+  <rect x="0" y="20" width="994" height="8" fill="#282a36"/>
+  <circle cx="14" cy="14" r="5" fill="#ff5f56"/>
+  <circle cx="30" cy="14" r="5" fill="#ffbd2e"/>
+  <circle cx="46" cy="14" r="5" fill="#27c93f"/>
+  <text x="970" y="18" font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="11" fill="#bfbfbf" text-anchor="end">OpenChoreoIncrementalEntityProvider.ts</text>
+  <g transform="translate(24, 48)">
+    <g font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="14px">
+<text x="0" y="14" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#959077">//&#160;plugins/catalog-backend-module-openchoreo-incremental/src/providers/OpenChoreoIncrementalEntityProvider.ts</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="33" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#66d9ef">export</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#66d9ef">class</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#a6e22e">OpenChoreoIncrementalEntityProvider</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="52" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#66d9ef">implements</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#a6e22e">IncrementalEntityProvider</tspan><tspan fill="#ff4689">&lt;</tspan><tspan fill="#a6e22e">OpenChoreoCursor</tspan><tspan fill="#f8f8f2">,</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#a6e22e">OpenChoreoContext</tspan><tspan fill="#ff4689">&gt;</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">{</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="71" xml:space="preserve"><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="90" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#a6e22e">getProviderName</tspan><tspan fill="#f8f8f2">(</tspan><tspan fill="#f8f8f2">)</tspan><tspan fill="#ff4689">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#66d9ef">string</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">{</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="109" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#66d9ef">return</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#e6db74">&#39;OpenChoreoIncrementalEntityProvider&#39;</tspan><tspan fill="#f8f8f2">;</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="128" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#f8f8f2">}</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="147" xml:space="preserve"><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="166" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#66d9ef">async</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#a6e22e">around</tspan><tspan fill="#f8f8f2">(</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="185" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#a6e22e">burst</tspan><tspan fill="#ff4689">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">(</tspan><tspan fill="#a6e22e">context</tspan><tspan fill="#ff4689">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#66d9ef">OpenChoreoContext</tspan><tspan fill="#f8f8f2">)</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">=&gt;</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">Promise</tspan><tspan fill="#ff4689">&lt;</tspan><tspan fill="#ff4689">void</tspan><tspan fill="#ff4689">&gt;</tspan><tspan fill="#f8f8f2">,</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="204" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#f8f8f2">)</tspan><tspan fill="#ff4689">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">Promise</tspan><tspan fill="#ff4689">&lt;</tspan><tspan fill="#ff4689">void</tspan><tspan fill="#ff4689">&gt;</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">{</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="223" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">//&#160;build&#160;the&#160;per-burst&#160;context&#160;(logger,&#160;client,&#160;batch&#160;processor)</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="242" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">//&#160;then&#160;hand&#160;it&#160;to&#160;the&#160;engine&#160;for&#160;repeated&#160;next()&#160;calls</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="261" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#f8f8f2">}</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="280" xml:space="preserve"><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="299" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#66d9ef">async</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#a6e22e">next</tspan><tspan fill="#f8f8f2">(</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="318" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#a6e22e">context</tspan><tspan fill="#ff4689">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#66d9ef">OpenChoreoContext</tspan><tspan fill="#f8f8f2">,</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="337" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#a6e22e">cursor?</tspan><tspan fill="#ff4689">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#66d9ef">OpenChoreoCursor</tspan><tspan fill="#f8f8f2">,</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="356" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#f8f8f2">)</tspan><tspan fill="#ff4689">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">Promise</tspan><tspan fill="#ff4689">&lt;</tspan><tspan fill="#a6e22e">EntityIteratorResult</tspan><tspan fill="#ff4689">&lt;</tspan><tspan fill="#a6e22e">OpenChoreoCursor</tspan><tspan fill="#ff4689">&gt;&gt;</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#f8f8f2">{</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="375" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">//&#160;fetch&#160;one&#160;page&#160;from&#160;OpenChoreo,&#160;return&#160;{&#160;done,&#160;entities,&#160;cursor&#160;}</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="394" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">//&#160;done:true&#160;triggers&#160;the&#160;sweep&#160;step&#160;in&#160;the&#160;engine</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="413" xml:space="preserve"><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#f8f8f2">}</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="432" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">}</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="451" xml:space="preserve"><tspan fill="#f8f8f2"></tspan></text></g>
+  </g>
+</svg>

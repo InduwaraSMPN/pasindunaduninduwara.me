@@ -1,0 +1,45 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Building an incremental entity provider for Backstage",
+  "description": "How I rewrote OpenChoreo's Backstage catalog ingestion with an incremental entity provider, mark-and-sweep, and Kubernetes-style cursor pagination.",
+  "image": [
+    "https://www.pasindunaduninduwara.me/blog/assets/hero-platform-engineering-fiber-mesh.jpg"
+  ],
+  "datePublished": "2026-01-15T09:00:00+05:30",
+  "dateModified": "2026-01-15T09:00:00+05:30",
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.pasindunaduninduwara.me/#author",
+    "name": "Pasindu Naduni Induwara",
+    "url": "https://www.pasindunaduninduwara.me/",
+    "jobTitle": "Software Engineering Intern",
+    "affiliation": {
+      "@type": "Organization",
+      "name": "WSO2 Lanka (Pvt) Ltd.",
+      "url": "https://wso2.com/"
+    },
+    "sameAs": []
+  },
+  "publisher": {
+    "@type": "Person",
+    "@id": "https://www.pasindunaduninduwara.me/#author",
+    "name": "Pasindu Naduni Induwara",
+    "url": "https://www.pasindunaduninduwara.me/",
+    "jobTitle": "Software Engineering Intern",
+    "affiliation": {
+      "@type": "Organization",
+      "name": "WSO2 Lanka (Pvt) Ltd.",
+      "url": "https://wso2.com/"
+    },
+    "sameAs": []
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.pasindunaduninduwara.me/blog/incremental-entity-provider-and-cursor-pagination"
+  },
+  "keywords": "backstage, openchoreo, platform-engineering, kubernetes, internship",
+  "articleSection": "Engineering",
+  "inLanguage": "en",
+  "wordCount": 2400
+}
