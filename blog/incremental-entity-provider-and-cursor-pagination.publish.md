@@ -1,3 +1,5 @@
+*Photo by S A on Unsplash.*
+
 The bug that pushed me to rewrite OpenChoreo's Backstage plugin showed up on a Tuesday in September. Someone had deleted a component upstream. Hours later the catalog UI was still showing it as if nothing had happened. The next refresh tick should have caught the delete. It didn't. That was the moment I gave up trying to patch the existing entity provider and opened a new one.
 
 I spent six months on the OpenChoreo and Backstage developer-experience team at WSO2 between July and December 2025. Two PRs came out of the work: a new incremental entity provider for Backstage ([PR #140](https://github.com/openchoreo/backstage-plugins/pull/140)) and cursor-paginated list endpoints on the OpenChoreo backend ([PR #1257](https://github.com/openchoreo/openchoreo/pull/1257)). Both are still open and in review. When I link a class or file below, the link goes to the PR. Line numbers drift mid-review, the "Files changed" tab does not.
@@ -35,13 +37,13 @@ One mental-model warning. People reach for the Kubernetes garbage-collector anal
 
 The provider-side surface is small. Inside an `around` envelope that the engine controls, the provider gets called repeatedly via `next(context, cursor)`. Each call returns a page of entities plus a continuation cursor. When the provider returns `done: true`, the engine knows to sweep.
 
-![TypeScript class OpenChoreoIncrementalEntityProvider implementing IncrementalEntityProvider with getProviderName, around, and next methods.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62884001db7dc52cd/view?project=pasindunaduninduwara-me)
+![TypeScript class OpenChoreoIncrementalEntityProvider implementing IncrementalEntityProvider with getProviderName, around, and next methods.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62d4b003735bc0bbb/view?project=pasindunaduninduwara-me)
 
 The full implementation lives in `OpenChoreoIncrementalEntityProvider` inside [PR #140](https://github.com/openchoreo/backstage-plugins/pull/140/files). What the snippet doesn't show: the `next` body builds an authenticated client, calls one of the OpenChoreo list endpoints (orgs, projects, components), and unpacks the response into Backstage entity refs.
 
 I learned this engine the way I learn most engines, which is by adding a log line at every lifeline and watching one full ingestion play out. The sequence isn't complicated, it's just spread across six actors:
 
-![Sequence diagram of one ingestion burst: Scheduler ticks the Engine, which loops next(cursor) against the Provider, which fetches paginated pages from the OpenChoreo API and writes ingestion marks. On done, the Engine calls computeRemoved, the DB Manager deletes orphan entities from the Backstage Catalog, and the Engine rests.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62884001dbae7beab/view?project=pasindunaduninduwara-me)
+![Sequence diagram of one ingestion burst: Scheduler ticks the Engine, which loops next(cursor) against the Provider, which fetches paginated pages from the OpenChoreo API and writes ingestion marks. On done, the Engine calls computeRemoved, the DB Manager deletes orphan entities from the Backstage Catalog, and the Engine rests.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62d4b00373ca658fa/view?project=pasindunaduninduwara-me)
 
 The `OpenChoreoIncrementalIngestionEngine` class owns the burst loop and the sweep handoff. Orphan computation lives in `OpenChoreoIncrementalIngestionDatabaseManager.computeRemoved`, which compares the prior generation's marks to the current generation's marks and emits deletes. `componentBatchProcessor` is where each burst's batch boundary is enforced, and I'll come back to it in a moment.
 
@@ -62,7 +64,7 @@ I followed the [Kubernetes API conventions for retrieving large result sets in c
 
 The token itself is base64-url-encoded JSON with two fields. The encode/decode pair lives in `pagination.go`:
 
-![Go paginationCursor struct with Continue and Skip fields, plus encodeCursor and decodeCursor functions using base64 RawURLEncoding.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62884001db113e848/view?project=pasindunaduninduwara-me)
+![Go paginationCursor struct with Continue and Skip fields, plus encodeCursor and decodeCursor functions using base64 RawURLEncoding.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62d4b00373343e435/view?project=pasindunaduninduwara-me)
 
 Two fields, both load-bearing. The `c` value is the upstream Kubernetes `continue` token, which the OpenChoreo API forwards to controller-runtime via `client.Continue(...)`. The `s` value is a within-page skip pointer. We need it because authorization checks and project filters can reject some items inside a page, which means a single Kubernetes page does not always map cleanly to a single response page. The skip pointer lets the server resume mid-page after filtering.
 
@@ -80,7 +82,7 @@ The Backstage client side is similar in spirit. It uses `openapi-fetch` against 
 
 The README ships a working YAML config block end users can copy:
 
-![app-config.yaml block for the openchoreo incremental provider with burstLength, burstInterval, restLength, chunkSize, maxConcurrentRequests, batchDelayMs, and rejectRemovalsAbovePercentage settings.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62884001db28e7567/view?project=pasindunaduninduwara-me)
+![app-config.yaml block for the openchoreo incremental provider with burstLength, burstInterval, restLength, chunkSize, maxConcurrentRequests, batchDelayMs, and rejectRemovalsAbovePercentage settings.](https://sgp.cloud.appwrite.io/v1/storage/buckets/images/files/69f62d4b003730c2b094/view?project=pasindunaduninduwara-me)
 
 `rejectRemovalsAbovePercentage` is worth calling out. It's a safety valve. If a single sweep would delete more than 80% of the catalog (because, say, the upstream API silently returned an empty list), the engine refuses the sweep and surfaces a warning instead of nuking the catalog. I tuned this default down twice during testing before settling on 80%, which felt about right.
 
@@ -121,7 +123,3 @@ The sweep deletes rows from `refresh_state` in the same transaction as the mark 
 - [Discussion #837](https://github.com/openchoreo/openchoreo/discussions/837), the cursor pagination proposal.
 - [Backstage incremental-ingestion provider cycle](https://backstage.io/docs/features/software-catalog/external-integrations/#provider-cycle).
 - [Kubernetes API conventions, retrieving large result sets in chunks](https://kubernetes.io/docs/reference/using-api/api-concepts/#retrieving-large-results-sets-in-chunks).
-
----
-
-*Pasindu Naduni Induwara was a Software Engineering Intern at WSO2 Lanka (Pvt) Ltd. from July to December 2025, on the OpenChoreo and Backstage developer-experience team.*
