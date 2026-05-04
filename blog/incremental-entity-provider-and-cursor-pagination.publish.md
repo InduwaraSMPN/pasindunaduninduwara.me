@@ -1,14 +1,14 @@
 *Photo by S A on Unsplash.*
 
-The bug that pushed me to rewrite OpenChoreo's Backstage plugin showed up on a Tuesday in September. Someone had deleted a component upstream. Hours later the catalog UI was still showing it as if nothing had happened. The next refresh tick should have caught the delete. It didn't. That was the moment I gave up trying to patch the existing entity provider and opened a new one.
+The bug that made me rewrite the Backstage plugin was a deletion that didn't propagate. A component was removed upstream. Hours later the catalog UI still showed it. The next refresh tick should have caught the delete. It didn't. That was the moment I gave up trying to patch the existing entity provider and opened a new one.
 
-I spent six months on the OpenChoreo and Backstage developer-experience team at WSO2 between July and December 2025. Two PRs came out of the work: a new incremental entity provider for Backstage ([PR #140](https://github.com/openchoreo/backstage-plugins/pull/140)) and cursor-paginated list endpoints on the OpenChoreo backend ([PR #1257](https://github.com/openchoreo/openchoreo/pull/1257)). Both are still open and in review. When I link a class or file below, the link goes to the PR. Line numbers drift mid-review, the "Files changed" tab does not.
+I spent six months on the Choreo team at WSO2 between July and December 2025. Two PRs came out of the work: a new incremental entity provider for Backstage ([PR #140](https://github.com/openchoreo/backstage-plugins/pull/140)) and cursor-paginated list endpoints on the OpenChoreo backend ([PR #1257](https://github.com/openchoreo/openchoreo/pull/1257)). When I link a class or file below, the link goes to the PR.
 
 The catalog matters more than people give it credit for. [DORA's 2025 report](https://cloud.google.com/blog/products/ai-machine-learning/announcing-the-2025-dora-report) puts internal-developer-platform adoption at 90% of organizations, and the catalog is usually the first surface developers touch. When that surface lies about what's actually upstream, trust drains out of it quickly.
 
 ## What the old provider was doing
 
-The original `OpenChoreoEntityProvider` ran the simplest possible loop. Every refresh tick, it called the OpenChoreo API, accumulated the entire entity set in memory, and emitted a `full` mutation against the catalog. At small scale, fine. We weren't at small scale.
+The original `OpenChoreoEntityProvider` ran the simplest possible loop. Every refresh tick, it called the OpenChoreo API, accumulated the entire entity set in memory, and emitted a `full` mutation against the catalog. As the catalog grew, the cost of that loop grew with it, in three ways I could measure.
 
 Memory was the first thing I noticed. Each refresh held the full dataset in a single in-process slice before handing it to Backstage, and the catalog backend's resident set jumped on every tick. Cold starts were the next thing. A fresh deployment had to wait one full refresh interval before any entities appeared, then another tick before stale rows reconciled, which meant anyone watching the UI right after a deploy saw an empty catalog for thirty-plus seconds.
 
@@ -25,13 +25,13 @@ The OpenChoreo list API at the time also had no pagination, which meant any clie
 
 ## Mark, sweep, repeat
 
-Credit first: the mark-and-sweep design is not mine. It comes straight from Backstage's incremental-ingestion module, [documented in the provider-cycle section of the external-integrations docs](https://backstage.io/docs/features/software-catalog/external-integrations/#provider-cycle). I vendored that pattern as a deliberate local fork, into a new plugin package called `catalog-backend-module-openchoreo-incremental`, because I needed hooks for OpenChoreo-shaped errors and burst sizing that the upstream module didn't expose at the time.
+The mark-and-sweep pattern itself comes from Backstage's upstream incremental-ingestion module, [documented in the provider-cycle section of the external-integrations docs](https://backstage.io/docs/features/software-catalog/external-integrations/#provider-cycle). I vendored it as a deliberate local fork into a new plugin package, `catalog-backend-module-openchoreo-incremental`, because I needed hooks for OpenChoreo-shaped errors and burst sizing that the upstream module didn't expose at the time.
 
 The model is simple once you have the right mental picture. Each ingestion run gets its own generation id, recorded as a row in an `ingestions` table. As the engine drives bursts, every entity it sees gets logged as a "mark" against that generation, in `ingestion_marks` (one row per burst) and `ingestion_mark_entities` (one row per entity ref seen). When the provider eventually reports `done: true`, the engine sweeps. Anything in the previous generation that has no mark in the current generation gets deleted.
 
 The split between "what we saw this run" and "what's currently in the catalog" is what makes this work. The old `full` path conflated the two and produced orphans whenever any fetch hiccupped. The mark/sweep path doesn't, because the sweep is conditional on the ingestion completing, not on every individual fetch succeeding.
 
-One mental-model warning. People reach for the Kubernetes garbage-collector analogy here, and it is the wrong one. There are no `ownerReferences`, no finalizers, no foreground or background propagation. The lifecycle is per-ingestion-generation, not per-owner-graph. Carrying the GC mental model into the next section will leave you looking for pieces that don't exist and missing the ones that do.
+Identity here is per-ingestion-generation, not per-owner-graph; there are no `ownerReferences` or finalizers.
 
 ## Walking through one ingestion cycle
 
