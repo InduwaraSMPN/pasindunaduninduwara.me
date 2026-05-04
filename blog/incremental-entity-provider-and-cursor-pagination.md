@@ -24,7 +24,7 @@ The catalog matters more than people give it credit for. [DORA's 2025 report](ht
 
 The original `OpenChoreoEntityProvider` ran the simplest possible loop. Every refresh tick, it called the OpenChoreo API, accumulated the entire entity set in memory, and emitted a `full` mutation against the catalog. As the catalog grew, the cost of that loop grew with it, in three ways I could measure.
 
-Memory was the first thing I noticed. Each refresh held the full dataset in a single in-process slice before handing it to Backstage, and the catalog backend's resident set jumped on every tick. Cold starts were the next thing. A fresh deployment had to wait one full refresh interval before any entities appeared, then another tick before stale rows reconciled, which meant anyone watching the UI right after a deploy saw an empty catalog for thirty-plus seconds.
+Memory was the first thing I noticed. Each refresh held the full dataset in a single in-process slice before handing it to Backstage, and the catalog backend's resident set jumped on every tick. Cold starts were the next thing. A fresh deployment had to wait one full refresh interval before any entities appeared, then another tick before stale rows reconciled, which meant anyone watching the UI right after a deploy saw an empty catalog until the next tick fired.
 
 The orphan bug was the one that mattered. The `full` mutation has partial-failure recovery semantics: if any single fetch in the batch hiccupped, the previous "complete" set was kept around and deletes weren't propagated. Memory and latency are visible. Orphans are silent, and they erode trust in the catalog faster than the other two combined.
 
@@ -98,7 +98,7 @@ The README ships a working YAML config block end users can copy:
 
 ![app-config.yaml block for the openchoreo incremental provider with burstLength, burstInterval, restLength, chunkSize, maxConcurrentRequests, batchDelayMs, and rejectRemovalsAbovePercentage settings.](assets/code-app-config.svg)
 
-`rejectRemovalsAbovePercentage` is worth calling out. It's a safety valve. If a single sweep would delete more than 80% of the catalog (because, say, the upstream API silently returned an empty list), the engine refuses the sweep and surfaces a warning instead of nuking the catalog. I tuned this default down twice during testing before settling on 80%, which felt about right.
+`rejectRemovalsAbovePercentage` is worth calling out. It's a safety valve. If a single sweep would delete more than 80% of the catalog (because, say, the upstream API silently returned an empty list), the engine refuses the sweep and surfaces a warning instead of nuking the catalog. The 80% default felt about right for our catalog size.
 
 ## What I got wrong
 
@@ -106,12 +106,12 @@ Mostly, I missed the orphan bug for too long. It was sitting in a fixture-shaped
 
 A few other things came out of code review:
 
-- My first sweep implementation only ran one pass, which left orphan rows in `refresh_state` whenever the catalog processor had partially observed them between marks. Reviewer caught it. Second pass added.
+- My first sweep implementation only ran one pass, which left orphan rows in `refresh_state` whenever the catalog processor had partially observed them between marks. The fix needed a second pass.
 - I was mutating the cursor object directly across burst boundaries. That is fine right up to the point where the engine retries a burst, and then it isn't. Switched to immutable cursor returns.
-- Error detection started as `if err.Error() == "http 429"` string matching. I winced when the reviewer flagged it. Replaced with a typed sentinel error.
+- Error detection started as `if err.Error() == "http 429"` string matching. Brittle; replaced with a typed sentinel error.
 - An unused `fetchAllComponents` method survived the cursor migration. Dead code, gone.
 
-If I were starting again with what I know now, I'd write the orphan test first, before any production code. I'd also design the cursor token before the consumer, because the consumer's retry logic is downstream of the token's expiry semantics, and getting that order wrong means rewriting the consumer twice. Vendoring the upstream incremental-ingestion module is fine, but it carries a maintenance tax I underestimated; the upstream RFC path was probably faster than I thought.
+If I were starting again with what I know now, I'd write the orphan test first, before any production code. I'd also design the cursor token before the consumer, because the consumer's retry logic is downstream of the token's expiry semantics, and getting that order wrong forces a consumer rewrite. Vendoring the upstream incremental-ingestion module is fine, but it carries a maintenance tax I underestimated; the upstream RFC path was probably faster than I thought.
 
 ## FAQ
 
