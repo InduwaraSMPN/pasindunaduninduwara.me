@@ -8,15 +8,15 @@ The catalog matters more than people give it credit for. [DORA's 2025 report](ht
 
 ## What the old provider was doing
 
-The original `OpenChoreoEntityProvider` ran the simplest possible loop. Every refresh tick, it called the OpenChoreo API, accumulated the entire entity set in memory, and emitted a `full` mutation against the catalog. As the catalog grew, the cost of that loop grew with it, in three ways I could measure.
+The original `OpenChoreoEntityProvider` ran the simplest possible loop. Every refresh tick, it called the OpenChoreo API, accumulated the entire entity set in memory, and emitted a `full` mutation against the catalog. As the catalog grew, the cost of that loop grew with it, in ways I could measure.
 
 Memory was the first thing I noticed. Each refresh held the full dataset in a single in-process slice before handing it to Backstage, and the catalog backend's resident set jumped on every tick. Cold starts were the next thing. A fresh deployment had to wait one full refresh interval before any entities appeared, then another tick before stale rows reconciled, which meant anyone watching the UI right after a deploy saw an empty catalog until the next tick fired.
 
-The orphan bug was the one that mattered. The `full` mutation has partial-failure recovery semantics: if any single fetch in the batch hiccupped, the previous "complete" set was kept around and deletes weren't propagated. Memory and latency are visible. Orphans are silent, and they erode trust in the catalog faster than the other two combined.
+The orphan bug was the one that mattered. The `full` mutation has partial-failure recovery semantics: if any single fetch in the batch hiccupped, the previous "complete" set was kept around and deletes weren't propagated. Memory and latency you can watch. The orphans stayed silent until someone noticed a phantom component on the catalog page and asked why.
 
 ## Why the default broke for us
 
-Backstage's default `EntityProvider.applyMutation({ type: 'full', entities })` is a sensible primitive for small, slow-moving sources. It cost-scales linearly with entity count, and every tick re-pays that cost in full. There is no checkpointing, so a producer fetch failing halfway means the next tick starts over from zero. Worst of all, deletion is implicit: it depends on the producer returning an authoritative complete list, which any upstream pagination, retry, or transient error breaks.
+Backstage's default `EntityProvider.applyMutation({ type: 'full', entities })` is a sensible primitive for small, slow-moving sources. It cost-scales linearly with entity count, and every tick re-pays that cost in full. There is no checkpointing, so a producer fetch failing halfway means the next tick starts over from zero. Deletion is also implicit: it depends on the producer returning an authoritative complete list, which any upstream pagination, retry, or transient error breaks.
 
 The OpenChoreo list API at the time also had no pagination, which meant any client that wanted a complete list paid the full cost on every refresh, no matter how the consumer was written. The fix had to be two-sided. Make the consumer incremental, then make the producer navigable so incremental actually pays off.
 
@@ -27,9 +27,9 @@ The OpenChoreo list API at the time also had no pagination, which meant any clie
 
 The mark-and-sweep pattern itself comes from Backstage's upstream incremental-ingestion module, [documented in the provider-cycle section of the external-integrations docs](https://backstage.io/docs/features/software-catalog/external-integrations/#provider-cycle). I vendored it as a deliberate local fork into a new plugin package, `catalog-backend-module-openchoreo-incremental`, because I needed hooks for OpenChoreo-shaped errors and burst sizing that the upstream module didn't expose at the time.
 
-The model is simple once you have the right mental picture. Each ingestion run gets its own generation id, recorded as a row in an `ingestions` table. As the engine drives bursts, every entity it sees gets logged as a "mark" against that generation, in `ingestion_marks` (one row per burst) and `ingestion_mark_entities` (one row per entity ref seen). When the provider eventually reports `done: true`, the engine sweeps. Anything in the previous generation that has no mark in the current generation gets deleted.
+The model is small. Each ingestion run gets its own generation id, recorded as a row in an `ingestions` table. As the engine drives bursts, every entity it sees gets logged as a "mark" against that generation, in `ingestion_marks` (one row per burst) and `ingestion_mark_entities` (one row per entity ref seen). When the provider eventually reports `done: true`, the engine sweeps. Anything in the previous generation that has no mark in the current generation gets deleted.
 
-The split between "what we saw this run" and "what's currently in the catalog" is what makes this work. The old `full` path conflated the two and produced orphans whenever any fetch hiccupped. The mark/sweep path doesn't, because the sweep is conditional on the ingestion completing, not on every individual fetch succeeding.
+The split between "what we saw this run" and "what's currently in the catalog" is the actual fix. The old `full` path conflated the two and produced orphans whenever any fetch hiccupped. The mark/sweep path doesn't, because the sweep is conditional on the ingestion completing, not on every individual fetch succeeding.
 
 Identity here is per-ingestion-generation, not per-owner-graph; there are no `ownerReferences` or finalizers.
 
@@ -68,7 +68,7 @@ The token itself is base64-url-encoded JSON with two fields. The encode/decode p
 
 Two fields, both load-bearing. The `c` value is the upstream Kubernetes `continue` token, which the OpenChoreo API forwards to controller-runtime via `client.Continue(...)`. The `s` value is a within-page skip pointer. We need it because authorization checks and project filters can reject some items inside a page, which means a single Kubernetes page does not always map cleanly to a single response page. The skip pointer lets the server resume mid-page after filtering.
 
-Server expiry is where the protocol earns its keep. When the upstream Kubernetes `continue` token has aged out, apimachinery returns a typed error. `HandleListError` checks `apierrors.IsResourceExpired(err)` and produces an `ErrContinueTokenExpired` sentinel. The HTTP layer maps that sentinel to `410 Gone` in `handlePaginationError`. Malformed tokens go to `400 Bad Request` through the same handler. This is the same shape Kubernetes itself uses, which means most Kubernetes clients already know how to retry against it.
+Server expiry is the load-bearing part. When the upstream Kubernetes `continue` token has aged out, apimachinery returns a typed error. `HandleListError` checks `apierrors.IsResourceExpired(err)` and produces an `ErrContinueTokenExpired` sentinel. The HTTP layer maps that sentinel to `410 Gone` in `handlePaginationError`. Malformed tokens go to `400 Bad Request` through the same handler. This is the same shape Kubernetes itself uses, which means most Kubernetes clients already know how to retry against it.
 
 Defaults come from a small constants package: `DefaultPageLimit=100`, `MaxPageLimit=512`. The Backstage provider asks for 50 per page in normal operation, well under the cap.
 
@@ -94,7 +94,7 @@ A few other things came out of code review:
 
 - My first sweep implementation only ran one pass, which left orphan rows in `refresh_state` whenever the catalog processor had partially observed them between marks. The fix needed a second pass.
 - I was mutating the cursor object directly across burst boundaries. That is fine right up to the point where the engine retries a burst, and then it isn't. Switched to immutable cursor returns.
-- Error detection started as `if err.Error() == "http 429"` string matching. Brittle; replaced with a typed sentinel error.
+- Error detection started as `if err.Error() == "http 429"` string matching. The kind of thing that survives until error messages get reformatted. Replaced with a typed sentinel error.
 - An unused `fetchAllComponents` method survived the cursor migration. Dead code, gone.
 
 If I were starting again with what I know now, I'd write the orphan test first, before any production code. I'd also design the cursor token before the consumer, because the consumer's retry logic is downstream of the token's expiry semantics, and getting that order wrong forces a consumer rewrite. Vendoring the upstream incremental-ingestion module is fine, but it carries a maintenance tax I underestimated; the upstream RFC path was probably faster than I thought.
