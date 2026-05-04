@@ -341,3 +341,41 @@
 	transform: scaleX(1);
 	transform-origin: left;
 }
+
+/*
+ * Blog post markdown rendering
+ *
+ * Tailwind v4 Preflight resets `list-style: none` on `ul` and `ol`, which
+ * strips bullets and numbers from blog post bodies rendered by
+ * @uiw/react-markdown-preview. The site uses `prose prose-lg` on the slug
+ * page but @tailwindcss/typography is not installed, so those classes are
+ * inert. The rules below restore standard list rendering inside the
+ * markdown preview wrapper without affecting any other UI surface.
+ */
+.markdown-preview ul,
+.markdown-preview ol {
+	margin: 1em 0;
+	padding-inline-start: 1.5em;
+}
+.markdown-preview ul {
+	list-style-type: disc;
+}
+.markdown-preview ul ul {
+	list-style-type: circle;
+}
+.markdown-preview ul ul ul {
+	list-style-type: square;
+}
+.markdown-preview ol {
+	list-style-type: decimal;
+}
+.markdown-preview li {
+	display: list-item;
+	margin: 0.35em 0;
+}
+.markdown-preview li::marker {
+	color: var(--accent-warm);
+}
+.markdown-preview li > p {
+	margin: 0;
+}
