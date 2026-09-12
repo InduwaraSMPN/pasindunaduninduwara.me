@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" width="920" height="620" role="img" aria-label="Sequence diagram: scheduler ticks the engine, which loops next() against the provider, which fetches paginated pages from the OpenChoreo API and writes ingestion marks. On done, the engine calls computeRemoved, the DB manager deletes orphans from the catalog, and the engine rests.">
+  <defs>
+    <style>
+      .bg { fill: #1e1f29; }
+      .lane { stroke: #44475a; stroke-width: 1; stroke-dasharray: 4 4; }
+      .actor-box { fill: #282a36; stroke: #6272a4; stroke-width: 1; rx: 4; ry: 4; }
+      .actor-label { fill: #f8f8f2; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .msg { stroke: #8be9fd; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+      .msg-async { stroke: #50fa7b; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrow-async); }
+      .msg-label { fill: #f8f8f2; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; font-size: 11px; }
+      .loop-box { fill: none; stroke: #ffb86c; stroke-width: 1; stroke-dasharray: 4 2; rx: 2; ry: 2; }
+      .loop-tag { fill: #ffb86c; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; }
+      .loop-cond { fill: #ffb86c; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; font-size: 10px; font-style: italic; }
+      .step { fill: #6272a4; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; font-size: 10px; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8be9fd"/>
+    </marker>
+    <marker id="arrow-async" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#50fa7b"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="620" rx="8" ry="8"/>
+
+  <!-- Six lifelines: Scheduler(80) Engine(220) Provider(360) API(500) DB(660) Catalog(820) -->
+  <line class="lane" x1="80"  y1="60" x2="80"  y2="585"/>
+  <line class="lane" x1="220" y1="60" x2="220" y2="585"/>
+  <line class="lane" x1="360" y1="60" x2="360" y2="585"/>
+  <line class="lane" x1="500" y1="60" x2="500" y2="585"/>
+  <line class="lane" x1="660" y1="60" x2="660" y2="585"/>
+  <line class="lane" x1="820" y1="60" x2="820" y2="585"/>
+
+  <!-- Actor boxes (top) -->
+  <rect class="actor-box" x="30"  y="20" width="100" height="34"/>
+  <text class="actor-label" x="80"  y="42">Scheduler</text>
+  <rect class="actor-box" x="170" y="20" width="100" height="34"/>
+  <text class="actor-label" x="220" y="42">Engine</text>
+  <rect class="actor-box" x="310" y="20" width="100" height="34"/>
+  <text class="actor-label" x="360" y="42">Provider</text>
+  <rect class="actor-box" x="440" y="20" width="120" height="34"/>
+  <text class="actor-label" x="500" y="42">OpenChoreo API</text>
+  <rect class="actor-box" x="600" y="20" width="120" height="34"/>
+  <text class="actor-label" x="660" y="42">DB Manager</text>
+  <rect class="actor-box" x="755" y="20" width="130" height="34"/>
+  <text class="actor-label" x="820" y="42">Backstage Catalog</text>
+
+  <!-- Actor boxes (bottom) -->
+  <rect class="actor-box" x="30"  y="585" width="100" height="34"/>
+  <text class="actor-label" x="80"  y="607">Scheduler</text>
+  <rect class="actor-box" x="170" y="585" width="100" height="34"/>
+  <text class="actor-label" x="220" y="607">Engine</text>
+  <rect class="actor-box" x="310" y="585" width="100" height="34"/>
+  <text class="actor-label" x="360" y="607">Provider</text>
+  <rect class="actor-box" x="440" y="585" width="120" height="34"/>
+  <text class="actor-label" x="500" y="607">OpenChoreo API</text>
+  <rect class="actor-box" x="600" y="585" width="120" height="34"/>
+  <text class="actor-label" x="660" y="607">DB Manager</text>
+  <rect class="actor-box" x="755" y="585" width="130" height="34"/>
+  <text class="actor-label" x="820" y="607">Backstage Catalog</text>
+
+  <!-- 1. Scheduler -> Engine -->
+  <text class="step" x="36" y="86">1.</text>
+  <line class="msg" x1="80" y1="95" x2="220" y2="95"/>
+  <text class="msg-label" x="150" y="89" text-anchor="middle">tick (burstInterval)</text>
+
+  <!-- Loop frame -->
+  <rect class="loop-box" x="195" y="115" width="615" height="295"/>
+  <rect class="actor-box" x="195" y="115" width="56" height="20" rx="0"/>
+  <text class="loop-tag" x="223" y="129" text-anchor="middle">loop</text>
+  <text class="loop-cond" x="265" y="129">until done:true or burst window elapses</text>
+
+  <!-- 2. Engine -> Provider next(cursor) -->
+  <text class="step" x="176" y="156">2.</text>
+  <line class="msg" x1="220" y1="165" x2="360" y2="165"/>
+  <text class="msg-label" x="290" y="159" text-anchor="middle">next(cursor)</text>
+
+  <!-- 3. Provider -> API GET -->
+  <text class="step" x="316" y="196">3.</text>
+  <line class="msg" x1="360" y1="205" x2="500" y2="205"/>
+  <text class="msg-label" x="430" y="199" text-anchor="middle">GET /resources?limit=50&amp;continue=...</text>
+
+  <!-- 4. API -> Provider page (async / dashed) -->
+  <text class="step" x="316" y="236">4.</text>
+  <line class="msg-async" x1="500" y1="245" x2="360" y2="245"/>
+  <text class="msg-label" x="430" y="239" text-anchor="middle">page + nextContinue</text>
+
+  <!-- 5. Provider -> Engine result (async / dashed) -->
+  <text class="step" x="176" y="276">5.</text>
+  <line class="msg-async" x1="360" y1="285" x2="220" y2="285"/>
+  <text class="msg-label" x="290" y="279" text-anchor="middle">{ done:false, entities, cursor }</text>
+
+  <!-- 6. Engine -> DB write marks -->
+  <text class="step" x="176" y="316">6.</text>
+  <line class="msg" x1="220" y1="325" x2="660" y2="325"/>
+  <text class="msg-label" x="440" y="319" text-anchor="middle">write ingestion_marks + ingestion_mark_entities</text>
+
+  <!-- Loop iteration hint -->
+  <text class="loop-cond" x="500" y="360" text-anchor="middle">repeat for each page</text>
+  <line class="lane" x1="220" y1="370" x2="660" y2="370" stroke="#ffb86c"/>
+
+  <!-- 7. Engine -> DB computeRemoved (after loop) -->
+  <text class="step" x="176" y="436">7.</text>
+  <line class="msg" x1="220" y1="445" x2="660" y2="445"/>
+  <text class="msg-label" x="440" y="439" text-anchor="middle">computeRemoved(prevGen, currGen)</text>
+
+  <!-- 8. DB -> Catalog delete orphans -->
+  <text class="step" x="616" y="476">8.</text>
+  <line class="msg" x1="660" y1="485" x2="820" y2="485"/>
+  <text class="msg-label" x="740" y="479" text-anchor="middle">delete orphan entities</text>
+
+  <!-- 9. Engine -> Scheduler rest -->
+  <text class="step" x="36" y="526">9.</text>
+  <line class="msg-async" x1="220" y1="535" x2="80" y2="535"/>
+  <text class="msg-label" x="150" y="529" text-anchor="middle">rest (restLength)</text>
+
+</svg>

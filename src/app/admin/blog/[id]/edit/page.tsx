@@ -16,8 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-// Note: databases import kept for client-side reads (getDocument); writes go through API routes
-import { COLLECTIONS, DATABASE_ID, databases } from "@/lib/appwrite";
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = use(params);
@@ -42,7 +40,12 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
 	useEffect(() => {
 		const fetchBlogPost = async () => {
 			try {
-				const post = await databases.getDocument(DATABASE_ID, COLLECTIONS.BLOG_POSTS, id);
+				const res = await fetch(`/api/blog/${id}`, { credentials: "include" });
+				if (!res.ok) {
+					const data = await res.json().catch(() => ({}));
+					throw new Error(data.error || `Request failed (${res.status})`);
+				}
+				const post = await res.json();
 
 				if (post) {
 					setFormData({

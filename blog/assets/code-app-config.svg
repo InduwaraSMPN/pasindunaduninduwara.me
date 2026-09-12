@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 328" width="794" height="328" role="img" aria-label="Code excerpt: app-config.yaml">
+  <rect x="0" y="0" width="794" height="328" rx="8" ry="8" fill="#1e1f29"/>
+  <rect x="0" y="0" width="794" height="28" rx="8" ry="8" fill="#282a36"/>
+  <rect x="0" y="20" width="794" height="8" fill="#282a36"/>
+  <circle cx="14" cy="14" r="5" fill="#ff5f56"/>
+  <circle cx="30" cy="14" r="5" fill="#ffbd2e"/>
+  <circle cx="46" cy="14" r="5" fill="#27c93f"/>
+  <text x="770" y="18" font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="11" fill="#bfbfbf" text-anchor="end">app-config.yaml</text>
+  <g transform="translate(24, 48)">
+    <g font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="14px">
+<text x="0" y="14" xml:space="preserve"><tspan fill="#959077">#&#160;app-config.yaml</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="33" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#ff4689">openchoreo</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="52" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#ff4689">api</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="71" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">baseUrl</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">${OPENCHOREO_API_URL}</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="90" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">token</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">${OPENCHOREO_TOKEN}</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="109" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;</tspan><tspan fill="#ff4689">incremental</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="128" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">burstLength</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">10</tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">#&#160;seconds&#160;-&#160;duration&#160;of&#160;each&#160;processing&#160;burst</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="147" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">burstInterval</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">30</tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">#&#160;seconds&#160;-&#160;interval&#160;between&#160;bursts&#160;during&#160;active&#160;ingestion</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="166" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">restLength</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">30</tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">#&#160;minutes&#160;-&#160;rest&#160;period&#160;after&#160;completing&#160;full&#160;ingestion</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="185" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">chunkSize</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">50</tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</tspan><tspan fill="#959077">#&#160;entities&#160;per&#160;API&#160;request</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="204" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">maxConcurrentRequests</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">5</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="223" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">batchDelayMs</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">100</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="242" xml:space="preserve"><tspan fill="#f8f8f2"></tspan><tspan fill="#f8f8f2">&#160;&#160;&#160;&#160;</tspan><tspan fill="#ff4689">rejectRemovalsAbovePercentage</tspan><tspan fill="#f8f8f2">:</tspan><tspan fill="#f8f8f2">&#160;</tspan><tspan fill="#ae81ff">80</tspan><tspan fill="#f8f8f2"></tspan></text>
+<text x="0" y="261" xml:space="preserve"><tspan fill="#f8f8f2"></tspan></text></g>
+  </g>
+</svg>
