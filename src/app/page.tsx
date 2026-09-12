@@ -1,4 +1,4 @@
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import BlogPosts from "@/components/blog-posts";
@@ -7,537 +7,477 @@ import ProjectsList from "@/components/projects-list";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/scroll-reveal";
+import {
+	CountUp,
+	MaskedLines,
+	Rule,
+	ScrollReveal,
+	SectionHead,
+} from "@/components/ui/scroll-reveal";
+
+/**
+ * Home — Editorial Brutalism.
+ *
+ * The page reads like the front section of a publication: a masthead of
+ * metadata, one oversized headline, then numbered sections. Structure is
+ * carried by hairline rules rather than cards and shadows.
+ */
+
+const masthead = [
+	{ label: "Name", value: "Pasindu Nadun Induwara" },
+	{ label: "Discipline", value: "Software Engineering" },
+	{ label: "Base", value: "Anuradhapura, Sri Lanka" },
+	{ label: "Status", value: "Open to work", signal: true },
+];
+
+const stats = [
+	{ value: 3.7, decimals: 1, suffix: "", label: "GPA — B.Sc. Hons IT" },
+	{ value: 6, decimals: 0, suffix: " mo", label: "Industry internship" },
+	{ value: 2, decimals: 0, suffix: "", label: "Competition placements" },
+];
+
+const skills = [
+	{
+		group: "Languages",
+		items: ["TypeScript", "JavaScript", "Python", "Java", "C/C++", "SQL", "HTML", "CSS"],
+	},
+	{
+		group: "Frameworks",
+		items: ["Next.js", "React", "Node.js", "Spring Boot", "Flutter", "Angular"],
+	},
+	{
+		group: "Platforms",
+		items: ["Docker", "Kubernetes", "Azure", "PostgreSQL", "MongoDB", "MySQL", "Git"],
+	},
+	{
+		group: "Practice",
+		items: ["RESTful APIs", "OAuth / JWT", "Real-time messaging", "UX / UI", "Responsive design"],
+	},
+];
+
+const experience = [
+	{
+		period: "Jul — Dec 2025",
+		company: "WSO2",
+		role: "Software Engineer Intern — Internal Developer Portals",
+	},
+	{
+		period: "2023 — present",
+		company: "University of Kelaniya",
+		role: "B.Sc. Honours in Information Technology · GPA 3.7",
+	},
+	{
+		period: "2024",
+		company: "University of Moratuwa — CODL",
+		role: "Trainee Full Stack Developer",
+	},
+];
+
+const achievements = [
+	{
+		mark: "1st Runners-Up",
+		title: "J'PURA EXPO 2023",
+		note: "Inter-University Export-Oriented Innovation Competition",
+	},
+	{
+		mark: "Semi-Finalist",
+		title: "Venture Verse Startup Challenge",
+		note: "Ceylon Treasure project",
+	},
+];
+
+const socials = [
+	{
+		label: "GitHub",
+		href: "https://github.com/InduwaraSMPN",
+		path: "M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z",
+	},
+	{
+		label: "LinkedIn",
+		href: "https://linkedin.com/in/induwarasmpn",
+		path: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
+	},
+];
+
+/**
+ * Hero headline, split into lines. Declared outside the component so the array
+ * is a stable module-level value rather than a fresh literal on every render.
+ */
+// biome-ignore-start lint/correctness/useJsxKeyInIterable: these are prop values, not rendered children — MaskedLines assigns keys when it maps over them
+const heroLines = [
+	<>Crafting digital</>,
+	<>experiences with</>,
+	<span className="ed-accent">purpose.</span>,
+];
+// biome-ignore-end lint/correctness/useJsxKeyInIterable: end of suppression range
 
 export default function Home() {
 	return (
-		<div className="min-h-screen bg-background overflow-x-hidden">
+		<div id="top" className="min-h-screen bg-background">
 			<SiteHeader activePage="home" />
 
 			<main>
-				{/* Hero Section */}
-				<section className="relative py-28 md:py-36 lg:py-40 px-4 overflow-hidden">
-					{/* Subtle gradient background */}
-					<div className="absolute inset-0 -z-10 overflow-hidden">
-						<div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-accent-warm/5 blur-[100px]" />
-						<div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-accent-warm/3 blur-[80px]" />
+				{/* ---------------------------------------------------------------
+				    MASTHEAD — the publication strip
+				   --------------------------------------------------------------- */}
+				<div className="ed-shell pt-8">
+					<dl className="grid grid-cols-2 gap-px border-y border-[var(--rule-strong)] bg-[var(--rule)] md:grid-cols-4">
+						{masthead.map((cell) => (
+							<div key={cell.label} className="bg-background py-3.5 pr-4">
+								<dt className="ed-label">{cell.label}</dt>
+								<dd
+									className={
+										cell.signal
+											? "mt-1.5 text-[0.8125rem] font-semibold text-[var(--signal)]"
+											: "mt-1.5 text-[0.8125rem] font-semibold"
+									}
+								>
+									{cell.value}
+								</dd>
+							</div>
+						))}
+					</dl>
+				</div>
+
+				{/* ---------------------------------------------------------------
+				    HERO
+				   --------------------------------------------------------------- */}
+				<header className="ed-shell pt-12 md:pt-16">
+					<div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+						<span className="ed-eyebrow">Software Engineer — Full Stack</span>
+						<span aria-hidden="true" className="h-px min-w-8 flex-1 bg-[var(--rule-strong)]" />
+						<span className="ed-eyebrow max-sm:w-full">Portfolio — Vol. 01</span>
 					</div>
 
-					<div className="container mx-auto max-w-6xl flex flex-col md:flex-row items-center gap-12 md:gap-20">
-						<ScrollReveal variant="slide-left" className="flex-1">
-							<div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-warm/10 border border-accent-warm/20 mb-6">
-								<span className="w-1.5 h-1.5 rounded-full bg-accent-warm animate-[glow-pulse_3s_ease-in-out_infinite]" />
-								<span className="text-accent-warm font-heading font-semibold text-xs tracking-widest uppercase">
-									Software Engineer
-								</span>
-							</div>
-							<h1 className="text-4xl md:text-5xl lg:text-[3.5rem] xl:text-6xl font-heading font-bold mb-6 leading-[1.08] tracking-tight">
-								Crafting Digital
-								<br />
-								Experiences with
-								<br />
-								<span className="text-accent-warm">Purpose</span>
-							</h1>
-							<p className="text-base md:text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-								Software Engineer and open source contributor building scalable full-stack
-								applications with clean code and thoughtful, engaging interfaces.
+					<h1 className="ed-display">
+						<MaskedLines lines={heroLines} />
+					</h1>
+
+					<div className="mt-10 grid grid-cols-1 gap-10 border-t border-[var(--rule-strong)] pt-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:items-end lg:gap-14">
+						<div className="flex flex-col gap-7">
+							<p className="max-w-[46ch] text-base leading-relaxed text-muted-foreground md:text-lg">
+								Software engineer and open source contributor building scalable full-stack
+								applications — with clean code and interfaces that hold up under inspection.
 							</p>
-							<div className="flex flex-wrap gap-3">
-								<Button
-									asChild
-									size="lg"
-									className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading font-semibold shadow-lg shadow-accent-warm/20 hover:shadow-accent-warm/30 transition-all duration-300"
-								>
+
+							<div className="flex flex-wrap gap-2.5">
+								<Button asChild size="lg">
 									<Link href="#projects">
-										View Projects
-										<ArrowRight className="h-4 w-4 ml-1" />
+										View projects
+										<ArrowRight className="size-4" />
 									</Link>
 								</Button>
-								<Button
-									variant="outline"
-									size="lg"
-									asChild
-									className="hover:border-accent-warm/40 transition-all duration-300"
-								>
-									<Link href="#contact">Contact Me</Link>
+								<Button asChild variant="outline" size="lg">
+									<Link href="#contact">Get in touch</Link>
 								</Button>
 							</div>
-							{/* Social links */}
-							<div className="flex items-center gap-3 mt-10 pt-8 border-t border-border/40">
-								<a
-									href="https://github.com/InduwaraSMPN"
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label="GitHub profile"
-									className="p-2.5 rounded-xl text-muted-foreground hover:text-accent-warm hover:bg-accent-warm/10 transition-all duration-300 hover:scale-105"
-								>
-									<svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-										<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-									</svg>
-								</a>
-								<a
-									href="https://linkedin.com/in/induwarasmpn"
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label="LinkedIn profile"
-									className="p-2.5 rounded-xl text-muted-foreground hover:text-accent-warm hover:bg-accent-warm/10 transition-all duration-300 hover:scale-105"
-								>
-									<svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-										<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-									</svg>
-								</a>
-								<div className="w-px h-4 bg-border/60 mx-1" />
-								<span className="text-xs text-muted-foreground/50 tracking-wide">
-									Based in Sri Lanka
-								</span>
-							</div>
-						</ScrollReveal>
 
-						<ScrollReveal variant="slide-right" delay={0.2} className="flex-1 flex justify-center">
-							<div className="relative">
-								{/* Decorative ring */}
-								<div className="absolute -inset-3 rounded-full border border-dashed border-accent-warm/15 animate-[spin_40s_linear_infinite]" />
-								<div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden ring-2 ring-accent-warm/10 ring-offset-4 ring-offset-background">
+							<div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-[var(--rule)] pt-6">
+								<div className="flex items-center gap-1">
+									{socials.map((s) => (
+										<a
+											key={s.label}
+											href={s.href}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="grid size-9 place-items-center border border-transparent text-muted-foreground transition-colors duration-200 hover:border-[var(--rule-strong)] hover:text-[var(--signal)]"
+										>
+											<svg
+												className="size-4"
+												viewBox="0 0 24 24"
+												fill="currentColor"
+												aria-hidden="true"
+											>
+												<path d={s.path} />
+											</svg>
+											<span className="sr-only">{s.label} profile</span>
+										</a>
+									))}
+								</div>
+								<span className="ed-meta">Currently: Internal Developer Portals @ WSO2</span>
+							</div>
+						</div>
+
+						{/* Specimen figure — framed, captioned, no rounded corners. */}
+						<ScrollReveal variant="fade-in" delay={0.35}>
+							<figure className="ed-figure group">
+								<div className="ed-hatch relative aspect-[4/5] overflow-hidden">
 									<Image
 										src="/placeholder-profile.jpg"
 										alt="Pasindu Nadun Induwara"
 										fill
-										sizes="(max-width: 768px) 256px, 320px"
-										className="object-cover"
+										sizes="(max-width: 1024px) 100vw, 380px"
+										className="object-cover grayscale transition-[filter] duration-700 ease-out-expo group-hover:grayscale-0"
 										priority
 									/>
 								</div>
-								{/* Floating accent dot */}
-								<div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-accent-warm shadow-lg shadow-accent-warm/40 animate-[glow-pulse_3s_ease-in-out_infinite]" />
-								{/* Secondary dot */}
-								<div className="absolute top-4 -left-2 w-3 h-3 rounded-full bg-accent-warm/40 animate-float" />
-							</div>
+								<figcaption className="mt-3.5 flex items-baseline justify-between gap-3">
+									<span className="ed-label">Fig. 01 — Portrait</span>
+									<span className="ed-label">Kelaniya, LK</span>
+								</figcaption>
+							</figure>
 						</ScrollReveal>
 					</div>
+				</header>
 
-					{/* Scroll indicator */}
-					<div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block opacity-0 animate-[fade-in_0.8s_ease-out_1.5s_forwards]">
-						<div className="w-10 h-16 rounded-full border-2 border-muted-foreground/20 flex items-center justify-center animate-float">
-							<svg
-								className="w-4 h-4 text-muted-foreground/40"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2.5"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<path d="M12 5v14" />
-								<path d="m19 12-7 7-7-7" />
-							</svg>
+				<div className="ed-shell mt-16">
+					<Rule />
+				</div>
+
+				{/* ---------------------------------------------------------------
+				    01 — SELECTED WORK
+				   --------------------------------------------------------------- */}
+				<section id="projects" className="ed-shell scroll-mt-24 py-16 md:py-24">
+					<ScrollReveal>
+						<SectionHead num="01" title="Selected work" note="Three of many" />
+					</ScrollReveal>
+
+					<ProjectsList limit={3} isHomePage={true} />
+
+					<ScrollReveal delay={0.2}>
+						<div className="mt-12">
+							<Button asChild variant="outline" size="lg">
+								<Link href="/projects">
+									View all projects
+									<ArrowRight className="size-4" />
+								</Link>
+							</Button>
 						</div>
-					</div>
+					</ScrollReveal>
 				</section>
 
-				{/* About Section */}
-				<section id="about" className="py-28 px-4 relative">
-					<div className="absolute inset-0 bg-muted/30 -z-10" />
-					<div className="container mx-auto max-w-5xl">
-						<ScrollReveal>
-							<div className="text-center mb-16">
-								<p className="text-accent-warm font-heading font-semibold text-xs tracking-[0.2em] uppercase mb-3">
-									Get to Know Me
+				<div className="ed-shell">
+					<Rule />
+				</div>
+
+				{/* ---------------------------------------------------------------
+				    02 — BACKGROUND
+				   --------------------------------------------------------------- */}
+				<section id="about" className="ed-shell scroll-mt-24 py-16 md:py-24">
+					<ScrollReveal>
+						<SectionHead num="02" title="Background" note="Anuradhapura → Colombo" />
+					</ScrollReveal>
+
+					<div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
+						{/* Left: narrative, numbers, chronology */}
+						<div className="flex flex-col gap-10">
+							<ScrollReveal>
+								<p className="max-w-[52ch] text-base leading-relaxed md:text-lg">
+									I care about the seam between systems and the people using them. Most of my work
+									is full-stack — designing the data model, building the API, then sweating the
+									interface until it feels inevitable.
 								</p>
-								<h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
-									About Me
-								</h2>
-								<div className="mt-4 mx-auto w-12 h-0.5 bg-accent-warm/40 rounded-full" />
-							</div>
-						</ScrollReveal>
+							</ScrollReveal>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-							<ScrollReveal variant="slide-left" delay={0.1}>
-								<h3 className="text-xl font-heading font-semibold mb-5 flex items-center gap-3">
-									My Background
-									<span className="flex-1 h-px bg-border/60" />
-								</h3>
-								<div className="space-y-4 text-muted-foreground leading-relaxed text-[0.938rem]">
-									<p>
-										Software Engineer and active open source contributor with a passion for web
-										development and building scalable solutions. Industry experience as a Software
-										Engineer Intern at WSO2, specializing in Internal Developer Portals using
-										Backstage and OpenChoreo.
-									</p>
-									<p>
-										Experienced in designing full-stack applications, cloud deployments, and modern
-										DevOps practices. Skilled in translating user needs into functional interfaces
-										while adhering to clean code standards.
-									</p>
-									<p>
-										Proficient in multiple technology stacks and committed to continuous learning
-										and open source collaboration.
-									</p>
+							<ScrollReveal delay={0.1}>
+								<dl className="grid grid-cols-3 border-y border-[var(--rule-strong)]">
+									{stats.map((stat) => (
+										<div key={stat.label} className="ed-stat">
+											<dt className="sr-only">{stat.label}</dt>
+											<dd>
+												<b>
+													<CountUp
+														value={stat.value}
+														decimals={stat.decimals}
+														suffix={stat.suffix}
+													/>
+												</b>
+												<span className="ed-label mt-2.5 block">{stat.label}</span>
+											</dd>
+										</div>
+									))}
+								</dl>
+							</ScrollReveal>
+
+							<ScrollReveal delay={0.15}>
+								<div>
+									<h3 className="ed-label mb-4">Experience &amp; Education</h3>
+									<ol className="border-t border-[var(--rule-strong)]">
+										{experience.map((job) => (
+											<li
+												key={job.company}
+												className="grid grid-cols-1 gap-x-6 gap-y-1 border-b border-[var(--rule)] py-4 sm:grid-cols-[8rem_1fr]"
+											>
+												<span className="ed-meta pt-0.5">{job.period}</span>
+												<div>
+													<p className="font-heading text-base font-semibold tracking-[-0.022em]">
+														{job.company}
+													</p>
+													<p className="mt-0.5 text-sm text-muted-foreground">{job.role}</p>
+												</div>
+											</li>
+										))}
+									</ol>
 								</div>
+							</ScrollReveal>
 
-								<div className="mt-10">
-									<h4 className="text-lg font-heading font-semibold mb-5 flex items-center gap-3">
-										Experience & Education
-										<span className="flex-1 h-px bg-border/60" />
-									</h4>
-									<div className="space-y-5 relative before:absolute before:left-[5px] before:top-3 before:bottom-3 before:w-px before:bg-gradient-to-b before:from-accent-warm before:via-accent-warm/40 before:to-transparent">
-										<div className="relative pl-7">
-											<div className="absolute left-0 top-2 z-10 size-3 rounded-full border-[3px] border-accent-warm bg-background" />
-											<p className="font-medium text-sm">WSO2 (July 2025 - December 2025)</p>
-											<p className="text-xs text-muted-foreground mt-0.5">
-												Software Engineer Intern
-											</p>
-										</div>
-										<div className="relative pl-7">
-											<div className="absolute left-0 top-2 z-10 size-3 rounded-full border-[3px] border-accent-warm/60 bg-background" />
-											<p className="font-medium text-sm">University of Kelaniya (2023 - Present)</p>
-											<p className="text-xs text-muted-foreground mt-0.5">
-												B.Sc. Honours in Information Technology | GPA: 3.7
-											</p>
-										</div>
-										<div className="relative pl-7">
-											<div className="absolute left-0 top-2 z-10 size-3 rounded-full border-[3px] border-accent-warm/30 bg-background" />
-											<p className="font-medium text-sm">University of Moratuwa - CODL</p>
-											<p className="text-xs text-muted-foreground mt-0.5">
-												Trainee Full Stack Developer
-											</p>
-										</div>
-									</div>
-								</div>
-
-								<div className="flex gap-3 mt-10">
-									<Button
-										variant="outline"
-										asChild
-										className="hover:border-accent-warm/40 transition-all duration-300"
-									>
+							<ScrollReveal delay={0.2}>
+								<div className="flex flex-wrap gap-2.5">
+									<Button asChild variant="outline">
 										<Link href="/Pasindu_Induwara_CV.pdf" download>
-											<Download className="h-4 w-4 mr-2" />
+											<Download className="size-4" />
 											Download CV
 										</Link>
 									</Button>
-									<Button
-										asChild
-										className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 shadow-lg shadow-accent-warm/15 transition-all duration-300"
-									>
-										<Link href="/cv">View Full CV</Link>
+									<Button asChild>
+										<Link href="/cv">View full CV</Link>
 									</Button>
 								</div>
 							</ScrollReveal>
+						</div>
 
-							<ScrollReveal variant="slide-right" delay={0.2}>
-								<h3 className="text-xl font-heading font-semibold mb-5 flex items-center gap-3">
-									Skills & Expertise
-									<span className="flex-1 h-px bg-border/60" />
-								</h3>
+						{/* Right: skills as definition rows, then recognition */}
+						<div className="flex flex-col gap-10">
+							<ScrollReveal variant="fade-in" delay={0.1}>
+								<div>
+									<h3 className="ed-label mb-4">Skills &amp; Expertise</h3>
+									<dl className="border-t border-[var(--rule-strong)]">
+										{skills.map((group) => (
+											<div key={group.group} className="ed-defrow">
+												<dt className="ed-label pt-0.5">{group.group}</dt>
+												<dd className="text-muted-foreground">
+													{group.items.map((item, i) => (
+														<span key={item}>
+															{i > 0 ? (
+																<>
+																	<span className="px-1.5 text-[var(--rule-strong)]">/</span>
+																	{/* Adjacent inline spans offer no break opportunity, so the
+																	    whole list would be one unbreakable run and force a
+																	    ~450px min-content on the row. */}
+																	<wbr />
+																</>
+															) : null}
+															<span className="text-foreground">{item}</span>
+														</span>
+													))}
+												</dd>
+											</div>
+										))}
+									</dl>
+								</div>
+							</ScrollReveal>
 
-								<StaggerContainer className="space-y-7" staggerDelay={0.05}>
-									<StaggerItem>
-										<h4 className="font-heading font-medium text-[11px] text-accent-warm uppercase tracking-[0.15em] mb-3">
-											Languages
-										</h4>
-										<div className="flex flex-wrap gap-2">
-											{[
-												"HTML",
-												"CSS",
-												"JavaScript",
-												"TypeScript",
-												"Python",
-												"Java",
-												"C/C++",
-												"SQL",
-											].map((s) => (
-												<span
-													key={s}
-													className="px-3 py-1.5 text-xs font-medium rounded-full bg-accent-warm/8 text-accent-warm border border-accent-warm/15 hover:bg-accent-warm/15 hover:border-accent-warm/30 transition-all duration-300 cursor-default"
-												>
-													{s}
-												</span>
-											))}
-										</div>
-									</StaggerItem>
-
-									<StaggerItem>
-										<h4 className="font-heading font-medium text-[11px] text-accent-warm uppercase tracking-[0.15em] mb-3">
-											Frameworks
-										</h4>
-										<div className="flex flex-wrap gap-2">
-											{["React", "Next.js", "Node.js", "Angular", "Spring Boot", "Flutter"].map(
-												(s) => (
-													<span
-														key={s}
-														className="px-3 py-1.5 text-xs font-medium rounded-full bg-secondary/80 text-secondary-foreground border border-border/60 hover:border-accent-warm/20 hover:bg-accent-warm/5 transition-all duration-300 cursor-default"
-													>
-														{s}
-													</span>
-												),
-											)}
-										</div>
-									</StaggerItem>
-
-									<StaggerItem>
-										<h4 className="font-heading font-medium text-[11px] text-accent-warm uppercase tracking-[0.15em] mb-3">
-											Tools & Platforms
-										</h4>
-										<div className="flex flex-wrap gap-2">
-											{[
-												"MySQL",
-												"PostgreSQL",
-												"MongoDB",
-												"Docker",
-												"Kubernetes",
-												"Azure",
-												"Git",
-											].map((s) => (
-												<span
-													key={s}
-													className="px-3 py-1.5 text-xs font-medium rounded-full bg-secondary/80 text-secondary-foreground border border-border/60 hover:border-accent-warm/20 hover:bg-accent-warm/5 transition-all duration-300 cursor-default"
-												>
-													{s}
-												</span>
-											))}
-										</div>
-									</StaggerItem>
-
-									<StaggerItem>
-										<h4 className="font-heading font-medium text-[11px] text-accent-warm uppercase tracking-[0.15em] mb-3">
-											Web Development
-										</h4>
-										<div className="flex flex-wrap gap-2">
-											{[
-												"Responsive Design",
-												"UX/UI",
-												"RESTful APIs",
-												"JWT/OAuth",
-												"Real-Time Messaging",
-											].map((s) => (
-												<span
-													key={s}
-													className="px-3 py-1.5 text-xs font-medium rounded-full bg-secondary/80 text-secondary-foreground border border-border/60 hover:border-accent-warm/20 hover:bg-accent-warm/5 transition-all duration-300 cursor-default"
-												>
-													{s}
-												</span>
-											))}
-										</div>
-									</StaggerItem>
-								</StaggerContainer>
-
-								<div className="mt-10">
-									<h4 className="font-heading font-medium text-[11px] text-accent-warm uppercase tracking-[0.15em] mb-4">
-										Achievements
-									</h4>
-									<div className="space-y-3">
-										<div className="p-4 rounded-xl bg-card border border-border/40 hover:border-accent-warm/20 transition-all duration-300 group">
-											<p className="font-medium text-sm">
-												<span className="text-accent-warm font-heading">1st Runners-Up</span> —
-												J&apos;PURA EXPO 2023
-											</p>
-											<p className="text-xs text-muted-foreground mt-1 group-hover:text-muted-foreground/80 transition-colors">
-												Inter University Export-Oriented Innovation Competition
-											</p>
-										</div>
-										<div className="p-4 rounded-xl bg-card border border-border/40 hover:border-accent-warm/20 transition-all duration-300 group">
-											<p className="font-medium text-sm">
-												<span className="text-accent-warm font-heading">Semi-Finalist</span> —
-												Venture Verse Startup Challenge
-											</p>
-											<p className="text-xs text-muted-foreground mt-1 group-hover:text-muted-foreground/80 transition-colors">
-												Ceylon Treasure project
-											</p>
-										</div>
-									</div>
+							<ScrollReveal variant="fade-in" delay={0.15}>
+								<div>
+									<h3 className="ed-label mb-4">Recognition</h3>
+									<ul className="border-t border-[var(--rule-strong)]">
+										{achievements.map((item) => (
+											<li key={item.title} className="border-b border-[var(--rule)] py-4">
+												<p className="font-heading text-base font-semibold tracking-[-0.022em]">
+													<span className="ed-accent">{item.mark}</span>
+													<span className="px-2 text-[var(--rule-strong)]">—</span>
+													{item.title}
+												</p>
+												<p className="mt-0.5 text-sm text-muted-foreground">{item.note}</p>
+											</li>
+										))}
+									</ul>
 								</div>
 							</ScrollReveal>
 						</div>
 					</div>
 				</section>
 
-				{/* Projects Section */}
-				<section id="projects" className="py-28 px-4 relative">
-					<div className="container mx-auto max-w-5xl">
-						<ScrollReveal>
-							<div className="text-center mb-16">
-								<p className="text-accent-warm font-heading font-semibold text-xs tracking-[0.2em] uppercase mb-3">
-									My Work
-								</p>
-								<h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
-									Featured Projects
-								</h2>
-								<div className="mt-4 mx-auto w-12 h-0.5 bg-accent-warm/40 rounded-full" />
-							</div>
-						</ScrollReveal>
-						<ProjectsList limit={3} isHomePage={true} />
-						<ScrollReveal delay={0.3}>
-							<div className="mt-14 text-center">
-								<Button
-									variant="outline"
-									asChild
-									size="lg"
-									className="hover:border-accent-warm/40 transition-all duration-300"
-								>
-									<Link href="/projects">
-										View All Projects
-										<ArrowRight className="h-4 w-4 ml-1" />
-									</Link>
-								</Button>
-							</div>
-						</ScrollReveal>
-					</div>
+				<div className="ed-shell">
+					<Rule />
+				</div>
+
+				{/* ---------------------------------------------------------------
+				    03 — WRITING
+				   --------------------------------------------------------------- */}
+				<section id="blog" className="ed-shell scroll-mt-24 py-16 md:py-24">
+					<ScrollReveal>
+						<SectionHead num="03" title="Latest writing" note="Notes on building things" />
+					</ScrollReveal>
+
+					<BlogPosts />
+
+					<ScrollReveal delay={0.2}>
+						<div className="mt-12">
+							<Button asChild variant="outline" size="lg">
+								<Link href="/blog">
+									View all posts
+									<ArrowRight className="size-4" />
+								</Link>
+							</Button>
+						</div>
+					</ScrollReveal>
 				</section>
 
-				{/* Blog Section */}
-				<section id="blog" className="py-28 px-4 relative">
-					<div className="absolute inset-0 bg-muted/30 -z-10" />
-					<div className="container mx-auto max-w-5xl">
+				<div className="ed-shell">
+					<Rule />
+				</div>
+
+				{/* ---------------------------------------------------------------
+				    04 — CONTACT
+				   --------------------------------------------------------------- */}
+				<section id="contact" className="ed-shell scroll-mt-24 py-16 md:py-24">
+					<ScrollReveal>
+						<SectionHead num="04" title="Get in touch" note="Response within 24 h" />
+					</ScrollReveal>
+
+					<div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-16">
 						<ScrollReveal>
-							<div className="text-center mb-16">
-								<p className="text-accent-warm font-heading font-semibold text-xs tracking-[0.2em] uppercase mb-3">
-									Insights
-								</p>
-								<h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
-									Latest from My Blog
-								</h2>
-								<div className="mt-4 mx-auto w-12 h-0.5 bg-accent-warm/40 rounded-full" />
-							</div>
-						</ScrollReveal>
-						<BlogPosts />
-						<ScrollReveal delay={0.3}>
-							<div className="mt-14 text-center">
-								<Button
-									variant="outline"
-									asChild
-									size="lg"
-									className="hover:border-accent-warm/40 transition-all duration-300"
-								>
-									<Link href="/blog">
-										View All Posts
-										<ArrowRight className="h-4 w-4 ml-1" />
-									</Link>
-								</Button>
-							</div>
-						</ScrollReveal>
-					</div>
-				</section>
-
-				{/* Contact Section */}
-				<section id="contact" className="py-28 px-4 relative">
-					<div className="container mx-auto max-w-3xl">
-						<ScrollReveal>
-							<div className="text-center mb-14">
-								<p className="text-accent-warm font-heading font-semibold text-xs tracking-[0.2em] uppercase mb-3">
-									Let&apos;s Connect
-								</p>
-								<h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
-									Get In Touch
-								</h2>
-								<div className="mt-4 mx-auto w-12 h-0.5 bg-accent-warm/40 rounded-full" />
-								<p className="text-muted-foreground mt-6 max-w-md mx-auto text-[0.938rem]">
-									Have a project in mind or want to collaborate? Feel free to reach out!
-								</p>
-							</div>
+							<ContactForm />
 						</ScrollReveal>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-14">
-							<ScrollReveal variant="slide-left" delay={0.1}>
-								<ContactForm />
-							</ScrollReveal>
-
-							<ScrollReveal variant="slide-right" delay={0.2}>
-								<div className="space-y-8">
-									<div>
-										<h3 className="text-lg font-heading font-semibold mb-5 flex items-center gap-3">
-											Contact Information
-											<span className="flex-1 h-px bg-border/60" />
-										</h3>
-										<ul className="space-y-5">
-											<li className="flex items-start gap-3.5 group">
-												<div className="mt-0.5 p-2.5 rounded-xl bg-accent-warm/8 text-accent-warm border border-accent-warm/10 group-hover:bg-accent-warm/15 group-hover:border-accent-warm/25 transition-all duration-300">
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="15"
-														height="15"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														strokeWidth="2"
-														strokeLinecap="round"
-														strokeLinejoin="round"
-													>
-														<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-													</svg>
-												</div>
-												<div>
-													<p className="font-medium text-sm">Phone</p>
-													<a
-														href="tel:+94703477582"
-														className="text-muted-foreground hover:text-accent-warm transition-colors duration-300 text-sm"
-													>
-														+94 70 347 7582
-													</a>
-												</div>
-											</li>
-											<li className="flex items-start gap-3.5 group">
-												<div className="mt-0.5 p-2.5 rounded-xl bg-accent-warm/8 text-accent-warm border border-accent-warm/10 group-hover:bg-accent-warm/15 group-hover:border-accent-warm/25 transition-all duration-300">
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="15"
-														height="15"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														strokeWidth="2"
-														strokeLinecap="round"
-														strokeLinejoin="round"
-													>
-														<rect width="20" height="16" x="2" y="4" rx="2" />
-														<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-													</svg>
-												</div>
-												<div>
-													<p className="font-medium text-sm">Email</p>
-													<a
-														href="mailto:pasindunaduninduwara@gmail.com"
-														className="text-muted-foreground hover:text-accent-warm transition-colors duration-300 text-sm"
-													>
-														pasindunaduninduwara@gmail.com
-													</a>
-												</div>
-											</li>
-										</ul>
-									</div>
-
-									<div>
-										<h3 className="text-lg font-heading font-semibold mb-5 flex items-center gap-3">
-											Connect
-											<span className="flex-1 h-px bg-border/60" />
-										</h3>
-										<div className="flex gap-3">
+						<ScrollReveal variant="fade-in" delay={0.12}>
+							<div className="flex flex-col gap-10">
+								<div>
+									<h3 className="ed-label mb-4">Direct</h3>
+									<ul className="border-t border-[var(--rule-strong)]">
+										<li className="border-b border-[var(--rule)] py-4">
+											<p className="ed-label mb-1">Email</p>
 											<a
-												href="https://github.com/InduwaraSMPN"
+												href="mailto:pasindunaduninduwara@gmail.com"
+												className="ed-link text-sm transition-colors duration-200 hover:text-[var(--signal)]"
+											>
+												pasindunaduninduwara@gmail.com
+											</a>
+										</li>
+										<li className="border-b border-[var(--rule)] py-4">
+											<p className="ed-label mb-1">Phone</p>
+											<a
+												href="tel:+94703477582"
+												className="ed-link text-sm transition-colors duration-200 hover:text-[var(--signal)]"
+											>
+												+94 70 347 7582
+											</a>
+										</li>
+										<li className="border-b border-[var(--rule)] py-4">
+											<p className="ed-label mb-1">Based in</p>
+											<p className="text-sm">Anuradhapura, Sri Lanka</p>
+										</li>
+									</ul>
+								</div>
+
+								<div>
+									<h3 className="ed-label mb-4">Elsewhere</h3>
+									<div className="flex flex-wrap gap-2.5">
+										{socials.map((s) => (
+											<a
+												key={s.label}
+												href={s.href}
 												target="_blank"
 												rel="noopener noreferrer"
-												className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card hover:border-accent-warm/40 hover:bg-accent-warm/5 hover:shadow-md hover:shadow-accent-warm/5 transition-all duration-300 text-sm font-medium"
+												className="group inline-flex items-center gap-2 border border-[var(--rule-strong)] px-4 py-2.5 text-sm font-medium transition-colors duration-200 hover:bg-foreground hover:text-background"
 											>
-												<svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-													<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+												<svg
+													className="size-4"
+													viewBox="0 0 24 24"
+													fill="currentColor"
+													aria-hidden="true"
+												>
+													<path d={s.path} />
 												</svg>
-												GitHub
+												{s.label}
+												<ArrowUpRight className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
 											</a>
-											<a
-												href="https://linkedin.com/in/induwarasmpn"
-												target="_blank"
-												rel="noopener noreferrer"
-												className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card hover:border-accent-warm/40 hover:bg-accent-warm/5 hover:shadow-md hover:shadow-accent-warm/5 transition-all duration-300 text-sm font-medium"
-											>
-												<svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-													<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-												</svg>
-												LinkedIn
-											</a>
-										</div>
+										))}
 									</div>
 								</div>
-							</ScrollReveal>
-						</div>
+							</div>
+						</ScrollReveal>
 					</div>
 				</section>
 			</main>

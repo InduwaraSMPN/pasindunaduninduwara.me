@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+	AdminBack,
+	AdminField,
+	AdminNote,
+	AdminPageHead,
+	AdminPanel,
+} from "@/components/admin/admin-shell";
 import ImageUpload from "@/components/admin/image-upload";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -31,22 +36,12 @@ export default function NewBlogPostPage() {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleSwitchChange = (checked: boolean) => {
-		setFormData((prev) => ({ ...prev, published: checked }));
-	};
-
-	const handleImageUpload = (url: string) => {
-		setFormData((prev) => ({ ...prev, thumbnail: url }));
-	};
-
 	const generateSlug = () => {
 		if (!formData.title) return;
-
 		const slug = formData.title
 			.toLowerCase()
 			.replace(/[^\w\s]/gi, "")
 			.replace(/\s+/g, "-");
-
 		setFormData((prev) => ({ ...prev, slug }));
 	};
 
@@ -56,39 +51,32 @@ export default function NewBlogPostPage() {
 		setError(null);
 
 		try {
-			// Process categories into an array
 			const categoriesArray = formData.categories
 				.split(",")
 				.map((category) => category.trim())
-				.filter((category) => category.length > 0);
+				.filter(Boolean);
 
-			// Prepare the post data
-			const postData = {
-				title: formData.title,
-				slug: formData.slug,
-				excerpt: formData.excerpt,
-				content: formData.content,
-				categories: categoriesArray,
-				thumbnail: formData.thumbnail,
-				published: formData.published,
-				published_at: formData.published ? new Date().toISOString() : null,
-			};
-
-			// Insert the new blog post via API route
 			const res = await fetch("/api/blog/create", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(postData),
+				body: JSON.stringify({
+					title: formData.title,
+					slug: formData.slug,
+					excerpt: formData.excerpt,
+					content: formData.content,
+					categories: categoriesArray,
+					thumbnail: formData.thumbnail,
+					published: formData.published,
+					published_at: formData.published ? new Date().toISOString() : null,
+				}),
 			});
 			const data = await res.json();
-			if (!res.ok) throw new Error(data.error);
+			if (!res.ok) throw new Error(data.error || "Could not create the post");
 
-			// Redirect to the blog posts page
 			router.push("/admin/blog");
 			router.refresh();
-		} catch (err: unknown) {
-			console.error("Error creating blog post:", err);
-			setError((err as Error).message || "An error occurred while creating the blog post");
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Could not create the post");
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -96,43 +84,24 @@ export default function NewBlogPostPage() {
 
 	return (
 		<div>
-			<div className="flex items-center mb-8">
-				<Link
-					href="/admin/blog"
-					className="text-primary hover:underline flex items-center gap-2 mr-4"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="2"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						className="lucide lucide-arrow-left"
-					>
-						<path d="m12 19-7-7 7-7" />
-						<path d="M19 12H5" />
-					</svg>
-					Back
-				</Link>
-				<h1 className="text-3xl font-bold">Add New Blog Post</h1>
-			</div>
+			<AdminBack href="/admin/blog">Back to blog</AdminBack>
 
-			{error && (
-				<div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">{error}</div>
-			)}
+			<AdminPageHead
+				eyebrow="Admin — New record"
+				title="Add post"
+				note={formData.published ? "Will publish immediately" : "Saving as draft"}
+			/>
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Blog Post Details</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<form onSubmit={handleSubmit} className="space-y-6">
-						<div className="space-y-2">
-							<Label htmlFor="title">Title</Label>
+			{error ? <AdminNote>{error}</AdminNote> : null}
+
+			<form
+				onSubmit={handleSubmit}
+				className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start"
+			>
+				{/* Main column — the writing itself. */}
+				<AdminPanel title="Content">
+					<div className="flex flex-col gap-7">
+						<AdminField label="Title" htmlFor="title">
 							<Input
 								id="title"
 								name="title"
@@ -140,21 +109,22 @@ export default function NewBlogPostPage() {
 								onChange={handleChange}
 								required
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<div className="flex justify-between items-center">
-								<Label htmlFor="slug">Slug</Label>
-								<Button
+						<AdminField
+							label="Slug"
+							htmlFor="slug"
+							hint="Forms the public URL: /blog/your-slug"
+							action={
+								<button
 									type="button"
-									variant="ghost"
-									size="sm"
 									onClick={generateSlug}
-									className="text-xs"
+									className="ed-label transition-colors duration-200 hover:text-[var(--signal)]"
 								>
 									Generate from title
-								</Button>
-							</div>
+								</button>
+							}
+						>
 							<Input
 								id="slug"
 								name="slug"
@@ -163,10 +133,13 @@ export default function NewBlogPostPage() {
 								required
 								placeholder="my-blog-post"
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<Label htmlFor="excerpt">Excerpt</Label>
+						<AdminField
+							label="Excerpt"
+							htmlFor="excerpt"
+							hint="Shown in the blog index and social previews."
+						>
 							<Textarea
 								id="excerpt"
 								name="excerpt"
@@ -175,22 +148,29 @@ export default function NewBlogPostPage() {
 								rows={2}
 								placeholder="A brief summary of your post"
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<Label htmlFor="content">Content</Label>
+						<AdminField
+							label="Content"
+							htmlFor="content"
+							hint="Markdown is rendered on the published page."
+						>
 							<Textarea
 								id="content"
 								name="content"
 								value={formData.content}
 								onChange={handleChange}
 								required
-								rows={10}
+								rows={18}
+								className="font-mono text-[0.8125rem] leading-relaxed"
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<Label htmlFor="categories">Categories (comma separated)</Label>
+						<AdminField
+							label="Categories"
+							htmlFor="categories"
+							hint="Comma separated. Shown as chips on the index."
+						>
 							<Input
 								id="categories"
 								name="categories"
@@ -198,33 +178,45 @@ export default function NewBlogPostPage() {
 								onChange={handleChange}
 								placeholder="web development, design, technology"
 							/>
-						</div>
+						</AdminField>
+					</div>
+				</AdminPanel>
 
-						<div className="space-y-2">
-							<Label>Featured Image</Label>
-							<ImageUpload onUploadComplete={handleImageUpload} />
-						</div>
+				{/* Side column — publish state and artwork. */}
+				<div className="flex flex-col gap-10 lg:sticky lg:top-12">
+					<AdminPanel title="Publish">
+						<div className="flex flex-col gap-6">
+							<div className="flex items-center justify-between gap-4">
+								<label htmlFor="published" className="ed-label cursor-pointer">
+									Publish immediately
+								</label>
+								<Switch
+									id="published"
+									checked={formData.published}
+									onCheckedChange={(checked) =>
+										setFormData((prev) => ({ ...prev, published: checked }))
+									}
+								/>
+							</div>
 
-						<div className="flex items-center space-x-2">
-							<Switch
-								id="published"
-								checked={formData.published}
-								onCheckedChange={handleSwitchChange}
-							/>
-							<Label htmlFor="published">Publish immediately</Label>
+							<div className="flex flex-col gap-2.5 border-t border-[var(--rule)] pt-6">
+								<Button type="submit" disabled={isSubmitting} className="w-full">
+									{isSubmitting ? "Creating…" : "Create post"}
+								</Button>
+								<Button type="button" variant="outline" asChild className="w-full">
+									<Link href="/admin/blog">Cancel</Link>
+								</Button>
+							</div>
 						</div>
+					</AdminPanel>
 
-						<div className="flex gap-4 pt-4">
-							<Button type="submit" disabled={isSubmitting}>
-								{isSubmitting ? "Creating..." : "Create Post"}
-							</Button>
-							<Button type="button" variant="outline" asChild>
-								<Link href="/admin/blog">Cancel</Link>
-							</Button>
-						</div>
-					</form>
-				</CardContent>
-			</Card>
+					<AdminPanel title="Featured image" note="Optional">
+						<ImageUpload
+							onUploadComplete={(url) => setFormData((prev) => ({ ...prev, thumbnail: url }))}
+						/>
+					</AdminPanel>
+				</div>
+			</form>
 		</div>
 	);
 }

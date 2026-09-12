@@ -41,26 +41,25 @@ export default function CommentsList({
 
 	if (loading) {
 		return (
-			<div className="space-y-4">
+			<div aria-busy="true" aria-live="polite">
 				{[1, 2].map((i) => (
-					<div key={i} className="animate-pulse p-4 rounded-xl bg-muted/50">
-						<div className="flex justify-between items-center mb-3">
-							<div className="h-4 bg-muted rounded w-24" />
-							<div className="h-3 bg-muted rounded w-20" />
+					<div key={i} className="border-b border-[var(--rule)] py-5">
+						<div className="flex items-baseline justify-between gap-4">
+							<span className="h-3 w-28 animate-pulse bg-muted" />
+							<span className="h-3 w-20 animate-pulse bg-muted" />
 						</div>
-						<div className="space-y-2">
-							<div className="h-3 bg-muted rounded w-full" />
-							<div className="h-3 bg-muted rounded w-3/4" />
-						</div>
+						<span className="mt-3 block h-3 w-full animate-pulse bg-muted" />
+						<span className="mt-2 block h-3 w-2/3 animate-pulse bg-muted" />
 					</div>
 				))}
+				<span className="sr-only">Loading comments</span>
 			</div>
 		);
 	}
 
 	if (error) {
 		return (
-			<Alert variant="destructive" className="border-destructive/30 bg-destructive/5">
+			<Alert variant="destructive">
 				<AlertDescription>{error}</AlertDescription>
 			</Alert>
 		);
@@ -68,30 +67,30 @@ export default function CommentsList({
 
 	if (comments.length === 0) {
 		return (
-			<div className="py-10 text-center">
-				<div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-4">
-					<MessageCircle className="h-5 w-5 text-muted-foreground" />
-				</div>
-				<p className="text-sm text-muted-foreground">
-					No comments yet. Be the first to share your thoughts!
-				</p>
+			<div className="border-y border-[var(--rule-strong)] py-12 text-center">
+				<MessageCircle className="mx-auto mb-3.5 size-5 text-muted-foreground" />
+				<p className="ed-meta">No comments yet. Be the first to share your thoughts.</p>
 			</div>
 		);
 	}
 
 	return (
-		<div className="space-y-4">
+		<ul className="border-t border-[var(--rule-strong)]">
 			{comments.map((comment) => (
-				<div key={comment.$id} className="p-4 rounded-xl bg-muted/30 border border-border/50">
-					<div className="flex justify-between items-center mb-2">
-						<h4 className="font-heading font-medium text-sm">{comment.name}</h4>
-						<time className="text-xs text-muted-foreground">{formatDate(comment.created_at)}</time>
+				<li key={comment.$id} className="border-b border-[var(--rule)] py-5">
+					<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+						<h4 className="font-heading text-sm font-semibold tracking-[-0.02em]">
+							{comment.name}
+						</h4>
+						<time dateTime={comment.created_at} className="ed-meta">
+							{formatDate(comment.created_at)}
+						</time>
 					</div>
-					<p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+					<p className="mt-2.5 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
 						{comment.content}
 					</p>
-				</div>
+				</li>
 			))}
-		</div>
+		</ul>
 	);
 }

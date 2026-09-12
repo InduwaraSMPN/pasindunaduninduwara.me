@@ -1,9 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AdminEmpty, AdminPageHead } from "@/components/admin/admin-shell";
 import CopyUrlButton from "@/components/admin/copy-url-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { BUCKET_ID, createServerClient, getFileUrl } from "@/lib/appwrite";
+
+function formatSize(bytes: number) {
+	return bytes < 1024 ? `${bytes} B` : `${Math.round(bytes / 1024)} KB`;
+}
 
 export default async function StoragePage() {
 	const { storage } = createServerClient();
@@ -12,56 +16,67 @@ export default async function StoragePage() {
 
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-8">
-				<h1 className="text-3xl font-bold">Storage</h1>
-				<div className="flex gap-2">
+			<AdminPageHead
+				eyebrow="Admin — Assets"
+				title="Storage"
+				note={`${files.total} file${files.total === 1 ? "" : "s"}`}
+				action={
 					<Button asChild>
-						<Link href="/admin/storage/upload">Upload New Image</Link>
+						<Link href="/admin/storage/upload">Upload image</Link>
 					</Button>
-				</div>
-			</div>
+				}
+			/>
 
-			<div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-				{files.files && files.files.length > 0 ? (
-					files.files.map((file) => {
+			{files.files && files.files.length > 0 ? (
+				<ul className="grid grid-cols-1 gap-px border border-[var(--rule-strong)] bg-[var(--rule)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					{files.files.map((file) => {
 						const publicUrl = getFileUrl(file.$id);
 						const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
 
 						return (
-							<Card key={file.$id} className="overflow-hidden">
-								<div className="relative h-40">
+							<li key={file.$id} className="flex flex-col bg-background">
+								<div className="relative aspect-4/3 w-full overflow-hidden border-b border-[var(--rule)] bg-card">
 									{isImage ? (
-										<Image src={publicUrl} alt={file.name} fill className="object-cover" />
+										<Image
+											src={publicUrl}
+											alt={file.name}
+											fill
+											sizes="(max-width: 640px) 100vw, 280px"
+											className="object-cover"
+										/>
 									) : (
-										<div className="flex items-center justify-center h-full bg-muted">
-											<span className="text-sm text-muted-foreground uppercase">
-												{file.name.split(".").pop()}
-											</span>
+										<div className="grid h-full place-items-center">
+											<span className="ed-label">{file.name.split(".").pop()}</span>
 										</div>
 									)}
 								</div>
-								<CardContent className="p-3">
-									<p className="text-sm truncate" title={file.name}>
+
+								<div className="flex flex-1 flex-col justify-between gap-3 p-4">
+									<p className="truncate text-sm font-medium" title={file.name}>
 										{file.name}
 									</p>
-									<div className="flex justify-between items-center mt-2">
-										<span className="text-xs text-muted-foreground">
-											{file.sizeOriginal < 1024
-												? `${file.sizeOriginal} B`
-												: `${Math.round(file.sizeOriginal / 1024)} KB`}
+									<div className="flex items-center justify-between gap-3">
+										<span className="ed-meta" data-numeric>
+											{formatSize(file.sizeOriginal)}
 										</span>
 										<CopyUrlButton url={publicUrl} />
 									</div>
-								</CardContent>
-							</Card>
+								</div>
+							</li>
 						);
-					})
-				) : (
-					<div className="col-span-full text-center py-12 text-muted-foreground">
-						No images found. Upload some images to get started.
-					</div>
-				)}
-			</div>
+					})}
+				</ul>
+			) : (
+				<AdminEmpty
+					title="No files in the bucket"
+					body="Uploads here are served directly to the public site — project covers, post thumbnails and portraits."
+					action={
+						<Button asChild>
+							<Link href="/admin/storage/upload">Upload image</Link>
+						</Button>
+					}
+				/>
+			)}
 		</div>
 	);
 }

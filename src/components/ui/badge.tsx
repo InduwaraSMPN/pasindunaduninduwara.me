@@ -3,15 +3,21 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Badges are set as mono uppercase tags — square, hairline bordered, no fill.
+ * They read as printed labels rather than as chips.
+ */
 const badgeVariants = cva(
-	"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+	"inline-flex items-center border px-2 py-0.5 font-mono text-[0.625rem] font-medium uppercase leading-normal tracking-[0.12em] transition-colors duration-200 ease-out-quart focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--signal)]",
 	{
 		variants: {
 			variant: {
-				default: "border-accent-warm/30 bg-accent-warm/10 text-accent-warm hover:bg-accent-warm/20",
-				secondary: "border-border bg-secondary text-secondary-foreground hover:bg-secondary/80",
-				destructive: "border-transparent bg-destructive text-white hover:bg-destructive/80",
-				outline: "text-foreground border-border",
+				default:
+					"border-[var(--signal)] text-[var(--signal)] hover:bg-[var(--signal)] hover:text-[var(--accent-warm-foreground)]",
+				secondary:
+					"border-[var(--rule-strong)] text-muted-foreground hover:border-foreground hover:text-foreground",
+				destructive: "border-destructive bg-destructive text-white hover:opacity-85",
+				outline: "border-[var(--rule-strong)] text-foreground",
 			},
 		},
 		defaultVariants: {
@@ -21,11 +27,11 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps
-	extends React.HTMLAttributes<HTMLDivElement>,
+	extends React.HTMLAttributes<HTMLSpanElement>,
 		VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
-	return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+	return <span className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
 export { Badge, badgeVariants };

@@ -1,25 +1,52 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Outfit } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { DevelopmentBanner } from "@/components/development-banner";
 import QueryProvider from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 
-const bricolage = Bricolage_Grotesque({
-	variable: "--font-bricolage",
+/**
+ * Editorial Brutalism type system.
+ *
+ * - Archivo carries the display voice. It is a variable grotesque with a `wdth`
+ *   axis, which lets headlines compress (wdth 92) while body copy stays at 100.
+ * - Instrument Serif is used only for italic accents — a single emphasised word
+ *   inside a headline, a pull quote. Never for body copy.
+ * - IBM Plex Mono handles all metadata: section numbers, labels, dates, counts.
+ */
+const archivo = Archivo({
+	variable: "--font-archivo",
 	subsets: ["latin"],
-	weight: ["400", "500", "600", "700", "800"],
+	axes: ["wdth"],
+	display: "swap",
 });
 
-const outfit = Outfit({
-	variable: "--font-outfit",
+const instrumentSerif = Instrument_Serif({
+	variable: "--font-serif",
 	subsets: ["latin"],
-	weight: ["300", "400", "500", "600", "700"],
+	weight: "400",
+	style: ["normal", "italic"],
+	display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+	variable: "--font-mono",
+	subsets: ["latin"],
+	weight: ["400", "500", "600"],
+	display: "swap",
 });
 
 export const metadata: Metadata = {
-	title: "Pasindu Nadun Induwara - Digital Designer",
-	description: "Portfolio website showcasing digital design projects and blog posts",
+	title: "Pasindu Nadun Induwara — Software Engineer",
+	description:
+		"Software engineer and open source contributor building scalable full-stack applications with clean code and considered interfaces.",
+	metadataBase: new URL("https://pasindunaduninduwara.me"),
+	openGraph: {
+		title: "Pasindu Nadun Induwara — Software Engineer",
+		description:
+			"Software engineer and open source contributor building scalable full-stack applications.",
+		type: "website",
+	},
 };
 
 export default function RootLayout({
@@ -29,7 +56,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={`${bricolage.variable} ${outfit.variable} antialiased`}>
+			<body className={`${archivo.variable} ${instrumentSerif.variable} ${plexMono.variable}`}>
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"

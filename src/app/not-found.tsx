@@ -1,42 +1,51 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
 	return (
-		<div className="min-h-screen flex flex-col bg-background">
-			<SiteHeader />
+		<div className="flex min-h-screen flex-col bg-background">
+			<SiteHeader showAvatar={false} activePage="none" />
 
-			<main className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-				{/* Layered glow orbs */}
-				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent-warm/4 blur-[150px] -z-10" />
-				<div className="absolute top-1/3 left-1/3 w-[300px] h-[300px] rounded-full bg-accent-warm/6 blur-[100px] -z-10" />
+			<main className="ed-shell flex flex-1 flex-col justify-center py-20">
+				<div className="mb-6 flex items-center gap-4">
+					<span className="ed-eyebrow">Error</span>
+					<span aria-hidden="true" className="h-px flex-1 bg-[var(--rule-strong)]" />
+					<span className="ed-eyebrow">HTTP 404</span>
+				</div>
 
-				<div className="text-center">
-					<p className="text-accent-warm/20 font-heading font-bold text-[10rem] md:text-[14rem] leading-none tracking-tighter select-none">
-						404
-					</p>
-					<div className="-mt-8 md:-mt-12 relative z-10">
-						<h1 className="text-2xl md:text-3xl font-heading font-semibold mb-3 tracking-tight">
-							Page Not Found
-						</h1>
-						<div className="mx-auto w-10 h-0.5 bg-accent-warm/40 rounded-full mb-5" />
-						<p className="text-muted-foreground mb-8 max-w-sm mx-auto text-[0.938rem]">
-							The page you are looking for doesn&apos;t exist or has been moved.
+				<p className="ed-display text-[clamp(5.5rem,24vw,16rem)] leading-[0.82] tracking-[-0.06em]">
+					404
+				</p>
+
+				<div className="mt-12 grid gap-8 border-t border-[var(--rule-strong)] pt-8 md:grid-cols-2 md:gap-16">
+					<h1 className="ed-display-md">
+						Page not <span className="ed-accent">found.</span>
+					</h1>
+
+					<div>
+						<p className="max-w-[42ch] text-muted-foreground">
+							The page you are looking for does not exist or has been moved. The links below should
+							get you back on track.
 						</p>
-						<Button
-							asChild
-							className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading shadow-lg shadow-accent-warm/20 transition-all duration-300"
-						>
-							<Link href="/">
-								<ArrowLeft className="h-4 w-4 mr-2" />
-								Return Home
-							</Link>
-						</Button>
+						<div className="mt-7 flex flex-wrap gap-2.5">
+							<Button asChild>
+								<Link href="/">
+									<ArrowLeft className="size-4" />
+									Return home
+								</Link>
+							</Button>
+							<Button asChild variant="outline">
+								<Link href="/projects">Browse projects</Link>
+							</Button>
+						</div>
 					</div>
 				</div>
 			</main>
+
+			<SiteFooter />
 		</div>
 	);
 }

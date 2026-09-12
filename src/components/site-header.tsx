@@ -1,31 +1,34 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { Download, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface SiteHeaderProps {
+	/**
+	 * Controls the brand lockup. The home page shows the full lockup with the
+	 * role line; inner pages show a compact one so the nav stays quiet there.
+	 */
 	showAvatar?: boolean;
-	activePage?: "home" | "projects" | "blog" | "contact" | "cv";
+	/**
+	 * Which nav item to mark. `"none"` is for pages that belong to no section —
+	 * the 404 and the login screen — so nothing is falsely highlighted.
+	 */
+	activePage?: "home" | "projects" | "blog" | "contact" | "cv" | "none";
 }
 
 const navLinks = [
-	{
-		label: "About",
-		href: "/#about",
-		page: "home" as const,
-		sectionId: "about",
-	},
+	{ label: "About", href: "/#about", page: "home" as const, sectionId: "about", num: "01" },
 	{
 		label: "Projects",
 		href: "/projects",
 		homeHref: "#projects",
 		page: "projects" as const,
 		sectionId: "projects",
+		num: "02",
 	},
 	{
 		label: "Blog",
@@ -33,6 +36,7 @@ const navLinks = [
 		homeHref: "#blog",
 		page: "blog" as const,
 		sectionId: "blog",
+		num: "03",
 	},
 	{
 		label: "Contact",
@@ -40,10 +44,11 @@ const navLinks = [
 		homeHref: "#contact",
 		page: "contact" as const,
 		sectionId: "contact",
+		num: "04",
 	},
-	{ label: "CV", href: "/cv", page: "cv" as const, sectionId: null },
 ];
 
+/** Tracks which section is currently in view so the nav can mark it. */
 function useActiveSection(enabled: boolean) {
 	const [activeSection, setActiveSection] = useState<string | null>(null);
 
@@ -90,51 +95,67 @@ function useScrolled(threshold = 20) {
 	return scrolled;
 }
 
-export function SiteHeader({
-	showAvatar: _showAvatar = true,
-	activePage = "home",
-}: SiteHeaderProps) {
+export function SiteHeader({ showAvatar = true, activePage = "home" }: SiteHeaderProps) {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const isHome = activePage === "home";
 	const activeSection = useActiveSection(isHome);
 	const scrolled = useScrolled();
 
+	// A rule that fills as the page is read.
+	const { scrollYProgress } = useScroll();
+	const progress = useSpring(scrollYProgress, {
+		stiffness: 180,
+		damping: 32,
+		restDelta: 0.001,
+	});
+
+	useEffect(() => {
+		if (!mobileOpen) return;
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key === "Escape") setMobileOpen(false);
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, [mobileOpen]);
+
 	const getIsActive = (link: (typeof navLinks)[number]) => {
-		if (isHome && activeSection) {
-			return link.sectionId === activeSection;
-		}
+		if (isHome && activeSection) return link.sectionId === activeSection;
 		return activePage === link.page;
 	};
 
 	return (
 		<header
-			className={`sticky top-0 z-50 w-full transition-all duration-500 ${
+			className={cn(
+				"sticky top-0 z-50 w-full border-b transition-colors duration-300",
 				scrolled
-					? "bg-background/70 backdrop-blur-2xl backdrop-saturate-150 shadow-sm shadow-black/[0.03]"
-					: "bg-background/40 backdrop-blur-xl"
-			}`}
+					? "border-[var(--rule-strong)] bg-background/90 backdrop-blur-xl"
+					: "border-[var(--rule)] bg-background/70 backdrop-blur-md",
+			)}
 		>
-			<div className="container mx-auto px-4 py-3 flex justify-between items-center">
-				{/* Logo */}
-				<Link href="/" className="flex items-center gap-3 group">
-					<Avatar
-						className={`h-9 w-9 transition-all duration-500 ${
-							scrolled
-								? "ring-2 ring-accent-warm/30 group-hover:ring-accent-warm/60"
-								: "ring-2 ring-accent-warm/15 group-hover:ring-accent-warm/40"
-						}`}
+			<div className="ed-shell flex items-center justify-between gap-6 py-3">
+				{/* Brand — a square seal, not a rounded avatar. */}
+				<Link href="/" className="group flex items-center gap-3">
+					<span
+						className={cn(
+							"grid size-9 shrink-0 place-items-center border font-heading text-[0.8125rem] font-bold tracking-[-0.03em] transition-colors duration-300",
+							scrolled ? "border-foreground/70" : "border-foreground/40",
+							"group-hover:bg-foreground group-hover:text-background",
+						)}
 					>
-						<AvatarImage src="/logo.png" alt="Pasindu Induwara logo" />
-						<AvatarFallback className="bg-accent-warm text-accent-warm-foreground font-heading font-bold text-sm">
-							PI
-						</AvatarFallback>
-					</Avatar>
+						PI
+					</span>
+					<span className="leading-none">
+						<span className="block font-heading text-[0.9375rem] font-bold tracking-[-0.03em]">
+							Pasindu Nadun Induwara
+						</span>
+						{showAvatar ? <span className="ed-label mt-1.5 block">Software Engineer</span> : null}
+					</span>
 				</Link>
 
-				{/* Desktop Nav */}
-				<div className="hidden md:flex items-center gap-1">
-					<nav>
-						<ul className="flex gap-0.5">
+				{/* Desktop nav */}
+				<div className="hidden items-center gap-1 md:flex">
+					<nav aria-label="Primary">
+						<ul className="flex items-center">
 							{navLinks.map((link) => {
 								const href = isHome && link.homeHref ? link.homeHref : link.href;
 								const isActive = getIsActive(link);
@@ -142,117 +163,124 @@ export function SiteHeader({
 									<li key={link.label}>
 										<Link
 											href={href}
-											className={`relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+											aria-current={isActive ? "page" : undefined}
+											className={cn(
+												"relative block px-3 py-2 text-sm font-medium transition-colors duration-200",
 												isActive
-													? "text-accent-warm"
-													: "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.03]"
-											}`}
+													? "text-[var(--signal)]"
+													: "text-muted-foreground hover:text-foreground",
+											)}
 										>
 											{link.label}
-											{isActive && (
+											{isActive ? (
 												<motion.span
-													layoutId="nav-indicator"
+													layoutId="nav-rule"
 													initial={false}
-													className="absolute bottom-0 left-3 right-3 h-[2px] bg-accent-warm rounded-full"
-													transition={{
-														type: "spring",
-														stiffness: 500,
-														damping: 30,
-													}}
+													className="absolute inset-x-3 bottom-0 h-px bg-[var(--signal)]"
+													transition={{ type: "spring", stiffness: 480, damping: 34 }}
 												/>
-											)}
+											) : null}
 										</Link>
 									</li>
 								);
 							})}
 						</ul>
 					</nav>
-					<div className="ml-2 h-4 w-px bg-border/50" />
-					<Button
-						variant="ghost"
-						size="sm"
-						asChild
-						className="ml-1 text-muted-foreground hover:text-accent-warm hover:bg-accent-warm/8"
+
+					<span aria-hidden="true" className="mx-2 h-4 w-px bg-[var(--rule)]" />
+
+					<Link
+						href="/Pasindu_Induwara_CV.pdf"
+						download
+						className="ed-link inline-flex items-center gap-1.5 px-2 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
 					>
-						<Link href="/Pasindu_Induwara_CV.pdf" download>
-							<Download className="h-3.5 w-3.5 mr-1.5" />
-							CV
-						</Link>
-					</Button>
+						<Download className="size-3.5" />
+						CV
+					</Link>
+
 					<ThemeToggle />
 				</div>
 
-				{/* Mobile Toggle */}
-				<div className="flex md:hidden items-center gap-2">
+				{/* Mobile controls */}
+				<div className="flex items-center gap-1 md:hidden">
 					<ThemeToggle />
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => setMobileOpen(!mobileOpen)}
-						className="h-9 w-9"
+					<button
+						type="button"
+						onClick={() => setMobileOpen((v) => !v)}
+						aria-expanded={mobileOpen}
+						aria-controls="mobile-nav"
+						className="grid size-9 place-items-center border border-[var(--rule)] transition-colors duration-200 hover:bg-foreground hover:text-background"
 					>
-						{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+						{mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
 						<span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
-					</Button>
+					</button>
 				</div>
 			</div>
 
-			{/* Mobile Nav */}
+			{/* Reading progress — a rule that fills. */}
+			<motion.div
+				aria-hidden="true"
+				style={{ scaleX: progress }}
+				className="absolute inset-x-0 bottom-0 h-px origin-left bg-[var(--signal)]"
+			/>
+
+			{/* Mobile nav — editorial rows, each numbered. */}
 			<AnimatePresence>
-				{mobileOpen && (
+				{mobileOpen ? (
 					<motion.div
+						id="mobile-nav"
 						initial={{ height: 0, opacity: 0 }}
 						animate={{ height: "auto", opacity: 1 }}
 						exit={{ height: 0, opacity: 0 }}
-						transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-						className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-2xl"
+						transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+						className="overflow-hidden border-t border-[var(--rule)] bg-background md:hidden"
 					>
-						<nav className="container mx-auto px-4 py-4">
-							<ul className="flex flex-col gap-1">
+						<nav aria-label="Primary mobile" className="ed-shell py-3">
+							<ul>
 								{navLinks.map((link, i) => {
 									const href = isHome && link.homeHref ? link.homeHref : link.href;
 									const isActive = getIsActive(link);
 									return (
 										<motion.li
 											key={link.label}
-											initial={{ opacity: 0, x: -12 }}
-											animate={{ opacity: 1, x: 0 }}
-											transition={{ delay: i * 0.05, duration: 0.2 }}
+											initial={{ opacity: 0, y: -8 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{ delay: i * 0.05, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+											className="border-b border-[var(--rule)] last:border-b-0"
 										>
 											<Link
 												href={href}
 												onClick={() => setMobileOpen(false)}
-												className={`block px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 ${
-													isActive
-														? "text-accent-warm bg-accent-warm/8 border border-accent-warm/15"
-														: "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-												}`}
+												className={cn(
+													"flex items-baseline gap-3 py-3.5 text-base font-medium transition-colors duration-200",
+													isActive ? "text-[var(--signal)]" : "text-foreground",
+												)}
 											>
+												<span className="ed-label">{link.num}</span>
 												{link.label}
 											</Link>
 										</motion.li>
 									);
 								})}
 								<motion.li
-									className="mt-2 pt-2 border-t border-border/30"
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
-									transition={{ delay: 0.3 }}
+									transition={{ delay: 0.22 }}
 								>
 									<Link
 										href="/Pasindu_Induwara_CV.pdf"
 										download
 										onClick={() => setMobileOpen(false)}
-										className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-accent-warm rounded-xl transition-colors"
+										className="flex items-center gap-2 py-3.5 text-base font-medium text-muted-foreground"
 									>
-										<Download className="h-4 w-4" />
+										<Download className="size-4" />
 										Download CV
 									</Link>
 								</motion.li>
 							</ul>
 						</nav>
 					</motion.div>
-				)}
+				) : null}
 			</AnimatePresence>
 		</header>
 	);

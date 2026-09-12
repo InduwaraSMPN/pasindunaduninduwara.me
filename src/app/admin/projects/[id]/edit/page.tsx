@@ -1,16 +1,22 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
+import {
+	AdminBack,
+	AdminField,
+	AdminLoading,
+	AdminNote,
+	AdminPageHead,
+	AdminPanel,
+	StatusMark,
+} from "@/components/admin/admin-shell";
 import ImageUpload from "@/components/admin/image-upload";
-// Note: databases import kept for client-side reads (getDocument); writes go through API routes
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+// Note: databases import kept for client-side reads (getDocument); writes go through API routes
 import { COLLECTIONS, DATABASE_ID, databases } from "@/lib/appwrite";
 
 export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
@@ -45,10 +51,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 					setImageUrl(project.image || "");
 				}
 			} catch (err) {
-				console.error("Error fetching project:", err);
-				setError(
-					err instanceof Error ? err.message : "An error occurred while fetching the project",
-				);
+				setError(err instanceof Error ? err.message : "Could not load the project");
 			} finally {
 				setIsLoading(false);
 			}
@@ -73,13 +76,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 		setError(null);
 
 		try {
-			// Process tags into an array
 			const tagsArray = formData.tags
 				.split(",")
 				.map((tag) => tag.trim())
-				.filter((tag) => tag.length > 0);
+				.filter(Boolean);
 
-			// Update the project via API route
 			const res = await fetch(`/api/projects/${id}/update`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -92,14 +93,12 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 				}),
 			});
 			const data = await res.json();
-			if (!res.ok) throw new Error(data.error);
+			if (!res.ok) throw new Error(data.error || "Could not save the project");
 
-			// Redirect to the projects page
 			router.push("/admin/projects");
 			router.refresh();
 		} catch (err) {
-			console.error("Error updating project:", err);
-			setError(err instanceof Error ? err.message : "An error occurred while updating the project");
+			setError(err instanceof Error ? err.message : "Could not save the project");
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -107,51 +106,41 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center items-center h-64">
-				<Loader2 className="h-8 w-8 animate-spin" />
+			<div>
+				<AdminBack href="/admin/projects">Back to projects</AdminBack>
+				<AdminLoading label="Loading project" />
 			</div>
 		);
 	}
 
 	return (
 		<div>
-			<div className="flex items-center mb-8">
-				<Link
-					href="/admin/projects"
-					className="text-primary hover:underline flex items-center gap-2 mr-4"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="2"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						className="lucide lucide-arrow-left"
-					>
-						<path d="m12 19-7-7 7-7" />
-						<path d="M19 12H5" />
-					</svg>
-					Back
-				</Link>
-				<h1 className="text-3xl font-bold">Edit Project</h1>
-			</div>
+			<AdminBack href="/admin/projects">Back to projects</AdminBack>
 
-			{error && (
-				<div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">{error}</div>
-			)}
+			<AdminPageHead
+				eyebrow="Admin — Edit record"
+				title="Edit project"
+				note={`ID ${id}`}
+				action={
+					<>
+						<Button variant="outline" asChild>
+							<Link href={`/projects/${id}`} target="_blank">
+								View live
+							</Link>
+						</Button>
+						<Button variant="outline" asChild>
+							<Link href="/admin/projects">Cancel</Link>
+						</Button>
+					</>
+				}
+			/>
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Project Details</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<form onSubmit={handleSubmit} className="space-y-6">
-						<div className="space-y-2">
-							<Label htmlFor="title">Title</Label>
+			{error ? <AdminNote>{error}</AdminNote> : null}
+
+			<form onSubmit={handleSubmit} className="max-w-3xl">
+				<AdminPanel title="Project details" note="Changes go live on save">
+					<div className="flex flex-col gap-7">
+						<AdminField label="Title" htmlFor="title">
 							<Input
 								id="title"
 								name="title"
@@ -159,10 +148,13 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 								onChange={handleChange}
 								required
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<Label htmlFor="description">Short Description</Label>
+						<AdminField
+							label="Short description"
+							htmlFor="description"
+							hint="One or two sentences. Used on the index row."
+						>
 							<Textarea
 								id="description"
 								name="description"
@@ -171,10 +163,13 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 								required
 								rows={3}
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<Label htmlFor="full_description">Full Description</Label>
+						<AdminField
+							label="Full description"
+							htmlFor="full_description"
+							hint="Markdown is rendered on the project page."
+						>
 							<Textarea
 								id="full_description"
 								name="full_description"
@@ -182,10 +177,13 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 								onChange={handleChange}
 								rows={8}
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<Label htmlFor="tags">Tags (comma separated)</Label>
+						<AdminField
+							label="Tags"
+							htmlFor="tags"
+							hint="Comma separated. Shown as chips on the index."
+						>
 							<Input
 								id="tags"
 								name="tags"
@@ -193,24 +191,32 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 								onChange={handleChange}
 								placeholder="react, typescript, web development"
 							/>
-						</div>
+						</AdminField>
 
-						<div className="space-y-2">
-							<Label>Project Image</Label>
+						<AdminField
+							label="Cover image"
+							action={
+								formData.image ? (
+									<StatusMark tone="ink">Attached</StatusMark>
+								) : (
+									<StatusMark>None</StatusMark>
+								)
+							}
+						>
 							<ImageUpload onUploadComplete={handleImageUpload} defaultImageUrl={imageUrl} />
-						</div>
+						</AdminField>
+					</div>
+				</AdminPanel>
 
-						<div className="flex gap-4 pt-4">
-							<Button type="submit" disabled={isSubmitting}>
-								{isSubmitting ? "Saving..." : "Save Changes"}
-							</Button>
-							<Button type="button" variant="outline" asChild>
-								<Link href="/admin/projects">Cancel</Link>
-							</Button>
-						</div>
-					</form>
-				</CardContent>
-			</Card>
+				<div className="mt-8 flex flex-wrap gap-2.5">
+					<Button type="submit" disabled={isSubmitting}>
+						{isSubmitting ? "Saving…" : "Save changes"}
+					</Button>
+					<Button type="button" variant="outline" asChild>
+						<Link href="/admin/projects">Cancel</Link>
+					</Button>
+				</div>
+			</form>
 		</div>
 	);
 }

@@ -8,6 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+/**
+ * The form is set as a printed questionnaire: mono labels, fields that are
+ * rules rather than boxes, and a single primary action.
+ */
 export default function ContactForm() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
@@ -44,104 +48,85 @@ export default function ContactForm() {
 	};
 
 	return (
-		<div className="space-y-5">
-			{error && (
-				<Alert variant="destructive" className="border-destructive/20 bg-destructive/5 rounded-xl">
+		<div className="flex flex-col gap-6">
+			{error ? (
+				<Alert variant="destructive">
 					<AlertDescription>{error}</AlertDescription>
 				</Alert>
-			)}
+			) : null}
 
-			{success && (
-				<Alert className="border-accent-warm/20 bg-accent-warm/5 rounded-xl">
-					<CheckCircle2 className="h-4 w-4 text-accent-warm" />
-					<AlertDescription className="text-accent-warm">{success}</AlertDescription>
+			{success ? (
+				<Alert className="border-[var(--signal)]/50 bg-[var(--signal)]/[0.06]">
+					<CheckCircle2 className="size-4" />
+					<AlertDescription>{success}</AlertDescription>
 				</Alert>
-			)}
+			) : null}
 
-			<form onSubmit={handleSubmit} className="space-y-5">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div className="space-y-2">
-						<Label
-							htmlFor="name"
-							className="text-xs font-medium tracking-wide uppercase text-muted-foreground"
-						>
-							Name
-						</Label>
+			<form onSubmit={handleSubmit} className="flex flex-col gap-7">
+				<div className="grid gap-7 sm:grid-cols-2">
+					<div className="flex flex-col gap-2.5">
+						<Label htmlFor="name">Name</Label>
 						<Input
 							id="name"
+							name="name"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Your name"
+							autoComplete="name"
 							required
 						/>
 					</div>
 
-					<div className="space-y-2">
-						<Label
-							htmlFor="email"
-							className="text-xs font-medium tracking-wide uppercase text-muted-foreground"
-						>
-							Email
-						</Label>
+					<div className="flex flex-col gap-2.5">
+						<Label htmlFor="email">Email</Label>
 						<Input
 							id="email"
+							name="email"
 							type="email"
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							placeholder="you@example.com"
+							autoComplete="email"
 							required
 						/>
 					</div>
 				</div>
 
-				<div className="space-y-2">
-					<Label
-						htmlFor="subject"
-						className="text-xs font-medium tracking-wide uppercase text-muted-foreground"
-					>
-						Subject
-					</Label>
+				<div className="flex flex-col gap-2.5">
+					<Label htmlFor="subject">Subject</Label>
 					<Input
 						id="subject"
+						name="subject"
 						value={subject}
 						onChange={(e) => setSubject(e.target.value)}
-						placeholder="What's this about?"
+						placeholder="What is this about?"
 						required
 					/>
 				</div>
 
-				<div className="space-y-2">
-					<Label
-						htmlFor="message"
-						className="text-xs font-medium tracking-wide uppercase text-muted-foreground"
-					>
-						Message
-					</Label>
+				<div className="flex flex-col gap-2.5">
+					<Label htmlFor="message">Message</Label>
 					<Textarea
 						id="message"
+						name="message"
 						value={message}
 						onChange={(e) => setMessage(e.target.value)}
-						placeholder="Tell me about your project or idea..."
+						placeholder="Tell me about your project or idea…"
 						rows={5}
 						required
-						className="resize-none"
 					/>
 				</div>
 
-				<Button
-					type="submit"
-					disabled={loading}
-					className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading font-semibold w-full sm:w-auto shadow-lg shadow-accent-warm/15 hover:shadow-accent-warm/25 transition-all duration-300"
-				>
+				<Button type="submit" size="lg" disabled={loading} className="self-start">
 					{loading ? (
 						<>
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-							Sending...
+							<Loader2 className="size-4 animate-spin" />
+							Sending
 						</>
 					) : (
 						<>
-							<Send className="mr-2 h-4 w-4" />
-							Send Message
+							<Send className="size-4" />
+							Send message
 						</>
 					)}
 				</Button>

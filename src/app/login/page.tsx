@@ -14,13 +14,18 @@ export default async function LoginPage() {
 
 	return (
 		<div className="min-h-screen bg-background">
-			<SiteHeader showAvatar={false} />
+			<SiteHeader showAvatar={false} activePage="none" />
 
-			<main className="py-20 px-4">
-				<div className="container mx-auto max-w-5xl">
-					<h1 className="text-4xl font-bold mb-8 text-center">Admin Login</h1>
-					<LoginForm />
+			<main className="ed-shell py-16 md:py-24">
+				<div className="mb-6 flex items-center gap-4">
+					<span className="ed-eyebrow">Restricted</span>
+					<span aria-hidden="true" className="h-px flex-1 bg-[var(--rule-strong)]" />
+					<span className="ed-eyebrow">Admin</span>
 				</div>
+
+				<h1 className="ed-display-md mb-12">Sign in</h1>
+
+				<LoginForm />
 			</main>
 
 			<SiteFooter activePage="contact" />

@@ -8,6 +8,11 @@ interface MarkdownPreviewComponentProps {
 	className?: string;
 }
 
+/**
+ * Article body. The library renders raw HTML, so the few elements that need
+ * editorial treatment — code, blockquotes — are styled inline against the
+ * project's own tokens rather than a hard-coded palette.
+ */
 export default function MarkdownPreviewComponent({
 	content,
 	className = "",
@@ -16,12 +21,14 @@ export default function MarkdownPreviewComponent({
 	const colorMode = resolvedTheme === "dark" ? "dark" : "light";
 
 	return (
-		<div className={`markdown-preview ${className}`}>
+		<div className={`ed-prose ${className}`}>
 			<MarkdownPreview
 				source={content.replace(/\\n/g, "\n")}
 				style={{
 					backgroundColor: "transparent",
 					color: "inherit",
+					fontFamily: "inherit",
+					fontSize: "inherit",
 				}}
 				wrapperElement={{
 					"data-color-mode": colorMode,
@@ -31,7 +38,8 @@ export default function MarkdownPreviewComponent({
 					if (node.type === "element" && node.tagName === "pre") {
 						node.properties = {
 							...node.properties,
-							style: "background-color: hsl(var(--muted)); border-radius: 0.375rem; padding: 1rem;",
+							style:
+								"background-color: var(--muted); border: 1px solid var(--rule); padding: 1rem 1.125rem; margin: 1.5rem 0; overflow-x: auto; font-size: 0.8125rem; line-height: 1.7;",
 						};
 					}
 					if (
@@ -43,14 +51,14 @@ export default function MarkdownPreviewComponent({
 						node.properties = {
 							...node.properties,
 							style:
-								"background-color: hsl(var(--muted)); padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875em;",
+								"background-color: var(--muted); padding: 0.15rem 0.35rem; font-size: 0.85em; color: var(--foreground);",
 						};
 					}
 					if (node.type === "element" && node.tagName === "blockquote") {
 						node.properties = {
 							...node.properties,
 							style:
-								"border-left: 4px solid hsl(var(--primary)); padding-left: 1rem; margin: 1rem 0; font-style: italic;",
+								"border-left: 2px solid var(--signal); padding-left: 1.375rem; margin: 1.75rem 0; font-family: var(--font-serif), Georgia, serif; font-style: italic; font-size: 1.125em; line-height: 1.55; color: var(--foreground);",
 						};
 					}
 				}}

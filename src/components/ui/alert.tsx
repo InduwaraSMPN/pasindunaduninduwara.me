@@ -3,14 +3,19 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Alerts are bordered notes, not toast-like bubbles. The destructive variant
+ * carries the signal colour as an outline so it reads at a glance without
+ * shouting.
+ */
 const alertVariants = cva(
-	"relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
+	"relative w-full border p-4 text-sm [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4",
 	{
 		variants: {
 			variant: {
-				default: "bg-background text-foreground",
+				default: "border-[var(--rule-strong)] bg-card text-foreground [&>svg]:text-foreground",
 				destructive:
-					"border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+					"border-destructive/60 bg-destructive/[0.06] text-destructive [&>svg]:text-destructive",
 			},
 		},
 		defaultVariants: {
@@ -31,7 +36,7 @@ const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<H
 	({ className, ...props }, ref) => (
 		<h5
 			ref={ref}
-			className={cn("mb-1 font-medium leading-none tracking-tight", className)}
+			className={cn("mb-1 font-heading font-semibold leading-none tracking-[-0.02em]", className)}
 			{...props}
 		/>
 	),

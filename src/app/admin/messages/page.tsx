@@ -1,6 +1,17 @@
 import { Query } from "node-appwrite";
+
+import { AdminPageHead } from "@/components/admin/admin-shell";
+import { Button } from "@/components/ui/button";
 import { COLLECTIONS, createServerClient, DATABASE_ID } from "@/lib/appwrite";
 import { formatDate } from "@/lib/utils";
+
+function EmptyRow({ children }: { children: React.ReactNode }) {
+	return <p className="ed-meta border-b border-[var(--rule)] py-6">{children}</p>;
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+	return <h2 className="ed-label mb-1 border-b border-[var(--rule-strong)] pb-3">{children}</h2>;
+}
 
 export default async function MessagesPage() {
 	const { databases } = createServerClient();
@@ -11,100 +22,99 @@ export default async function MessagesPage() {
 	]);
 	const messages = result.documents;
 
-	// Group messages by read status
 	const unreadMessages = messages.filter((message) => !message.read);
 	const readMessages = messages.filter((message) => message.read);
 
 	return (
 		<div>
-			<h1 className="text-3xl font-bold mb-8">Messages</h1>
+			<AdminPageHead
+				eyebrow="Admin — Inbox"
+				title="Messages"
+				note={`${unreadMessages.length} unread · ${readMessages.length} read`}
+			/>
 
-			<div className="space-y-8">
-				<div>
-					<h2 className="text-xl font-semibold mb-4">Unread Messages ({unreadMessages.length})</h2>
+			<section>
+				<SectionLabel>Unread ({unreadMessages.length})</SectionLabel>
 
-					{unreadMessages.length === 0 ? (
-						<p className="text-muted-foreground">No unread messages.</p>
-					) : (
-						<div className="border rounded-md divide-y">
-							{unreadMessages.map((message) => (
-								<div key={message.$id} className="p-4">
-									<div className="flex justify-between items-start mb-2">
-										<div>
-											<span className="font-medium">{message.name}</span>
-											<span className="text-muted-foreground ml-2">{message.email}</span>
-										</div>
-										<time className="text-sm text-muted-foreground">
-											{formatDate(message.$createdAt)}
-										</time>
-									</div>
-
-									<h3 className="text-lg font-medium mb-2">{message.subject}</h3>
-									<p className="mb-4 whitespace-pre-line">{message.message}</p>
-
-									<div className="flex justify-end gap-2">
-										<form action={`/api/messages/${message.$id}/mark-read`} method="post">
-											<button
-												type="submit"
-												className="px-3 py-1 bg-primary text-primary-foreground text-sm rounded-md hover:bg-primary/90"
-											>
-												Mark as Read
-											</button>
-										</form>
-
-										<form action={`/api/messages/${message.$id}/delete`} method="post">
-											<button
-												type="submit"
-												className="px-3 py-1 bg-destructive text-destructive-foreground text-sm rounded-md hover:bg-destructive/90"
-											>
-												Delete
-											</button>
-										</form>
-									</div>
+				{unreadMessages.length === 0 ? (
+					<EmptyRow>Inbox clear — nothing unread.</EmptyRow>
+				) : (
+					<ul>
+						{unreadMessages.map((message) => (
+							<li key={message.$id} className="border-b border-[var(--rule)] py-6">
+								<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5">
+									<p className="flex items-baseline gap-3 font-heading text-base font-semibold tracking-[-0.022em]">
+										<span
+											aria-hidden="true"
+											className="size-2 shrink-0 translate-y-[-0.15em] bg-[var(--signal)]"
+										/>
+										{message.name}
+										<span className="ed-meta font-normal">{message.email}</span>
+									</p>
+									<time className="ed-meta">{formatDate(message.$createdAt)}</time>
 								</div>
-							))}
-						</div>
-					)}
-				</div>
 
-				<div>
-					<h2 className="text-xl font-semibold mb-4">Read Messages ({readMessages.length})</h2>
+								<h3 className="mt-3 font-heading text-lg font-semibold tracking-[-0.024em]">
+									{message.subject}
+								</h3>
+								<p className="mt-2.5 max-w-[70ch] whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+									{message.message}
+								</p>
 
-					{readMessages.length === 0 ? (
-						<p className="text-muted-foreground">No read messages.</p>
-					) : (
-						<div className="border rounded-md divide-y">
-							{readMessages.map((message) => (
-								<div key={message.$id} className="p-4">
-									<div className="flex justify-between items-start mb-2">
-										<div>
-											<span className="font-medium">{message.name}</span>
-											<span className="text-muted-foreground ml-2">{message.email}</span>
-										</div>
-										<time className="text-sm text-muted-foreground">
-											{formatDate(message.$createdAt)}
-										</time>
-									</div>
-
-									<h3 className="text-lg font-medium mb-2">{message.subject}</h3>
-									<p className="mb-4 whitespace-pre-line">{message.message}</p>
-
-									<div className="flex justify-end">
-										<form action={`/api/messages/${message.$id}/delete`} method="post">
-											<button
-												type="submit"
-												className="px-3 py-1 bg-destructive text-destructive-foreground text-sm rounded-md hover:bg-destructive/90"
-											>
-												Delete
-											</button>
-										</form>
-									</div>
+								<div className="mt-4 flex flex-wrap justify-end gap-2.5">
+									<form action={`/api/messages/${message.$id}/mark-read`} method="post">
+										<Button type="submit" variant="outline" size="sm">
+											Mark as read
+										</Button>
+									</form>
+									<form action={`/api/messages/${message.$id}/delete`} method="post">
+										<Button type="submit" variant="destructive" size="sm">
+											Delete
+										</Button>
+									</form>
 								</div>
-							))}
-						</div>
-					)}
-				</div>
-			</div>
+							</li>
+						))}
+					</ul>
+				)}
+			</section>
+
+			<section className="mt-14">
+				<SectionLabel>Read ({readMessages.length})</SectionLabel>
+
+				{readMessages.length === 0 ? (
+					<EmptyRow>No read messages.</EmptyRow>
+				) : (
+					<ul>
+						{readMessages.map((message) => (
+							<li key={message.$id} className="border-b border-[var(--rule)] py-6">
+								<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5">
+									<p className="flex flex-wrap items-baseline gap-3 font-heading text-base font-semibold tracking-[-0.022em]">
+										{message.name}
+										<span className="ed-meta font-normal">{message.email}</span>
+									</p>
+									<time className="ed-meta">{formatDate(message.$createdAt)}</time>
+								</div>
+
+								<h3 className="mt-3 font-heading text-lg font-semibold tracking-[-0.024em]">
+									{message.subject}
+								</h3>
+								<p className="mt-2.5 max-w-[70ch] whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+									{message.message}
+								</p>
+
+								<div className="mt-4 flex justify-end">
+									<form action={`/api/messages/${message.$id}/delete`} method="post">
+										<Button type="submit" variant="destructive" size="sm">
+											Delete
+										</Button>
+									</form>
+								</div>
+							</li>
+						))}
+					</ul>
+				)}
+			</section>
 		</div>
 	);
 }

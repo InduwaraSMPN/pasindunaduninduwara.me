@@ -51,81 +51,75 @@ export default function CommentForm({ postId, onCommentSubmitted }: CommentFormP
 	};
 
 	return (
-		<div className="space-y-4">
-			<h3 className="text-lg font-heading font-semibold">Leave a Comment</h3>
+		<div className="flex flex-col gap-6 border-t border-[var(--rule-strong)] pt-8">
+			<h3 className="ed-label">Leave a comment</h3>
 
-			{error && (
-				<Alert variant="destructive" className="border-destructive/30 bg-destructive/5">
+			{error ? (
+				<Alert variant="destructive">
 					<AlertDescription>{error}</AlertDescription>
 				</Alert>
-			)}
+			) : null}
 
-			{success && (
-				<Alert className="border-accent-warm/30 bg-accent-warm/5">
-					<CheckCircle2 className="h-4 w-4 text-accent-warm" />
-					<AlertDescription className="text-accent-warm">{success}</AlertDescription>
+			{success ? (
+				<Alert className="border-[var(--signal)]/50 bg-[var(--signal)]/[0.06]">
+					<CheckCircle2 className="size-4" />
+					<AlertDescription>{success}</AlertDescription>
 				</Alert>
-			)}
+			) : null}
 
-			<form onSubmit={handleSubmit} className="space-y-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div className="space-y-2">
-						<Label htmlFor="comment-name" className="text-sm font-medium">
-							Name
-						</Label>
+			<form onSubmit={handleSubmit} className="flex flex-col gap-7">
+				<div className="grid gap-7 sm:grid-cols-2">
+					<div className="flex flex-col gap-2.5">
+						<Label htmlFor="comment-name">Name</Label>
 						<Input
 							id="comment-name"
+							name="name"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Your name"
+							autoComplete="name"
 							required
 						/>
 					</div>
 
-					<div className="space-y-2">
-						<Label htmlFor="comment-email" className="text-sm font-medium">
-							Email
-						</Label>
+					<div className="flex flex-col gap-2.5">
+						<Label htmlFor="comment-email">Email</Label>
 						<Input
 							id="comment-email"
+							name="email"
 							type="email"
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							placeholder="you@example.com"
+							autoComplete="email"
 							required
 						/>
 					</div>
 				</div>
 
-				<div className="space-y-2">
-					<Label htmlFor="comment-content" className="text-sm font-medium">
-						Comment
-					</Label>
+				<div className="flex flex-col gap-2.5">
+					<Label htmlFor="comment-content">Comment</Label>
 					<Textarea
 						id="comment-content"
+						name="content"
 						value={content}
 						onChange={(e) => setContent(e.target.value)}
-						placeholder="Share your thoughts..."
+						placeholder="Share your thoughts…"
 						rows={4}
 						required
-						className="resize-none"
 					/>
 				</div>
 
-				<Button
-					type="submit"
-					disabled={loading}
-					className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 font-heading font-semibold"
-				>
+				<Button type="submit" disabled={loading} className="self-start">
 					{loading ? (
 						<>
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-							Submitting...
+							<Loader2 className="size-4 animate-spin" />
+							Submitting
 						</>
 					) : (
 						<>
-							<Send className="mr-2 h-4 w-4" />
-							Submit Comment
+							<Send className="size-4" />
+							Submit comment
 						</>
 					)}
 				</Button>

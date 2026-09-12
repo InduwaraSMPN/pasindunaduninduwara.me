@@ -2,39 +2,38 @@
 
 import { X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
+/**
+ * A development notice, printed rather than animated. The only motion is a
+ * blinking block — the same signal used elsewhere for "live" state.
+ */
 export function DevelopmentBanner() {
 	const [isVisible, setIsVisible] = useState(true);
 
 	if (!isVisible) return null;
 
 	return (
-		<div className="bg-accent-warm text-accent-warm-foreground px-4 py-2 relative overflow-hidden">
-			{/* Subtle shimmer overlay */}
-			<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent animate-shimmer bg-[length:200%_100%]" />
-			<div className="container mx-auto flex items-center justify-center text-center relative">
-				<div className="flex items-center gap-2.5">
-					<span className="relative flex h-2 w-2">
-						<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-warm-foreground opacity-50" />
-						<span className="relative inline-flex rounded-full h-2 w-2 bg-accent-warm-foreground" />
-					</span>
-					<span className="font-heading font-medium text-xs tracking-wide">
-						This website is under development
-					</span>
-					<span className="hidden md:inline text-xs opacity-60 font-light">
-						— Some features may not work as expected
-					</span>
-				</div>
-				<Button
-					variant="ghost"
-					size="sm"
+		<div className="bg-[var(--signal)] text-[var(--accent-warm-foreground)]">
+			<div className="ed-shell relative flex items-center justify-center gap-3 py-2.5">
+				<span
+					aria-hidden="true"
+					className="size-1.5 shrink-0 animate-ed-blink bg-[var(--accent-warm-foreground)]"
+				/>
+				<p className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.16em]">
+					This site is under development
+				</p>
+				<span className="hidden font-mono text-[0.625rem] uppercase tracking-[0.16em] opacity-70 md:inline">
+					— Some features may be incomplete
+				</span>
+
+				<button
+					type="button"
 					onClick={() => setIsVisible(false)}
-					className="absolute right-1 top-1/2 -translate-y-1/2 text-accent-warm-foreground/80 hover:text-accent-warm-foreground hover:bg-accent-warm-foreground/15 h-6 w-6 p-0 rounded-full"
-					aria-label="Dismiss banner"
+					aria-label="Dismiss development notice"
+					className="absolute right-0 top-1/2 grid size-6 -translate-y-1/2 place-items-center opacity-70 transition-opacity duration-200 hover:opacity-100"
 				>
-					<X className="h-3.5 w-3.5" />
-				</Button>
+					<X className="size-3.5" />
+				</button>
 			</div>
 		</div>
 	);

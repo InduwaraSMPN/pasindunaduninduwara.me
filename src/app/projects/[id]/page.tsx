@@ -1,4 +1,5 @@
-import { ArrowLeft, Calendar, RefreshCw } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -6,24 +7,51 @@ import MarkdownPreviewComponent from "@/components/blog/markdown-preview";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
+import { MaskedLines, Rule } from "@/components/ui/scroll-reveal";
 import { COLLECTIONS, createServerClient, DATABASE_ID } from "@/lib/appwrite";
 import type { Project } from "@/types/appwrite";
 
-export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
-	const { id } = await params;
+function formatDate(value: string): string {
+	return new Date(value).toLocaleDateString("en-GB", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
 
-	const { databases } = createServerClient();
-
-	let project: Project | undefined;
+async function getProject(id: string): Promise<Project | undefined> {
 	try {
-		project = (await databases.getDocument(
+		const { databases } = createServerClient();
+		return (await databases.getDocument(
 			DATABASE_ID,
 			COLLECTIONS.PROJECTS,
 			id,
 		)) as unknown as Project;
 	} catch (error) {
 		console.error("Error fetching project:", error);
+		return undefined;
 	}
+}
+
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+	const { id } = await params;
+	const project = await getProject(id);
+
+	if (!project) return { title: "Project not found" };
+
+	return {
+		title: `${project.title} — Pasindu Nadun Induwara`,
+		description: project.description,
+	};
+}
+
+export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+	const { id } = await params;
+	const project = await getProject(id);
 
 	if (!project) {
 		notFound();
@@ -33,71 +61,87 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 		<div className="min-h-screen bg-background">
 			<SiteHeader showAvatar={false} activePage="projects" />
 
-			<main className="py-12 md:py-16 px-4">
-				<div className="container mx-auto max-w-4xl">
-					<div className="mb-8">
-						<Link
-							href="/projects"
-							className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent-warm transition-colors font-medium"
-						>
-							<ArrowLeft className="h-4 w-4" />
-							Back to Projects
-						</Link>
+			<main>
+				<header className="ed-shell pt-8 md:pt-12">
+					<Link
+						href="/projects"
+						className="ed-meta ed-link inline-flex items-center gap-2 transition-colors duration-200 hover:text-foreground"
+					>
+						<ArrowLeft className="size-3.5" />
+						Back to projects
+					</Link>
+
+					<div className="mt-8 mb-6 flex items-center gap-4">
+						<span className="ed-eyebrow">Project</span>
+						<span aria-hidden="true" className="h-px flex-1 bg-[var(--rule-strong)]" />
+						<span className="ed-eyebrow">{formatDate(project.$createdAt)}</span>
 					</div>
 
-					<div className="relative w-full aspect-[16/9] mb-10 rounded-2xl overflow-hidden ring-1 ring-border">
-						<Image src={project.image} alt={project.title} fill className="object-cover" priority />
-					</div>
-
-					<h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold mb-4 tracking-tight">
-						{project.title}
+					<h1 className="ed-display">
+						<MaskedLines lines={[project.title]} />
 					</h1>
 
-					<div className="flex flex-wrap gap-2 mb-6">
-						{project.tags.map((tag: string, index: number) => (
-							<Badge key={index} variant="default">
-								{tag}
-							</Badge>
-						))}
-					</div>
-
-					<div className="flex flex-wrap gap-6 mb-12 text-sm text-muted-foreground">
-						<div className="flex items-center gap-2">
-							<Calendar className="h-4 w-4 text-accent-warm" />
-							<span>
-								Created{" "}
-								{new Date(project.$createdAt).toLocaleDateString("en-US", {
-									year: "numeric",
-									month: "long",
-									day: "numeric",
-								})}
-							</span>
+					{project.tags.length > 0 ? (
+						<div className="mt-8 flex flex-wrap gap-1.5">
+							{project.tags.map((tag) => (
+								<Badge key={tag} variant="secondary">
+									{tag}
+								</Badge>
+							))}
 						</div>
-						<div className="flex items-center gap-2">
-							<RefreshCw className="h-4 w-4 text-accent-warm" />
-							<span>
-								Updated{" "}
-								{new Date(project.$updatedAt).toLocaleDateString("en-US", {
-									year: "numeric",
-									month: "long",
-									day: "numeric",
-								})}
-							</span>
-						</div>
-					</div>
+					) : null}
 
-					<article className="prose prose-lg max-w-none mb-12 prose-headings:font-heading prose-headings:tracking-tight">
-						<MarkdownPreviewComponent
-							content={project.full_description || project.description}
-							className="prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-blockquote:border-l-accent-warm"
-						/>
-					</article>
+					<div className="mt-8 flex flex-wrap gap-x-8 gap-y-2 border-t border-[var(--rule-strong)] pt-5">
+						<span className="ed-meta">Created {formatDate(project.$createdAt)}</span>
+						<span className="ed-meta">Updated {formatDate(project.$updatedAt)}</span>
+					</div>
+				</header>
+
+				{project.image ? (
+					<div className="ed-shell mt-12">
+						<figure className="ed-figure group">
+							<div className="relative aspect-[16/9] overflow-hidden border border-[var(--rule)]">
+								<Image
+									src={project.image}
+									alt={project.title}
+									fill
+									sizes="(max-width: 1240px) 100vw, 1240px"
+									className="object-cover grayscale transition-[filter] duration-700 ease-out-expo group-hover:grayscale-0"
+									priority
+								/>
+							</div>
+							<figcaption className="mt-3.5 flex items-baseline justify-between gap-3">
+								<span className="ed-label">Fig. 01 — {project.title}</span>
+								<span className="ed-label">Cover</span>
+							</figcaption>
+						</figure>
+					</div>
+				) : null}
+
+				<div className="ed-shell mt-12">
+					<Rule />
+				</div>
+
+				<section className="ed-shell py-12 md:py-16">
+					<div className="max-w-[68ch]">
+						<MarkdownPreviewComponent content={project.full_description || project.description} />
+					</div>
+				</section>
+
+				<div className="ed-shell pb-16">
+					<div className="border-t border-[var(--rule-strong)] pt-8">
+						<Link
+							href="/projects"
+							className="ed-meta ed-link inline-flex items-center gap-2 transition-colors duration-200 hover:text-foreground"
+						>
+							<ArrowLeft className="size-3.5" />
+							Back to all projects
+						</Link>
+					</div>
 				</div>
 			</main>
 
-			<div className="mt-12">
-				<SiteFooter activePage="projects" />
-			</div>
+			<SiteFooter activePage="projects" />
 		</div>
 	);
 }

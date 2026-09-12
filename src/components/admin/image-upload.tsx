@@ -1,12 +1,11 @@
 "use client";
 
-import { AlertCircle, Loader2, Upload, X } from "lucide-react";
+import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+
+import { AdminField, AdminNote } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 interface ImageUploadProps {
 	onUploadComplete: (url: string) => void;
@@ -23,7 +22,7 @@ export default function ImageUpload({ onUploadComplete, defaultImageUrl }: Image
 	const processFile = useCallback(
 		async (file: File) => {
 			if (!file.type.startsWith("image/")) {
-				setError("Please upload an image file (JPEG, PNG, etc.)");
+				setError("That file is not an image. Use JPEG, PNG, GIF or WebP.");
 				return;
 			}
 
@@ -31,33 +30,20 @@ export default function ImageUpload({ onUploadComplete, defaultImageUrl }: Image
 			setUploading(true);
 
 			try {
-				// Create a preview
-				const objectUrl = URL.createObjectURL(file);
-				setPreview(objectUrl);
+				setPreview(URL.createObjectURL(file));
 
-				// Use the server-side API route to handle the upload
 				const formData = new FormData();
 				formData.append("file", file);
 
-				const response = await fetch("/api/upload", {
-					method: "POST",
-					body: formData,
-				});
-
+				const response = await fetch("/api/upload", { method: "POST", body: formData });
 				const result = await response.json();
 
-				if (!response.ok) {
-					throw new Error(result.error || "Error uploading file");
-				}
-
-				if (!result.publicUrl) {
-					throw new Error("No public URL returned from upload");
-				}
+				if (!response.ok) throw new Error(result.error || "Upload failed");
+				if (!result.publicUrl) throw new Error("The upload returned no public URL");
 
 				onUploadComplete(result.publicUrl);
-			} catch (error) {
-				console.error("Upload error:", error);
-				setError(error instanceof Error ? error.message : "Error uploading file");
+			} catch (err) {
+				setError(err instanceof Error ? err.message : "Upload failed");
 				setPreview(defaultImageUrl || null);
 			} finally {
 				setUploading(false);
@@ -77,103 +63,95 @@ export default function ImageUpload({ onUploadComplete, defaultImageUrl }: Image
 			e.preventDefault();
 			e.stopPropagation();
 			setDragActive(false);
-
-			if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-				await processFile(e.dataTransfer.files[0]);
-			}
+			if (e.dataTransfer.files?.length) await processFile(e.dataTransfer.files[0]);
 		},
 		[processFile],
 	);
 
-	const handleDragEnter = useCallback((e: React.DragEvent<HTMLElement>) => {
+	const stop = (e: React.DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setDragActive(true);
-	}, []);
-
-	const handleDragLeave = useCallback((e: React.DragEvent<HTMLElement>) => {
-		e.preventDefault();
-		e.stopPropagation();
-		setDragActive(false);
-	}, []);
-
-	const handleDragOver = useCallback((e: React.DragEvent<HTMLElement>) => {
-		e.preventDefault();
-		e.stopPropagation();
-	}, []);
+	};
 
 	const clearImage = () => {
 		setPreview(null);
-		if (fileInputRef.current) {
-			fileInputRef.current.value = "";
-		}
+		setError(null);
+		if (fileInputRef.current) fileInputRef.current.value = "";
 		onUploadComplete("");
 	};
 
-	const triggerFileInput = () => {
-		fileInputRef.current?.click();
-	};
-
 	return (
-		<div className="space-y-4">
-			{error && (
-				<Alert variant="destructive">
-					<AlertCircle className="h-4 w-4 mr-2" />
-					<AlertDescription>{error}</AlertDescription>
-				</Alert>
-			)}
+		<div className="flex flex-col gap-5">
+			{error ? <AdminNote>{error}</AdminNote> : null}
 
 			{preview ? (
-				<div className="relative w-full h-48 rounded-md overflow-hidden border">
-					<Image src={preview} alt="Preview" fill className="object-cover" />
+				<div className="relative aspect-16/9 w-full overflow-hidden border border-[var(--rule-strong)] bg-card">
+					<Image
+						src={preview}
+						alt="Selected image preview"
+						fill
+						sizes="640px"
+						className="object-cover"
+					/>
 					<Button
+						type="button"
 						variant="destructive"
 						size="icon"
-						className="absolute top-2 right-2 h-8 w-8 rounded-full"
 						onClick={clearImage}
+						className="absolute top-3 right-3 size-8"
 					>
-						<X className="h-4 w-4" />
+						<X className="size-3.5" aria-hidden="true" />
+						<span className="sr-only">Remove image</span>
 					</Button>
 				</div>
 			) : (
 				<button
 					type="button"
-					className={`w-full border border-dashed rounded-md p-8 text-center cursor-pointer transition-colors ${
-						dragActive ? "bg-primary/10 border-primary" : "hover:bg-muted/50"
-					}`}
-					onClick={triggerFileInput}
+					onClick={() => fileInputRef.current?.click()}
 					onDrop={handleDrop}
-					onDragOver={handleDragOver}
-					onDragEnter={handleDragEnter}
-					onDragLeave={handleDragLeave}
+					onDragOver={stop}
+					onDragEnter={(e) => {
+						stop(e);
+						setDragActive(true);
+					}}
+					onDragLeave={(e) => {
+						stop(e);
+						setDragActive(false);
+					}}
+					className={`w-full cursor-pointer border border-dashed px-6 py-12 text-center transition-colors duration-300 ${
+						dragActive
+							? "border-[var(--signal)] bg-[color-mix(in_oklab,var(--signal)_7%,transparent)]"
+							: "border-[var(--rule-strong)] hover:border-foreground hover:bg-card"
+					}`}
 				>
-					<Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-					<p className="text-sm text-muted-foreground mb-2">
-						Drag and drop an image, or click to browse
-					</p>
-					<p className="text-xs text-muted-foreground">Supported formats: JPEG, PNG, GIF, WebP</p>
+					<Upload className="mx-auto size-6 text-muted-foreground" aria-hidden="true" />
+					<span className="ed-label mt-4 block">Drop an image, or click to browse</span>
+					<span className="ed-meta mt-2 block">JPEG · PNG · GIF · WebP</span>
 				</button>
 			)}
 
-			<div className="space-y-2">
-				<Label htmlFor="image">{preview ? "Change Image" : "Upload Image"}</Label>
-				<Input
-					id="image"
+			<AdminField
+				label={preview ? "Replace image" : "Choose image"}
+				htmlFor="image-upload"
+				hint="Uploads straight to the storage bucket and returns a public URL."
+			>
+				<input
+					id="image-upload"
 					type="file"
 					accept="image/*"
 					ref={fileInputRef}
 					onChange={handleFileChange}
 					disabled={uploading}
-					className="cursor-pointer"
+					className="ed-field cursor-pointer file:mr-3 file:cursor-pointer file:border-0 file:bg-transparent file:font-mono file:text-[0.6875rem] file:uppercase file:tracking-[0.14em] file:text-[var(--signal)]"
 				/>
-			</div>
+			</AdminField>
 
-			{uploading && (
-				<div className="flex items-center justify-center">
-					<Loader2 className="h-5 w-5 animate-spin mr-2" />
-					<span>Uploading...</span>
+			{uploading ? (
+				<div className="flex items-center gap-3 border-y border-[var(--rule)] py-3">
+					<Loader2 className="size-3.5 animate-spin text-[var(--signal)]" aria-hidden="true" />
+					<span className="ed-label">Uploading…</span>
 				</div>
-			)}
+			) : null}
 		</div>
 	);
 }

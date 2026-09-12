@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
+import { PageMasthead } from "@/components/page-masthead";
 import ProjectsList from "@/components/projects-list";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { Rule } from "@/components/ui/scroll-reveal";
+
+export const metadata: Metadata = {
+	title: "Projects — Pasindu Nadun Induwara",
+	description:
+		"Full-stack applications, platform tooling and experiments built by Pasindu Nadun Induwara.",
+};
 
 export default function ProjectsPage() {
 	return (
@@ -9,22 +17,24 @@ export default function ProjectsPage() {
 			<SiteHeader showAvatar={false} activePage="projects" />
 
 			<main>
-				<section className="py-16 md:py-20 px-4">
-					<div className="container mx-auto max-w-5xl">
-						<ScrollReveal>
-							<p className="text-accent-warm font-heading font-semibold text-sm tracking-widest uppercase mb-3">
-								My Work
-							</p>
-							<h1 className="text-4xl md:text-5xl font-heading font-bold mb-4 tracking-tight">
-								My Projects
-							</h1>
-							<p className="text-lg text-muted-foreground mb-16 max-w-lg">
-								A collection of my digital design work and projects.
-							</p>
-						</ScrollReveal>
+				<PageMasthead
+					eyebrow="Index"
+					note="Selected work"
+					lines={[
+						<>Things I have</>,
+						<>
+							built and <span className="ed-accent">shipped.</span>
+						</>,
+					]}
+					lede="Full-stack applications, platform tooling and experiments — each one a link to a full write-up covering the problem, the approach and what I would do differently."
+				/>
 
-						<ProjectsList limit={9} isHomePage={true} />
-					</div>
+				<div className="ed-shell mt-14">
+					<Rule />
+				</div>
+
+				<section className="ed-shell py-14 md:py-20">
+					<ProjectsList isHomePage={false} />
 				</section>
 			</main>
 

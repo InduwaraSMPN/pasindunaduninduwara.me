@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Query } from "node-appwrite";
+
+import { AdminPageHead, AdminStat } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { COLLECTIONS, createServerClient, DATABASE_ID } from "@/lib/appwrite";
 
 export default async function AdminDashboard() {
@@ -27,74 +28,79 @@ export default async function AdminDashboard() {
 		Query.limit(1),
 	]);
 
+	const stats = [
+		{
+			num: "01",
+			label: "Projects",
+			value: projects.total,
+			note: "In the portfolio index",
+			href: "/admin/projects",
+			alert: false,
+		},
+		{
+			num: "02",
+			label: "Blog posts",
+			value: publishedPosts.total + draftPosts.total,
+			note: `${publishedPosts.total} published · ${draftPosts.total} draft`,
+			href: "/admin/blog",
+			alert: false,
+		},
+		{
+			num: "03",
+			label: "Comments",
+			value: pendingComments.total,
+			note: pendingComments.total > 0 ? "Awaiting moderation" : "Nothing awaiting approval",
+			href: "/admin/comments",
+			alert: pendingComments.total > 0,
+		},
+		{
+			num: "04",
+			label: "Messages",
+			value: unreadMessages.total,
+			note: unreadMessages.total > 0 ? "Unread enquiries" : "Inbox clear",
+			href: "/admin/messages",
+			alert: unreadMessages.total > 0,
+		},
+	];
+
 	return (
 		<div>
-			<h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle>Projects</CardTitle>
-						<CardDescription>Total projects in your portfolio</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<div className="text-3xl font-bold">{projects.total}</div>
-						<Button asChild variant="link" className="p-0 h-auto mt-2">
-							<Link href="/admin/projects">Manage Projects</Link>
+			<AdminPageHead
+				eyebrow="Admin — Overview"
+				title="Dashboard"
+				note="Live counts"
+				action={
+					<>
+						<Button asChild variant="outline">
+							<Link href="/admin/blog/new">New post</Link>
 						</Button>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle>Blog Posts</CardTitle>
-						<CardDescription>Published and draft posts</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<div className="text-3xl font-bold">{publishedPosts.total + draftPosts.total}</div>
-						<div className="text-sm text-muted-foreground mt-1">
-							{publishedPosts.total} published · {draftPosts.total} drafts
-						</div>
-						<Button asChild variant="link" className="p-0 h-auto mt-2">
-							<Link href="/admin/blog">Manage Blog Posts</Link>
+						<Button asChild>
+							<Link href="/admin/projects/new">New project</Link>
 						</Button>
-					</CardContent>
-				</Card>
+					</>
+				}
+			/>
 
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle>Comments</CardTitle>
-						<CardDescription>Pending approval</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<div className="text-3xl font-bold">{pendingComments.total}</div>
-						<Button asChild variant="link" className="p-0 h-auto mt-2">
-							<Link href="/admin/comments">Moderate Comments</Link>
-						</Button>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle>Messages</CardTitle>
-						<CardDescription>Unread contact messages</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<div className="text-3xl font-bold">{unreadMessages.total}</div>
-						<Button asChild variant="link" className="p-0 h-auto mt-2">
-							<Link href="/admin/messages">View Messages</Link>
-						</Button>
-					</CardContent>
-				</Card>
+			<div className="grid gap-px border border-[var(--rule-strong)] bg-[var(--rule)] sm:grid-cols-2 xl:grid-cols-4">
+				{stats.map((stat) => (
+					<AdminStat
+						key={stat.num}
+						num={stat.num}
+						label={stat.label}
+						value={stat.value}
+						note={stat.note}
+						href={stat.href}
+						alert={stat.alert}
+					/>
+				))}
 			</div>
 
-			<div className="flex gap-4">
-				<Button asChild>
-					<Link href="/admin/projects/new">New Project</Link>
-				</Button>
-				<Button asChild>
-					<Link href="/admin/blog/new">New Blog Post</Link>
-				</Button>
+			{/* Session note — a quiet reminder of what this console governs. */}
+			<div className="mt-10 border-t border-[var(--rule)] pt-6">
+				<p className="ed-meta max-w-[70ch] leading-relaxed">
+					Everything here writes straight to the live Appwrite database and storage bucket. Project
+					and post changes are visible on the public site the moment they are saved.
+				</p>
 			</div>
 		</div>
 	);
