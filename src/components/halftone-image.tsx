@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { screenImage } from "@/lib/halftone";
+import { type HalftoneScreen, screenImage } from "@/lib/halftone";
 import { cn } from "@/lib/utils";
 
 interface HalftoneImageProps {
@@ -10,6 +10,8 @@ interface HalftoneImageProps {
 	alt: string;
 	sizes: string;
 	priority?: boolean;
+	/** `coarse` for a portrait; `fine` keeps type inside a screenshot legible. */
+	screen?: HalftoneScreen;
 	/** Show the photograph instead of the print — a pinned toggle. */
 	showPhoto?: boolean;
 	onReady?: () => void;
@@ -31,6 +33,7 @@ export function HalftoneImage({
 	alt,
 	sizes,
 	priority,
+	screen = "coarse",
 	showPhoto = false,
 	onReady,
 	className,
@@ -43,8 +46,8 @@ export function HalftoneImage({
 		const canvas = canvasRef.current;
 		const img = imgRef.current;
 		if (!canvas || !img?.complete) return;
-		if (screenImage(canvas, img)) setReady(true);
-	}, []);
+		if (screenImage(canvas, img, screen)) setReady(true);
+	}, [screen]);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;

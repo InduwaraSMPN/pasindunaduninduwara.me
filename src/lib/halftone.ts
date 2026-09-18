@@ -1,8 +1,10 @@
 /**
- * Halftone screening for the portrait.
+ * Halftone screening for the site's photographs.
  *
- * The photograph is printed the way a periodical prints one: round dots on a
- * 45° grid, dot area proportional to tone, in the theme's ink.
+ * Every photograph is printed the way a periodical prints one: round dots on a
+ * 45° grid, dot area proportional to tone, in the theme's ink. The portrait
+ * uses a coarse screen; project and post images use a fine one so type and
+ * interface detail inside a screenshot survive the screening.
  *
  * Runs once per image (and again on resize or theme change) — never per frame.
  */
@@ -33,23 +35,58 @@ function clamp01(v: number) {
 /** Screen angle for a single-colour halftone: 45° hides the grid best. */
 const SCREEN_ANGLE = Math.PI / 4;
 
-/**
- * Levels applied before screening. Light backgrounds drop out to bare paper,
- * deep shadows close up to solid ink, and a gamma opens the mid-tones so a
- * face does not fill in — the way a photo is prepared for press.
- */
-const BLACK_POINT = 0.06;
-const WHITE_POINT = 0.8;
-const MIDTONE_GAMMA = 0.72;
+export type HalftoneScreen = "coarse" | "fine";
 
-/**
- * Light ink on dark paper must represent lightness, not darkness, or the
- * print becomes a negative. Highlights are held back so a pale wall reads as
- * a mid-tone field rather than a lit panel on a dark page.
- */
-const LIGHT_INK_CEILING = 0.4;
+interface ScreenSpec {
+	/** Dots across the plate; the finer, the more detail survives. */
+	cellsAcross: number;
+	/** Smallest cell, in CSS px, that still prints as visible dots. */
+	minCell: number;
+	/**
+	 * Levels applied before screening, the way a photo is prepared for press:
+	 * tones past the white point drop out to bare paper, tones below the black
+	 * point close up to solid ink, and the gamma opens or holds the mid-tones.
+	 */
+	blackPoint: number;
+	whitePoint: number;
+	gamma: number;
+	/**
+	 * Light ink on dark paper must represent lightness, not darkness, or the
+	 * print becomes a negative; the ceiling holds highlights back from a glare.
+	 */
+	lightInkCeiling: number;
+}
 
-export function screenImage(canvas: HTMLCanvasElement, img: HTMLImageElement) {
+const SCREENS: Record<HalftoneScreen, ScreenSpec> = {
+	/** The portrait: coarse and contrasty, the wall dropped out to paper. */
+	coarse: {
+		cellsAcross: 76,
+		minCell: 2.6,
+		blackPoint: 0.06,
+		whitePoint: 0.8,
+		gamma: 0.72,
+		lightInkCeiling: 0.4,
+	},
+	/**
+	 * Screenshots: a fine ruling and gentle levels, so logos, headlines and
+	 * light interface greys survive the screen instead of dropping out.
+	 */
+	fine: {
+		cellsAcross: 230,
+		minCell: 2.2,
+		blackPoint: 0.03,
+		whitePoint: 0.94,
+		gamma: 0.9,
+		lightInkCeiling: 0.72,
+	},
+};
+
+export function screenImage(
+	canvas: HTMLCanvasElement,
+	img: HTMLImageElement,
+	screen: HalftoneScreen = "coarse",
+) {
+	const { cellsAcross, minCell, blackPoint, whitePoint, gamma, lightInkCeiling } = SCREENS[screen];
 	const box = canvas.getBoundingClientRect();
 	if (box.width === 0 || box.height === 0 || img.naturalWidth === 0) return false;
 
@@ -65,8 +102,8 @@ export function screenImage(canvas: HTMLCanvasElement, img: HTMLImageElement) {
 	const styles = getComputedStyle(canvas);
 	const ink = styles.color;
 	const lightInk = luma(toRgb(ink)) > luma(toRgb(styles.backgroundColor));
-	// Small plates get a finer screen, down to a floor that still reads as dots.
-	const cell = Math.max(2.6, box.width / 76) * dpr;
+	// The ruling scales with the plate, down to a floor that still reads as dots.
+	const cell = Math.max(minCell, box.width / cellsAcross) * dpr;
 
 	// Sample at half-cell resolution: enough to average the tone under a dot.
 	const sw = Math.max(1, Math.ceil((W / cell) * 2));
@@ -96,8 +133,8 @@ export function screenImage(canvas: HTMLCanvasElement, img: HTMLImageElement) {
 		const sy = Math.min(sh - 1, Math.max(0, Math.floor((y / H) * sh)));
 		const i = (sy * sw + sx) * 4;
 		const l = (0.2126 * pixels[i] + 0.7152 * pixels[i + 1] + 0.0722 * pixels[i + 2]) / 255;
-		const leveled = clamp01((l - BLACK_POINT) / (WHITE_POINT - BLACK_POINT));
-		return lightInk ? leveled * LIGHT_INK_CEILING : 1 - leveled ** MIDTONE_GAMMA;
+		const leveled = clamp01((l - blackPoint) / (whitePoint - blackPoint));
+		return lightInk ? leveled * lightInkCeiling : 1 - leveled ** gamma;
 	};
 
 	ctx.clearRect(0, 0, W, H);

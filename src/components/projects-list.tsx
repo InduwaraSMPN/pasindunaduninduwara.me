@@ -3,7 +3,7 @@
 import { ArrowUpRight, FolderOpen } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
-import { TritoneImage } from "@/components/tritone-image";
+import { HalftoneImage } from "@/components/halftone-image";
 import { useProjects } from "@/lib/project-service";
 import { cn } from "@/lib/utils";
 
@@ -98,10 +98,11 @@ export default function ProjectsList({
 							<div className={cn("lg:col-span-7", flip && "lg:order-2")}>
 								{project.image ? (
 									<div className="ed-figure">
-										<TritoneImage
+										<HalftoneImage
 											src={project.image}
 											alt=""
 											sizes="(max-width: 1024px) 100vw, 680px"
+											screen="fine"
 											className="aspect-[16/10]"
 										/>
 									</div>
@@ -116,7 +117,15 @@ export default function ProjectsList({
 									<span className="ed-meta">{year}</span>
 								</div>
 
-								<h3 className="mt-6 font-heading text-[clamp(1.9rem,3.4vw,3rem)] font-[620] leading-[1] tracking-[-0.045em] transition-colors duration-300 group-hover:text-[var(--signal)]">
+								<h3
+									className={cn(
+										"mt-6 font-heading font-[620] leading-[1] tracking-[-0.045em] transition-colors duration-300 group-hover:text-[var(--signal)]",
+										// A long single-word name (a domain) would outrun the column.
+										name.length > 16
+											? "text-[clamp(1.6rem,2.6vw,2.25rem)]"
+											: "text-[clamp(1.9rem,3.4vw,3rem)]",
+									)}
+								>
 									{/* A domain name is one long word; let it break at its dots. */}
 									{name.split(".").map((part, i) => (
 										<Fragment key={part}>

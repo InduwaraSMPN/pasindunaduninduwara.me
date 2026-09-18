@@ -2,7 +2,7 @@
 
 import { ArrowUpRight, FileText } from "lucide-react";
 import Link from "next/link";
-import { TritoneImage } from "@/components/tritone-image";
+import { HalftoneImage } from "@/components/halftone-image";
 import { StaggerContainer, StaggerItem } from "@/components/ui/scroll-reveal";
 import { useBlogPosts } from "@/lib/blog-service";
 
@@ -88,10 +88,11 @@ export default function BlogPosts() {
 						>
 							{post.thumbnail ? (
 								<div className="mb-6 border border-[var(--rule)]">
-									<TritoneImage
+									<HalftoneImage
 										src={post.thumbnail}
 										alt=""
 										sizes="(max-width: 768px) 100vw, 560px"
+										screen="fine"
 										className="aspect-[16/9]"
 									/>
 								</div>

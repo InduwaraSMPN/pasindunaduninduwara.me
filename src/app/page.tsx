@@ -5,8 +5,8 @@ import BlogPosts from "@/components/blog-posts";
 import ContactForm from "@/components/contact-form";
 import { HalftonePortrait } from "@/components/halftone-portrait";
 import { LocalTime } from "@/components/local-time";
+import { MosaicField } from "@/components/mosaic-field";
 import ProjectsList from "@/components/projects-list";
-import { SignalField } from "@/components/signal-field";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
@@ -15,8 +15,9 @@ import { CountUp, MaskedLines, ScrollReveal, SectionHead } from "@/components/ui
 /**
  * Home — Editorial Brutalism, printed edition.
  *
- * Opens on a live halftone field — the signal, printed as weather — with the
- * headline set on the paper it dissolves into. Then the work as full plates,
+ * Opens on a photograph rebuilt as a tile mosaic — a forest trail in its own
+ * colours, its tiles glinting — with the headline set on the paper it comes
+ * apart into. Then the work as full plates,
  * a chapter printed on a solid of the signal, the writing, and a black-stock
  * close. Each chapter is printed onto the one before it as a halftone ramp.
  */
@@ -121,33 +122,45 @@ export default function Home() {
 
 			<main>
 				{/* ---------------------------------------------------------------
-				    HERO — the signal field, then the headline on the paper it
-				    dissolves into, then the deck: standfirst, contents, portrait.
+				    HERO — the trail as a mosaic, coming apart behind the dateline
+				    and settling behind the top of the headline; then the deck:
+				    standfirst, contents, portrait.
 				   --------------------------------------------------------------- */}
-				<header className="relative isolate [--hero-art:clamp(20rem,46vh,26rem)] md:[--hero-art:clamp(26rem,62vh,42rem)]">
-					<SignalField className="absolute inset-x-0 top-0 -z-10 h-[var(--hero-art)]" />
+				<header className="relative isolate [--hero-art:clamp(18rem,44vh,26rem)] md:[--hero-art:clamp(24rem,58vh,40rem)]">
+					{/* The artwork spans this block — the picture plus the dateline and
+					    the gap under it — and runs a little past it, so its last
+					    scattered tiles settle behind the top of the headline, whatever
+					    the dateline wraps to. */}
+					<div className="relative">
+						<MosaicField
+							src="/trail.webp"
+							focusY={0.55}
+							dissolveFrom="calc(var(--hero-art) * 0.72)"
+							className="absolute inset-x-0 top-0 -bottom-12 -z-10 md:-bottom-20"
+						/>
 
-					<div className="ed-shell pt-[calc(var(--hero-art)*0.84)]">
 						{/* The dateline is the only metadata above the headline. */}
-						<div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-							<span className="ed-eyebrow">Software Engineer — Full Stack</span>
+						<div className="ed-shell flex flex-wrap items-center gap-x-4 gap-y-3 pt-[calc(var(--hero-art)+1.75rem)] pb-12 md:pb-14">
+							<span className="ed-eyebrow ed-knockout">Software Engineer — Full Stack</span>
 							<span aria-hidden="true" className="h-px min-w-8 flex-1 bg-[var(--rule-strong)]" />
 							<p className="ed-eyebrow flex flex-wrap items-center gap-x-3.5 gap-y-2 max-sm:w-full">
-								<span>Anuradhapura, LK</span>
+								<span className="ed-knockout">Anuradhapura, LK</span>
 								<span aria-hidden="true" className="h-3 w-px bg-[var(--rule-strong)]" />
-								<LocalTime />
+								<LocalTime className="ed-knockout" />
 								<span
 									aria-hidden="true"
 									className="h-3 w-px bg-[var(--rule-strong)] max-sm:hidden"
 								/>
-								<span className="inline-flex items-center gap-2 text-[var(--signal)]">
+								<span className="ed-knockout inline-flex items-center gap-2 text-[var(--signal)]">
 									<span aria-hidden="true" className="size-1.5 bg-[var(--signal)]" />
 									Open to work
 								</span>
 							</p>
 						</div>
+					</div>
 
-						<div className="ed-crop mt-12 md:mt-14">
+					<div className="ed-shell">
+						<div className="ed-crop">
 							<h1 className="ed-display">
 								<MaskedLines lines={heroLines} />
 							</h1>

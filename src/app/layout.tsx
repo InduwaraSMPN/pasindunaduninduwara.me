@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { DevelopmentBanner } from "@/components/development-banner";
-import { PrintFilters } from "@/components/tritone-image";
 import QueryProvider from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 
@@ -58,7 +57,6 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body className={`${archivo.variable} ${instrumentSerif.variable} ${plexMono.variable}`}>
-				<PrintFilters />
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"
