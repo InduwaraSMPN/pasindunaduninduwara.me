@@ -2,14 +2,24 @@
 
 import { ArrowUpRight, FolderOpen } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { StaggerContainer, StaggerItem } from "@/components/ui/scroll-reveal";
+import { Fragment } from "react";
+import { TritoneImage } from "@/components/tritone-image";
 import { useProjects } from "@/lib/project-service";
+import { cn } from "@/lib/utils";
 
 /**
- * Projects are presented as a numbered index, the way a magazine lists its
- * contents. Each row inverts to solid ink on hover — the signature interaction
- * of the whole site.
+ * Titles are stored as "name - what it is". The name is set large; the rest
+ * becomes the standfirst line under it.
+ */
+function splitTitle(title: string) {
+	const [name, ...rest] = title.split(" - ");
+	return { name: name.trim(), kind: rest.join(" - ").trim() };
+}
+
+/**
+ * Projects are printed as plates: the cover image screened in two colours
+ * beside the write-up, alternating sides down the page like a feature spread.
+ * Hovering a plate shows the cover in full colour — the proof under the print.
  */
 export default function ProjectsList({
 	limit,
@@ -20,25 +30,26 @@ export default function ProjectsList({
 	isHomePage?: boolean;
 }) {
 	const { data: projects, isLoading, isError } = useProjects();
-	const skeletonCount = limit ?? 4;
-	/**
-	 * Tags are capped on every listing. Without this a project with fifteen tags
-	 * wraps into a wall of chips that stretches its row far taller than its
-	 * neighbours and unbalances the whole index. The remainder becomes `+N`.
-	 */
-	const maxTags = isHomePage ? 4 : 6;
+	const skeletonCount = limit ?? 3;
+	/** Four tags say enough; the full list lives on the project page. */
+	const maxTags = isHomePage ? 4 : 5;
 
 	if (isLoading) {
 		return (
-			<div className="ed-index" aria-busy="true" aria-live="polite">
+			<div className="border-t border-[var(--rule-strong)]" aria-busy="true" aria-live="polite">
 				{Array.from({ length: skeletonCount }).map((_, i) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
-					<div key={i} className="border-b border-[var(--rule)] py-6">
-						<div className="flex items-center gap-7">
-							<span className="h-3 w-6 shrink-0 animate-pulse bg-muted" />
-							<span className="h-4 w-1/3 animate-pulse bg-muted" />
-							<span className="ml-auto h-3 w-24 animate-pulse bg-muted" />
-						</div>
+					<div
+						// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
+						key={i}
+						className="grid grid-cols-1 gap-8 border-b border-[var(--rule)] py-10 lg:grid-cols-12 lg:gap-12"
+					>
+						<span className="aspect-[16/10] animate-pulse bg-muted lg:col-span-7" />
+						<span className="flex flex-col gap-4 lg:col-span-5">
+							<span className="h-3 w-12 animate-pulse bg-muted" />
+							<span className="h-9 w-2/3 animate-pulse bg-muted" />
+							<span className="h-3 w-full animate-pulse bg-muted" />
+							<span className="h-3 w-4/5 animate-pulse bg-muted" />
+						</span>
 					</div>
 				))}
 				<span className="sr-only">Loading projects</span>
@@ -68,47 +79,82 @@ export default function ProjectsList({
 		);
 	}
 
+	const list = typeof limit === "number" ? projects.slice(0, limit) : projects;
+
 	return (
-		<StaggerContainer className="ed-index" staggerDelay={0.09}>
-			{(typeof limit === "number" ? projects.slice(0, limit) : projects).map((project, index) => (
-				<StaggerItem key={project.$id}>
-					<Link
-						href={`/projects/${project.$id}`}
-						className="ed-index-row grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-x-5 gap-y-3 py-6 md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1.05fr)_7.5rem] md:items-center md:gap-x-7"
-					>
-						<span className="ed-index-mark pt-0.5 font-mono text-xs font-semibold tracking-[0.14em]">
-							{String(index + 1).padStart(2, "0")}
-						</span>
+		<ol className="border-t border-[var(--rule-strong)]">
+			{list.map((project, index) => {
+				const { name, kind } = splitTitle(project.title);
+				const flip = index % 2 === 1;
+				const year = new Date(project.created_at).getFullYear();
+				const extra = project.tags.length - maxTags;
 
-						<span className="min-w-0">
-							<span className="block font-heading text-lg font-bold leading-tight tracking-[-0.028em] md:text-xl">
-								{project.title}
-							</span>
-							{project.tags.length > 0 ? (
-								<span className="mt-2.5 flex flex-wrap gap-1.5">
-									{project.tags.slice(0, maxTags).map((tag) => (
-										<Badge key={tag} variant="secondary">
-											{tag}
-										</Badge>
+				return (
+					<li key={project.$id} className="border-b border-[var(--rule)]">
+						<Link
+							href={`/projects/${project.$id}`}
+							className="group grid grid-cols-1 gap-8 py-10 outline-offset-4 md:py-14 lg:grid-cols-12 lg:items-center lg:gap-14"
+						>
+							<div className={cn("lg:col-span-7", flip && "lg:order-2")}>
+								{project.image ? (
+									<div className="ed-figure">
+										<TritoneImage
+											src={project.image}
+											alt=""
+											sizes="(max-width: 1024px) 100vw, 680px"
+											className="aspect-[16/10]"
+										/>
+									</div>
+								) : (
+									<div className="ed-hatch aspect-[16/10] border border-[var(--rule-strong)]" />
+								)}
+							</div>
+
+							<div className="flex flex-col lg:col-span-5">
+								<div className="flex items-baseline justify-between gap-4">
+									<span className="ed-sec-num">{String(index + 1).padStart(2, "0")}</span>
+									<span className="ed-meta">{year}</span>
+								</div>
+
+								<h3 className="mt-6 font-heading text-[clamp(1.9rem,3.4vw,3rem)] font-[620] leading-[1] tracking-[-0.045em] transition-colors duration-300 group-hover:text-[var(--signal)]">
+									{/* A domain name is one long word; let it break at its dots. */}
+									{name.split(".").map((part, i) => (
+										<Fragment key={part}>
+											{i > 0 ? (
+												<>
+													<wbr />.
+												</>
+											) : null}
+											{part}
+										</Fragment>
 									))}
-									{project.tags.length > maxTags ? (
-										<Badge variant="outline">+{project.tags.length - maxTags}</Badge>
-									) : null}
+								</h3>
+								{kind ? (
+									<p className="mt-3 text-base font-medium tracking-[-0.01em] text-foreground/80">
+										{kind}
+									</p>
+								) : null}
+
+								<p className="mt-5 line-clamp-4 max-w-[48ch] text-[0.9375rem] leading-relaxed text-muted-foreground">
+									{project.description}
+								</p>
+
+								{project.tags.length > 0 ? (
+									<p className="mt-6 font-mono text-[0.6875rem] leading-relaxed tracking-[0.06em] text-muted-foreground">
+										{project.tags.slice(0, maxTags).join("  /  ")}
+										{extra > 0 ? `  +${extra}` : ""}
+									</p>
+								) : null}
+
+								<span className="mt-8 inline-flex items-center gap-2 self-start border-b-2 border-foreground pb-1 text-sm font-semibold transition-colors duration-300 group-hover:border-[var(--signal)] group-hover:text-[var(--signal)]">
+									View project
+									<ArrowUpRight className="size-4 transition-transform duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
 								</span>
-							) : null}
-						</span>
-
-						<span className="ed-index-dim col-start-2 line-clamp-3 text-sm leading-relaxed md:col-start-3 md:line-clamp-2">
-							{project.description}
-						</span>
-
-						<span className="ed-index-dim col-start-2 inline-flex items-center gap-1.5 font-mono text-[0.625rem] uppercase tracking-[0.14em] md:col-start-4 md:justify-end">
-							View
-							<ArrowUpRight className="size-3.5" />
-						</span>
-					</Link>
-				</StaggerItem>
-			))}
-		</StaggerContainer>
+							</div>
+						</Link>
+					</li>
+				);
+			})}
+		</ol>
 	);
 }

@@ -347,33 +347,3 @@ export function SectionHead({ num, title, note, className }: SectionHeadProps) {
 		</div>
 	);
 }
-
-/* ---------------------------------------------------------------------------
-   Ticker — a continuous marquee. Duplicated content makes the loop seamless;
-   hover pauses it so the reader can actually read a term.
-   -------------------------------------------------------------------------- */
-
-interface TickerProps {
-	items: string[];
-	className?: string;
-}
-
-export function Ticker({ items, className }: TickerProps) {
-	return (
-		// `data-bleed` marks content that deliberately exceeds its container, so
-		// the visual-qa overflow audit doesn't report the marquee as a defect.
-		<div className={cn("ed-ticker", className)} aria-hidden="true" data-bleed>
-			<div className="ed-ticker-track">
-				{[0, 1].map((pass) => (
-					<div key={pass} className="flex gap-11">
-						{items.map((item) => (
-							<span key={item} className="ed-ticker-item">
-								{item}
-							</span>
-						))}
-					</div>
-				))}
-			</div>
-		</div>
-	);
-}

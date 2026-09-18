@@ -4,7 +4,6 @@ import BlogPosts from "@/components/blog-posts";
 import { PageMasthead } from "@/components/page-masthead";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { Rule } from "@/components/ui/scroll-reveal";
 
 export const metadata: Metadata = {
 	title: "Writing — Pasindu Nadun Induwara",
@@ -30,11 +29,7 @@ export default function BlogPage() {
 					lede="Notes on software engineering, platform tooling and the craft of building for the web. Written to be useful to the next person who hits the same problem."
 				/>
 
-				<div className="ed-shell mt-14">
-					<Rule />
-				</div>
-
-				<section className="ed-shell py-14 md:py-20">
+				<section className="ed-shell pt-16 pb-20 md:pt-20 md:pb-28">
 					<BlogPosts />
 				</section>
 			</main>

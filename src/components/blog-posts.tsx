@@ -1,8 +1,8 @@
 "use client";
 
 import { ArrowUpRight, FileText } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { TritoneImage } from "@/components/tritone-image";
 import { StaggerContainer, StaggerItem } from "@/components/ui/scroll-reveal";
 import { useBlogPosts } from "@/lib/blog-service";
 
@@ -87,13 +87,12 @@ export default function BlogPosts() {
 							className="group flex h-full flex-col border-t border-[var(--rule-strong)] py-7"
 						>
 							{post.thumbnail ? (
-								<div className="relative mb-5 aspect-[16/9] overflow-hidden border border-[var(--rule)]">
-									<Image
+								<div className="mb-6 border border-[var(--rule)]">
+									<TritoneImage
 										src={post.thumbnail}
 										alt=""
-										fill
-										sizes="(max-width: 768px) 100vw, 50vw"
-										className="object-cover grayscale transition-[transform,filter] duration-700 ease-out-expo group-hover:scale-[1.03] group-hover:grayscale-0"
+										sizes="(max-width: 768px) 100vw, 560px"
+										className="aspect-[16/9]"
 									/>
 								</div>
 							) : null}

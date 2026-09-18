@@ -1,28 +1,9 @@
 import { Download } from "lucide-react";
 import Link from "next/link";
-import { Ticker } from "@/components/ui/scroll-reveal";
 
 interface SiteFooterProps {
 	activePage?: "home" | "projects" | "blog" | "contact" | "cv";
 }
-
-const tickerItems = [
-	"TypeScript",
-	"Next.js",
-	"React",
-	"Node.js",
-	"Python",
-	"Java",
-	"Docker",
-	"Kubernetes",
-	"PostgreSQL",
-	"MongoDB",
-	"Backstage",
-	"OpenChoreo",
-	"Azure",
-	"Spring Boot",
-	"Flutter",
-];
 
 const indexLinks = [
 	{ label: "Projects", href: "/projects" },
@@ -40,10 +21,8 @@ const indexLinks = [
 export function SiteFooter({ activePage: _activePage = "home" }: SiteFooterProps) {
 	return (
 		<footer className="dark ed-stock ed-stock-black mt-auto">
-			<Ticker items={tickerItems} />
-
-			<div className="ed-shell py-14">
-				<div className="grid gap-10 md:grid-cols-3">
+			<div className="ed-shell pt-6 pb-14">
+				<div className="grid gap-10 border-t border-[var(--rule-strong)] pt-12 md:grid-cols-3">
 					{/* Contact */}
 					<div>
 						<h3 className="ed-label mb-5">Contact</h3>
@@ -123,18 +102,18 @@ export function SiteFooter({ activePage: _activePage = "home" }: SiteFooterProps
 					</div>
 				</div>
 
-				{/* Colophon — the name, set large. */}
-				<p className="ed-display mt-14 border-t border-[var(--rule-strong)] pt-8 text-[clamp(1.75rem,7.4vw,5.25rem)] leading-[0.92] tracking-[-0.05em]">
-					Pasindu
+				{/* Nameplate — the name set as large as the page allows, the way a
+				    paper prints its title across the full width of the sheet. */}
+				<p className="ed-display mt-16 border-t border-[var(--rule-strong)] pt-10 text-[clamp(3rem,11.6vw,10.75rem)] leading-[0.86] tracking-[-0.06em] md:mt-24">
+					Pasindu Nadun
 					<br />
-					Nadun <span className="ed-accent">Induwara</span>
+					<span className="ed-accent">Induwara</span>
 				</p>
 
 				<div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
 					<p className="ed-meta">
 						© {new Date().getFullYear()} Pasindu Nadun Induwara. All rights reserved.
 					</p>
-					<p className="ed-meta">Set in Archivo &amp; Instrument Serif</p>
 					<a
 						href="#top"
 						className="ed-meta ed-link transition-colors duration-200 hover:text-foreground"

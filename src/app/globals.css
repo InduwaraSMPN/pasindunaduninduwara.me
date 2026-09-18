@@ -78,7 +78,6 @@
 	--ease-ed: cubic-bezier(0.65, 0, 0.35, 1);
 
 	/* --- animations --- */
-	--animate-ed-ticker: ed-ticker 38s linear infinite;
 	--animate-ed-blink: ed-blink 1.1s steps(1) infinite;
 	--animate-ed-pulse: ed-pulse 3s ease-in-out infinite;
 	--animate-ed-draw: ed-draw 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -140,13 +139,11 @@
 	--grain-opacity: 0.5;
 	--grain-blend: multiply;
 
-	/* Salmon newsprint — the paper stock for the Background chapter (see
-	   PAPER STOCKS below). A pale warm tint in the signal's family, pushed toward
-	   peach so it reads as business-section newsprint, not as a second colour. */
-	--stock-salmon: oklch(0.918 0.034 62);
-	--stock-salmon-2: oklch(0.944 0.025 66);
-	/* The signal has to be darkened on salmon to keep 4.5:1 at 11px. */
-	--stock-salmon-signal: oklch(0.48 0.19 31);
+	/* Signal stock — the Background chapter is printed on a solid of the
+	   signal (see PAPER STOCKS below). Lifted from the text signal so dark ink
+	   on it clears 4.5:1; identical in both themes, like a printed solid. */
+	--stock-signal: oklch(0.7 0.165 41);
+	--stock-signal-2: oklch(0.745 0.148 45);
 }
 
 /* ============================================================================
@@ -201,20 +198,18 @@
 
 	--grain-opacity: 0.22;
 	--grain-blend: screen;
-
-	--stock-salmon: oklch(0.232 0.028 48);
-	--stock-salmon-2: oklch(0.27 0.03 50);
-	--stock-salmon-signal: oklch(0.7 0.17 38);
 }
 
 /* ============================================================================
    PAPER STOCKS — chapters
    The publication changes paper between chapters instead of adding colours.
-   A stock re-points `--paper` (and, for salmon, the signal), then re-derives
-   the tokens that were mixed from paper at :root, because a custom property
-   that references another resolves where it is declared, not where it is used.
+   A stock re-points `--paper` (and, for the signal stock, the ink), then
+   re-derives the tokens that were mixed from paper at :root, because a custom
+   property that references another resolves where it is declared, not where
+   it is used.
 
-   - `.ed-stock-salmon` — pale newsprint, the Background chapter.
+   - `.ed-stock-signal` — the Background chapter: a solid of the signal with a
+     fine dot screen, dark ink on it in both themes.
    - `.ed-stock-black` — always paired with the `dark` class, so the whole dark
      token set applies inside it. This is the row-invert gesture scaled up to a
      chapter: in light mode the stock is ink; in dark mode it goes one step
@@ -239,10 +234,26 @@
 	color: var(--foreground);
 }
 
-.ed-stock-salmon {
-	--paper: var(--stock-salmon);
-	--paper-2: var(--stock-salmon-2);
-	--signal: var(--stock-salmon-signal);
+.ed-stock-signal {
+	--paper: var(--stock-signal);
+	--paper-2: var(--stock-signal-2);
+	/* Dark ink in both themes — accents go to ink too, since signal on signal
+	   would vanish; the serif italic alone marks them. */
+	--ink: oklch(0.185 0.004 60);
+	--foreground: var(--ink);
+	--signal: var(--ink);
+	--border: color-mix(in oklab, var(--ink) 22%, transparent);
+	--rule: color-mix(in oklab, var(--ink) 22%, transparent);
+	--rule-strong: color-mix(in oklab, var(--ink) 55%, transparent);
+	--rule-soft: color-mix(in oklab, var(--ink) 12%, transparent);
+	color-scheme: light;
+	/* A fine screen over the solid, the way a flat tint prints on a press. */
+	background-image: radial-gradient(
+		circle,
+		color-mix(in oklab, var(--ink) 13%, transparent) 0.9px,
+		transparent 1.25px
+	);
+	background-size: 9px 9px;
 }
 
 .ed-stock-black {
@@ -313,10 +324,12 @@
 	h5,
 	h6 {
 		font-family: var(--font-heading), system-ui, sans-serif;
-		font-weight: 800;
-		font-variation-settings: "wdth" 94;
-		letter-spacing: -0.032em;
-		line-height: 1.06;
+		/* A medium-heavy weight at normal width: at display sizes it reads as
+		   confident rather than blunt, and the counters stay open in dark mode. */
+		font-weight: 640;
+		font-variation-settings: "wdth" 100;
+		letter-spacing: -0.036em;
+		line-height: 1.04;
 		text-wrap: balance;
 	}
 
@@ -324,7 +337,7 @@
 	h4,
 	h5,
 	h6 {
-		font-variation-settings: "wdth" 96;
+		font-weight: 600;
 		letter-spacing: -0.024em;
 	}
 
@@ -421,21 +434,21 @@
 	/* --- display type ----------------------------------------------------- */
 	.ed-display {
 		font-family: var(--font-heading), system-ui, sans-serif;
-		font-weight: 800;
-		font-variation-settings: "wdth" 92;
-		font-size: clamp(2.6rem, 8.2vw, 7rem);
-		line-height: 0.94;
-		letter-spacing: -0.045em;
+		font-weight: 600;
+		font-variation-settings: "wdth" 100;
+		font-size: clamp(2.6rem, 8.6vw, 8.25rem);
+		line-height: 0.9;
+		letter-spacing: -0.052em;
 		text-wrap: balance;
 	}
 
 	.ed-display-md {
 		font-family: var(--font-heading), system-ui, sans-serif;
-		font-weight: 800;
-		font-variation-settings: "wdth" 92;
-		font-size: clamp(1.6rem, 4.4vw, 3rem);
-		line-height: 1;
-		letter-spacing: -0.038em;
+		font-weight: 620;
+		font-variation-settings: "wdth" 100;
+		font-size: clamp(1.9rem, 4.8vw, 3.75rem);
+		line-height: 0.98;
+		letter-spacing: -0.046em;
 		text-wrap: balance;
 	}
 
@@ -463,6 +476,9 @@
 		position: relative;
 		isolation: isolate;
 		overflow: hidden;
+		/* Inset the content so the ink fill has a margin around it on hover —
+		   flush text against the edge of a solid block reads as a clipping bug. */
+		padding-inline: clamp(0.75rem, 1.6vw, 1.25rem);
 		border-bottom: 1px solid var(--rule);
 		transition: color 0.32s var(--ease-out-quart);
 	}
@@ -537,8 +553,8 @@
 		gap: 0.3em;
 		padding-bottom: 0.16em;
 		font-family: var(--font-heading), system-ui, sans-serif;
-		font-weight: 800;
-		font-variation-settings: "wdth" 92;
+		font-weight: 620;
+		font-variation-settings: "wdth" 100;
 		font-size: clamp(1.5rem, 3.1vw, 2.5rem);
 		line-height: 1.05;
 		letter-spacing: -0.035em;
@@ -637,8 +653,8 @@
 	/* --- statement: one sentence set as a spread --------------------------- */
 	.ed-statement {
 		font-family: var(--font-heading), system-ui, sans-serif;
-		font-weight: 800;
-		font-variation-settings: "wdth" 92;
+		font-weight: 600;
+		font-variation-settings: "wdth" 100;
 		font-size: clamp(2rem, 5.6vw, 4.875rem);
 		line-height: 0.98;
 		letter-spacing: -0.042em;
@@ -653,41 +669,6 @@
 		letter-spacing: 0.16em;
 		color: var(--signal);
 		font-variant-numeric: tabular-nums;
-	}
-
-	/* --- ticker ----------------------------------------------------------- */
-	.ed-ticker {
-		overflow: hidden;
-		border-block: 1px solid var(--rule-strong);
-		background: var(--card);
-		padding-block: 0.875rem;
-	}
-	.ed-ticker-track {
-		display: flex;
-		gap: 2.75rem;
-		width: max-content;
-		animation: var(--animate-ed-ticker);
-	}
-	.ed-ticker:hover .ed-ticker-track {
-		animation-play-state: paused;
-	}
-	.ed-ticker-item {
-		display: flex;
-		align-items: center;
-		gap: 2.75rem;
-		font-family: var(--font-mono), ui-monospace, monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: var(--muted-foreground);
-		white-space: nowrap;
-	}
-	.ed-ticker-item::after {
-		content: "";
-		width: 5px;
-		height: 5px;
-		background: var(--signal);
-		flex: none;
 	}
 
 	/* --- editorial field: a rule, not a box ------------------------------- */
@@ -732,8 +713,8 @@
 	.ed-stat b {
 		display: block;
 		font-family: var(--font-heading), system-ui, sans-serif;
-		font-weight: 800;
-		font-variation-settings: "wdth" 88;
+		font-weight: 600;
+		font-variation-settings: "wdth" 100;
 		font-size: clamp(1.75rem, 4vw, 2.75rem);
 		letter-spacing: -0.04em;
 		line-height: 1;
@@ -758,6 +739,78 @@
 		border: 1px solid var(--rule-strong);
 		padding: 0.875rem;
 		background: var(--card);
+	}
+
+	/* --- halftone plate: print over photograph ------------------------------
+	   Two stacked layers crossfade; nothing moves. The photo is grayscale
+	   until the screen is ready, so the first paint is never a blank frame. */
+	.ed-halftone-photo,
+	.ed-halftone-screen {
+		transition:
+			opacity 0.7s var(--ease-out-expo),
+			filter 0.7s var(--ease-out-expo);
+	}
+	.ed-halftone:not([data-ready]) .ed-halftone-photo {
+		filter: grayscale(1);
+	}
+	.ed-halftone-screen {
+		opacity: 0;
+	}
+	.ed-halftone[data-view="halftone"] .ed-halftone-photo {
+		opacity: 0;
+	}
+	.ed-halftone[data-view="halftone"] .ed-halftone-screen {
+		opacity: 1;
+	}
+	@media (hover: hover) {
+		.group:hover .ed-halftone[data-view="halftone"] .ed-halftone-photo {
+			opacity: 1;
+		}
+		.group:hover .ed-halftone[data-view="halftone"] .ed-halftone-screen {
+			opacity: 0;
+		}
+	}
+	.group:focus-visible .ed-halftone[data-view="halftone"] .ed-halftone-photo {
+		opacity: 1;
+	}
+	.group:focus-visible .ed-halftone[data-view="halftone"] .ed-halftone-screen {
+		opacity: 0;
+	}
+
+	/* --- tritone plate: three inks over the photograph ----------------------
+	   The print layer takes the theme's gradient map (see PrintFilters); the
+	   original photo sits above it and crossfades in on hover or focus. */
+	.ed-tritone-print {
+		filter: url("#ed-tritone-light");
+	}
+	.dark .ed-tritone-print {
+		filter: url("#ed-tritone-dark");
+	}
+	.ed-tritone-photo {
+		opacity: 0;
+		transition: opacity 0.7s var(--ease-out-expo);
+	}
+	@media (hover: hover) {
+		.group:hover .ed-tritone-photo {
+			opacity: 1;
+		}
+	}
+	.group:focus-visible .ed-tritone-photo {
+		opacity: 1;
+	}
+
+	/* --- hero field ---------------------------------------------------------
+	   The canvas reads its plate colours from these, so the artwork re-inks
+	   with the theme. Without WebGL it falls back to a static dot screen. */
+	.ed-signal-field {
+		color: var(--signal);
+		background-color: var(--background);
+	}
+	.ed-signal-field[data-fallback] {
+		background-image: radial-gradient(circle, var(--signal) 1.6px, transparent 2px);
+		background-size: 10px 10px;
+		-webkit-mask-image: linear-gradient(to bottom, #000 25%, transparent 90%);
+		mask-image: linear-gradient(to bottom, #000 25%, transparent 90%);
 	}
 
 	/* --- hairline grid paper, used behind figures ------------------------- */
@@ -880,12 +933,6 @@
    KEYFRAMES
    ========================================================================== */
 
-@keyframes ed-ticker {
-	to {
-		transform: translateX(-50%);
-	}
-}
-
 @keyframes ed-blink {
 	0%,
 	49% {
@@ -941,9 +988,6 @@
 
 	/* MaskedLines and Rule read `useReducedMotion` and skip their travel
 	   entirely, so they need no CSS override here. */
-	.ed-ticker-track {
-		animation: none;
-	}
 	.ed-index-row::before {
 		transition: none;
 	}

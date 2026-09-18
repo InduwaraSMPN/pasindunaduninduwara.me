@@ -38,19 +38,19 @@ export function LocalTime({ className }: { className?: string }) {
 	const hour = parts?.find((p) => p.type === "hour")?.value ?? "--";
 	const minute = parts?.find((p) => p.type === "minute")?.value ?? "--";
 
+	// Inherits the type of whatever line it sits in — the hero dateline sets it.
 	return (
 		<span className={className}>
-			<time dateTime={now?.toISOString()} data-numeric>
+			<span className="sr-only">Local time </span>
+			<time dateTime={now?.toISOString()} data-numeric className="text-foreground">
 				<span aria-hidden="true">
 					{hour}
 					<span className={now ? "animate-ed-blink" : undefined}>:</span>
 					{minute}
 				</span>
-				<span className="sr-only">{now ? `${hour}:${minute}` : "Loading local time"}</span>
+				<span className="sr-only">{now ? `${hour}:${minute}` : "loading"}</span>
 			</time>
-			<span className="ml-1.5 font-mono text-[0.6875rem] font-medium tracking-[0.08em] text-muted-foreground">
-				{OFFSET_LABEL}
-			</span>
+			<span className="ml-[0.6em]">{OFFSET_LABEL}</span>
 		</span>
 	);
 }

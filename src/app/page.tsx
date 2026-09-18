@@ -1,38 +1,25 @@
 import { ArrowDown, ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import Link from "next/link";
-import { Fragment, type ReactNode } from "react";
+import { Fragment } from "react";
 import BlogPosts from "@/components/blog-posts";
 import ContactForm from "@/components/contact-form";
 import { HalftonePortrait } from "@/components/halftone-portrait";
 import { LocalTime } from "@/components/local-time";
 import ProjectsList from "@/components/projects-list";
+import { SignalField } from "@/components/signal-field";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import {
-	CountUp,
-	MaskedLines,
-	Rule,
-	ScrollReveal,
-	SectionHead,
-} from "@/components/ui/scroll-reveal";
+import { CountUp, MaskedLines, ScrollReveal, SectionHead } from "@/components/ui/scroll-reveal";
 
 /**
  * Home — Editorial Brutalism, printed edition.
  *
- * The page reads like the front section of a publication: a masthead of
- * metadata, one oversized headline framed by crop marks, a contents index,
- * then numbered sections. Chapters change paper stock — paper, salmon
- * newsprint, paper, black — rather than adding colours, and each stock is
- * printed onto the one before it as a halftone ramp.
+ * Opens on a live halftone field — the signal, printed as weather — with the
+ * headline set on the paper it dissolves into. Then the work as full plates,
+ * a chapter printed on a solid of the signal, the writing, and a black-stock
+ * close. Each chapter is printed onto the one before it as a halftone ramp.
  */
-
-const masthead: { label: string; value: ReactNode; signal?: boolean }[] = [
-	{ label: "Discipline", value: "Software Engineering" },
-	{ label: "Base", value: "Anuradhapura, Sri Lanka" },
-	{ label: "Local time", value: <LocalTime /> },
-	{ label: "Status", value: "Open to work", signal: true },
-];
 
 /** One source for the contents index and the section heads it points to. */
 const sections = {
@@ -43,9 +30,9 @@ const sections = {
 };
 
 const stats = [
-	{ value: 3.7, decimals: 1, suffix: "", label: "GPA — B.Sc. Hons IT" },
-	{ value: 6, decimals: 0, suffix: " mo", label: "Industry internship" },
-	{ value: 2, decimals: 0, suffix: "", label: "Competition placements" },
+	{ value: 3.7, decimals: 1, suffix: "", label: "GPA, B.Sc. Hons IT — University of Kelaniya" },
+	{ value: 6, decimals: 0, suffix: " mo", label: "Software engineering internship at WSO2" },
+	{ value: 2, decimals: 0, suffix: "", label: "Competition placements, 2023" },
 ];
 
 const skills = [
@@ -120,10 +107,10 @@ const socials = [
  * validates element arrays in props the same way it validates children.
  */
 const heroLines = [
-	<Fragment key="crafting">Crafting digital</Fragment>,
-	<Fragment key="experiences">experiences with</Fragment>,
-	<span key="purpose" className="ed-accent">
-		purpose.
+	<Fragment key="software">Software that</Fragment>,
+	<Fragment key="holds">holds up under</Fragment>,
+	<span key="inspection" className="ed-accent">
+		inspection.
 	</span>,
 ];
 
@@ -134,133 +121,142 @@ export default function Home() {
 
 			<main>
 				{/* ---------------------------------------------------------------
-				    MASTHEAD — the publication strip
+				    HERO — the signal field, then the headline on the paper it
+				    dissolves into, then the deck: standfirst, contents, portrait.
 				   --------------------------------------------------------------- */}
-				<div className="ed-shell pt-8">
-					<dl className="grid grid-cols-2 gap-px border-y border-[var(--rule-strong)] bg-[var(--rule)] md:grid-cols-4">
-						{masthead.map((cell) => (
-							<div key={cell.label} className="bg-background py-3.5 pr-4">
-								<dt className="ed-label">{cell.label}</dt>
-								<dd
-									className={
-										cell.signal
-											? "mt-1.5 text-[0.8125rem] font-semibold text-[var(--signal)]"
-											: "mt-1.5 text-[0.8125rem] font-semibold"
-									}
-								>
-									{cell.value}
-								</dd>
-							</div>
-						))}
-					</dl>
-				</div>
+				<header className="relative isolate [--hero-art:clamp(20rem,46vh,26rem)] md:[--hero-art:clamp(26rem,62vh,42rem)]">
+					<SignalField className="absolute inset-x-0 top-0 -z-10 h-[var(--hero-art)]" />
 
-				{/* ---------------------------------------------------------------
-				    HERO — headline in crop marks, then a three-column deck:
-				    standfirst, contents, portrait.
-				   --------------------------------------------------------------- */}
-				<header className="ed-shell pt-10 md:pt-14">
-					<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-						<span className="ed-eyebrow">Software Engineer — Full Stack</span>
-						<span aria-hidden="true" className="h-px min-w-8 flex-1 bg-[var(--rule-strong)]" />
-						<span className="ed-eyebrow max-sm:w-full">Portfolio — Vol. 01</span>
-					</div>
-
-					<div className="ed-crop mt-12 md:mt-16">
-						<h1 className="ed-display">
-							<MaskedLines lines={heroLines} />
-						</h1>
-					</div>
-
-					<div className="mt-12 grid grid-cols-1 border-t border-[var(--rule-strong)] md:mt-16 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)_minmax(0,1fr)]">
-						{/* Standfirst */}
-						<div className="flex flex-col gap-7 pt-7 md:col-start-1 md:row-start-1 md:pr-8">
-							<p className="max-w-[46ch] text-base leading-relaxed text-muted-foreground md:text-lg">
-								Software engineer and open source contributor building scalable full-stack
-								applications — with clean code and interfaces that hold up under inspection.
+					<div className="ed-shell pt-[calc(var(--hero-art)*0.84)]">
+						{/* The dateline is the only metadata above the headline. */}
+						<div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+							<span className="ed-eyebrow">Software Engineer — Full Stack</span>
+							<span aria-hidden="true" className="h-px min-w-8 flex-1 bg-[var(--rule-strong)]" />
+							<p className="ed-eyebrow flex flex-wrap items-center gap-x-3.5 gap-y-2 max-sm:w-full">
+								<span>Anuradhapura, LK</span>
+								<span aria-hidden="true" className="h-3 w-px bg-[var(--rule-strong)]" />
+								<LocalTime />
+								<span
+									aria-hidden="true"
+									className="h-3 w-px bg-[var(--rule-strong)] max-sm:hidden"
+								/>
+								<span className="inline-flex items-center gap-2 text-[var(--signal)]">
+									<span aria-hidden="true" className="size-1.5 bg-[var(--signal)]" />
+									Open to work
+								</span>
 							</p>
-
-							<div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-								<div className="-ml-2.5 flex items-center gap-1">
-									{socials.map((s) => (
-										<a
-											key={s.label}
-											href={s.href}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="grid size-9 place-items-center border border-transparent text-muted-foreground transition-colors duration-200 hover:border-[var(--rule-strong)] hover:text-[var(--signal)]"
-										>
-											<svg
-												className="size-4"
-												viewBox="0 0 24 24"
-												fill="currentColor"
-												aria-hidden="true"
-											>
-												<path d={s.path} />
-											</svg>
-											<span className="sr-only">{s.label} profile</span>
-										</a>
-									))}
-								</div>
-								<span className="ed-meta">Currently: Internal Developer Portals @ WSO2</span>
-							</div>
 						</div>
 
-						{/* Contents — the section index, set the way a periodical sets it. */}
-						<nav
-							aria-labelledby="contents-label"
-							className="mt-8 border-t border-[var(--rule)] pt-6 md:col-start-1 md:row-start-2 md:pr-8 lg:col-start-2 lg:row-start-1 lg:mt-0 lg:border-t-0 lg:border-l lg:px-8 lg:pt-7"
-						>
-							<p id="contents-label" className="ed-label mb-3">
-								Contents
-							</p>
-							<ol className="ed-index">
-								{Object.values(sections).map((s) => (
-									<li key={s.id}>
-										<a
-											href={`#${s.id}`}
-											className="ed-index-row group flex items-baseline gap-3 px-1 py-3"
-										>
-											<span className="ed-index-mark font-mono text-xs font-semibold tracking-[0.14em]">
-												{s.num}
-											</span>
-											<span className="whitespace-nowrap font-heading text-lg font-bold tracking-[-0.028em]">
-												{s.title}
-											</span>
-											<span aria-hidden="true" className="ed-leader ed-index-dim" />
-											<ArrowDown
-												aria-hidden="true"
-												className="ed-index-dim size-3.5 shrink-0 self-center transition-transform duration-300 ease-out-expo group-hover:translate-y-0.5"
-											/>
-										</a>
-									</li>
-								))}
-							</ol>
-						</nav>
+						<div className="ed-crop mt-12 md:mt-14">
+							<h1 className="ed-display">
+								<MaskedLines lines={heroLines} />
+							</h1>
+						</div>
 
-						{/* Portrait — screened as a halftone, the photograph on request. */}
-						<div className="mt-8 border-t border-[var(--rule)] pt-6 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0 md:border-t-0 md:border-l md:pt-7 md:pl-8 lg:col-start-3 lg:row-span-1">
-							<ScrollReveal variant="fade-in" delay={0.35}>
-								<HalftonePortrait
-									src="/placeholder-profile.jpg"
-									alt="Pasindu Nadun Induwara"
-									caption="Fig. 01 — Kelaniya"
-									sizes="(max-width: 768px) 100vw, (max-width: 1024px) 40vw, 320px"
-									priority
-								/>
-							</ScrollReveal>
+						<div className="mt-14 grid grid-cols-1 border-t border-[var(--rule-strong)] md:mt-16 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_13rem]">
+							{/* Standfirst */}
+							<div className="flex flex-col gap-7 pt-7 md:col-start-1 md:row-start-1 md:pr-8">
+								<p className="max-w-[44ch] text-base leading-relaxed text-muted-foreground md:text-lg">
+									Full-stack engineer and open source contributor. Most recently an intern on
+									WSO2&apos;s Choreo team, rebuilding catalog ingestion for OpenChoreo&apos;s
+									Backstage portal.
+								</p>
+
+								<div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+									<div className="-ml-2.5 flex items-center gap-1">
+										{socials.map((s) => (
+											<a
+												key={s.label}
+												href={s.href}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="grid size-9 place-items-center border border-transparent text-muted-foreground transition-colors duration-200 hover:border-[var(--rule-strong)] hover:text-[var(--signal)]"
+											>
+												<svg
+													className="size-4"
+													viewBox="0 0 24 24"
+													fill="currentColor"
+													aria-hidden="true"
+												>
+													<path d={s.path} />
+												</svg>
+												<span className="sr-only">{s.label} profile</span>
+											</a>
+										))}
+									</div>
+									<Link
+										href="/Pasindu_Induwara_CV.pdf"
+										download
+										className="ed-link inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
+									>
+										<Download className="size-3.5" />
+										Download CV
+									</Link>
+								</div>
+							</div>
+
+							{/* Contents — the section index, set the way a periodical sets it. */}
+							<nav
+								aria-labelledby="contents-label"
+								className="mt-8 border-t border-[var(--rule)] pt-6 md:col-start-1 md:row-start-2 md:pr-8 lg:col-start-2 lg:row-start-1 lg:mt-0 lg:border-t-0 lg:border-l lg:px-8 lg:pt-7"
+							>
+								<p id="contents-label" className="ed-label mb-3">
+									Contents
+								</p>
+								<ol className="ed-index">
+									{Object.values(sections).map((s) => (
+										<li key={s.id}>
+											<a
+												href={`#${s.id}`}
+												className="ed-index-row group flex items-baseline gap-3 py-3"
+											>
+												<span className="ed-index-mark font-mono text-xs font-semibold tracking-[0.14em]">
+													{s.num}
+												</span>
+												<span className="whitespace-nowrap font-heading text-lg font-semibold tracking-[-0.028em]">
+													{s.title}
+												</span>
+												<span aria-hidden="true" className="ed-leader ed-index-dim" />
+												<ArrowDown
+													aria-hidden="true"
+													className="ed-index-dim size-3.5 shrink-0 self-center transition-transform duration-300 ease-out-expo group-hover:translate-y-0.5"
+												/>
+											</a>
+										</li>
+									))}
+								</ol>
+							</nav>
+
+							{/* Portrait — the column is sized so the 4:5 plate is exactly as
+							    tall as the contents list beside it, with its caption level
+							    with the "Contents" label. */}
+							<div className="mt-8 border-t border-[var(--rule)] pt-6 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0 md:border-t-0 md:border-l md:pt-7 md:pl-8 lg:col-start-3 lg:row-span-1">
+								<ScrollReveal variant="fade-in" delay={0.35}>
+									<HalftonePortrait
+										className="max-md:max-w-[17rem]"
+										src="/placeholder-profile.jpg"
+										alt="Pasindu Nadun Induwara"
+										caption={
+											<>
+												Fig. 01<span className="lg:hidden"> — Kelaniya</span>
+											</>
+										}
+										sizes="(max-width: 768px) 100vw, (max-width: 1024px) 40vw, 176px"
+										priority
+									/>
+								</ScrollReveal>
+							</div>
 						</div>
 					</div>
 				</header>
 
-				<div className="ed-shell mt-16">
-					<Rule />
-				</div>
-
 				{/* ---------------------------------------------------------------
-				    01 — SELECTED WORK
+				    01 — SELECTED WORK · plates
 				   --------------------------------------------------------------- */}
-				<section id={sections.work.id} className="ed-shell scroll-mt-24 py-16 md:py-24">
+				<section
+					id={sections.work.id}
+					className="ed-shell scroll-mt-24 pt-24 pb-20 md:pt-36 md:pb-28"
+				>
 					<ScrollReveal>
 						<SectionHead
 							num={sections.work.num}
@@ -272,7 +268,7 @@ export default function Home() {
 					<ProjectsList limit={3} isHomePage={true} />
 
 					<ScrollReveal delay={0.2}>
-						<div className="mt-12">
+						<div className="mt-14">
 							<Link href="/projects" className="ed-cta">
 								View all projects
 								<ArrowRight aria-hidden="true" />
@@ -282,10 +278,10 @@ export default function Home() {
 				</section>
 
 				{/* ---------------------------------------------------------------
-				    02 — BACKGROUND · salmon stock
+				    02 — BACKGROUND · printed on a solid of the signal
 				   --------------------------------------------------------------- */}
-				<section id={sections.background.id} className="ed-stock ed-stock-salmon scroll-mt-24">
-					<div className="ed-shell py-16 md:py-24">
+				<section id={sections.background.id} className="ed-stock ed-stock-signal scroll-mt-24">
+					<div className="ed-shell py-20 md:py-32">
 						<ScrollReveal>
 							<SectionHead
 								num={sections.background.num}
@@ -295,57 +291,65 @@ export default function Home() {
 						</ScrollReveal>
 
 						<ScrollReveal>
-							<p className="ed-crop ed-statement mt-16 mb-16 max-w-[19ch] md:mt-20 md:mb-24">
+							<p className="ed-crop ed-statement mt-16 max-w-[17ch] md:mt-24">
 								I care about the seam between systems and the{" "}
 								<span className="ed-accent">people</span> using them.
 							</p>
 						</ScrollReveal>
 
-						<div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-0">
-							{/* Left: narrative, numbers, chronology */}
-							<div className="flex flex-col gap-10 lg:pr-12">
+						<dl className="mt-20 grid grid-cols-1 border-t border-[var(--rule-strong)] sm:grid-cols-3 md:mt-28">
+							{stats.map((stat, i) => (
+								<div
+									key={stat.label}
+									className={
+										i === 0
+											? "border-b border-[var(--rule)] py-7 sm:border-b-0 sm:pr-6"
+											: "border-b border-[var(--rule)] py-7 sm:border-b-0 sm:border-l sm:px-6"
+									}
+								>
+									<dt className="sr-only">{stat.label}</dt>
+									<dd>
+										<b className="block font-heading text-[clamp(3.25rem,8vw,7rem)] font-[560] leading-[0.9] tracking-[-0.055em] tabular-nums">
+											<CountUp value={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
+										</b>
+										<span className="mt-4 block max-w-[24ch] text-sm font-medium leading-snug">
+											{stat.label}
+										</span>
+									</dd>
+								</div>
+							))}
+						</dl>
+					</div>
+				</section>
+
+				{/* The rest of the background, back on paper. */}
+				<section className="ed-stock" aria-label="Experience, skills and recognition">
+					<div className="ed-shell py-20 md:py-28">
+						<div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-0">
+							{/* Left: narrative and chronology */}
+							<div className="flex flex-col gap-12 lg:pr-14">
 								<ScrollReveal>
-									<p className="max-w-[52ch] text-base leading-relaxed md:text-lg">
+									<p className="max-w-[46ch] text-lg leading-relaxed md:text-xl">
 										Most of my work is full-stack — designing the data model, building the API, then
 										sweating the interface until it feels inevitable.
 									</p>
 								</ScrollReveal>
 
 								<ScrollReveal delay={0.1}>
-									<dl className="grid grid-cols-3 border-y border-[var(--rule-strong)]">
-										{stats.map((stat) => (
-											<div key={stat.label} className="ed-stat">
-												<dt className="sr-only">{stat.label}</dt>
-												<dd>
-													<b>
-														<CountUp
-															value={stat.value}
-															decimals={stat.decimals}
-															suffix={stat.suffix}
-														/>
-													</b>
-													<span className="ed-label mt-2.5 block">{stat.label}</span>
-												</dd>
-											</div>
-										))}
-									</dl>
-								</ScrollReveal>
-
-								<ScrollReveal delay={0.15}>
 									<div>
 										<h3 className="ed-label mb-4">Experience &amp; Education</h3>
 										<ol className="border-t border-[var(--rule-strong)]">
 											{experience.map((job) => (
 												<li
 													key={job.company}
-													className="grid grid-cols-1 gap-x-6 gap-y-1 border-b border-[var(--rule)] py-4 sm:grid-cols-[8rem_1fr]"
+													className="grid grid-cols-1 gap-x-6 gap-y-1 border-b border-[var(--rule)] py-5 sm:grid-cols-[8.5rem_1fr]"
 												>
-													<span className="ed-meta pt-0.5">{job.period}</span>
+													<span className="ed-meta pt-1">{job.period}</span>
 													<div>
-														<p className="font-heading text-base font-semibold tracking-[-0.022em]">
+														<p className="font-heading text-lg font-semibold tracking-[-0.024em]">
 															{job.company}
 														</p>
-														<p className="mt-0.5 text-sm text-muted-foreground">{job.role}</p>
+														<p className="mt-1 text-sm text-muted-foreground">{job.role}</p>
 													</div>
 												</li>
 											))}
@@ -353,7 +357,7 @@ export default function Home() {
 									</div>
 								</ScrollReveal>
 
-								<ScrollReveal delay={0.2}>
+								<ScrollReveal delay={0.15}>
 									<div className="flex flex-wrap gap-2.5">
 										<Button asChild variant="outline">
 											<Link href="/Pasindu_Induwara_CV.pdf" download>
@@ -368,8 +372,8 @@ export default function Home() {
 								</ScrollReveal>
 							</div>
 
-							{/* Right: skills as definition rows, then recognition */}
-							<div className="flex flex-col gap-10 lg:border-l lg:border-[var(--rule)] lg:pl-12">
+							{/* Right: skills, then recognition */}
+							<div className="flex flex-col gap-12 lg:border-l lg:border-[var(--rule)] lg:pl-14">
 								<ScrollReveal variant="fade-in" delay={0.1}>
 									<div>
 										<h3 className="ed-label mb-4">Skills &amp; Expertise</h3>
@@ -404,13 +408,13 @@ export default function Home() {
 										<h3 className="ed-label mb-4">Recognition</h3>
 										<ul className="border-t border-[var(--rule-strong)]">
 											{achievements.map((item) => (
-												<li key={item.title} className="border-b border-[var(--rule)] py-4">
-													<p className="font-heading text-base font-semibold tracking-[-0.022em]">
+												<li key={item.title} className="border-b border-[var(--rule)] py-5">
+													<p className="font-heading text-lg font-semibold tracking-[-0.024em]">
 														<span className="ed-accent">{item.mark}</span>
 														<span className="px-2 text-[var(--rule-strong)]">—</span>
 														{item.title}
 													</p>
-													<p className="mt-0.5 text-sm text-muted-foreground">{item.note}</p>
+													<p className="mt-1 text-sm text-muted-foreground">{item.note}</p>
 												</li>
 											))}
 										</ul>
@@ -422,36 +426,37 @@ export default function Home() {
 				</section>
 
 				{/* ---------------------------------------------------------------
-				    03 — WRITING · back to paper
+				    03 — WRITING
 				   --------------------------------------------------------------- */}
-				<section id={sections.writing.id} className="ed-stock scroll-mt-24">
-					<div className="ed-shell py-16 md:py-24">
-						<ScrollReveal>
-							<SectionHead
-								num={sections.writing.num}
-								title={sections.writing.title}
-								note={sections.writing.note}
-							/>
-						</ScrollReveal>
+				<section
+					id={sections.writing.id}
+					className="ed-shell scroll-mt-24 pt-12 pb-24 md:pt-16 md:pb-32"
+				>
+					<ScrollReveal>
+						<SectionHead
+							num={sections.writing.num}
+							title={sections.writing.title}
+							note={sections.writing.note}
+						/>
+					</ScrollReveal>
 
-						<BlogPosts />
+					<BlogPosts />
 
-						<ScrollReveal delay={0.2}>
-							<div className="mt-12">
-								<Link href="/blog" className="ed-cta">
-									View all posts
-									<ArrowRight aria-hidden="true" />
-								</Link>
-							</div>
-						</ScrollReveal>
-					</div>
+					<ScrollReveal delay={0.2}>
+						<div className="mt-14">
+							<Link href="/blog" className="ed-cta">
+								View all posts
+								<ArrowRight aria-hidden="true" />
+							</Link>
+						</div>
+					</ScrollReveal>
 				</section>
 
 				{/* ---------------------------------------------------------------
 				    04 — CONTACT · black stock, continuous with the footer
 				   --------------------------------------------------------------- */}
 				<section id={sections.contact.id} className="dark ed-stock ed-stock-black scroll-mt-24">
-					<div className="ed-shell py-16 md:py-24">
+					<div className="ed-shell py-20 md:py-32">
 						<ScrollReveal>
 							<SectionHead
 								num={sections.contact.num}
@@ -460,50 +465,50 @@ export default function Home() {
 							/>
 						</ScrollReveal>
 
-						<div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-0">
-							<ScrollReveal className="lg:pr-12">
+						<ScrollReveal>
+							<div className="mt-16 md:mt-24">
+								<p className="ed-statement max-w-[15ch]">Have something worth building?</p>
+								<a
+									href="mailto:pasindunaduninduwara@gmail.com"
+									className="ed-cta mt-10 text-[clamp(1.25rem,3.4vw,2.75rem)] md:mt-14"
+								>
+									<span>
+										pasindunaduninduwara
+										<wbr />
+										@gmail.com
+									</span>
+									<ArrowUpRight aria-hidden="true" />
+								</a>
+							</div>
+						</ScrollReveal>
+
+						<div className="mt-20 grid grid-cols-1 gap-14 border-t border-[var(--rule-strong)] pt-14 md:mt-28 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-0">
+							<ScrollReveal className="lg:pr-14">
+								<h3 className="ed-label mb-8">Or leave a message</h3>
 								<ContactForm />
 							</ScrollReveal>
 
 							<ScrollReveal
 								variant="fade-in"
 								delay={0.12}
-								className="lg:border-l lg:border-[var(--rule)] lg:pl-12"
+								className="lg:border-l lg:border-[var(--rule)] lg:pl-14"
 							>
-								<div className="flex flex-col gap-10">
-									<div>
-										<h3 className="ed-label mb-4">Write directly</h3>
+								<ul className="border-t border-[var(--rule-strong)]">
+									<li className="border-b border-[var(--rule)] py-5">
+										<p className="ed-label mb-1.5">Phone</p>
 										<a
-											href="mailto:pasindunaduninduwara@gmail.com"
-											className="ed-cta text-[clamp(1.125rem,1.9vw,1.5rem)]"
+											href="tel:+94703477582"
+											className="ed-link text-base transition-colors duration-200 hover:text-[var(--signal)]"
 										>
-											<span>
-												pasindunaduninduwara
-												<wbr />
-												@gmail.com
-											</span>
-											<ArrowUpRight aria-hidden="true" />
+											+94 70 347 7582
 										</a>
-									</div>
-
-									<ul className="border-t border-[var(--rule-strong)]">
-										<li className="border-b border-[var(--rule)] py-4">
-											<p className="ed-label mb-1">Phone</p>
-											<a
-												href="tel:+94703477582"
-												className="ed-link text-sm transition-colors duration-200 hover:text-[var(--signal)]"
-											>
-												+94 70 347 7582
-											</a>
-										</li>
-										<li className="border-b border-[var(--rule)] py-4">
-											<p className="ed-label mb-1">Based in</p>
-											<p className="text-sm">Anuradhapura, Sri Lanka</p>
-										</li>
-									</ul>
-
-									<div>
-										<h3 className="ed-label mb-4">Elsewhere</h3>
+									</li>
+									<li className="border-b border-[var(--rule)] py-5">
+										<p className="ed-label mb-1.5">Based in</p>
+										<p className="text-base">Anuradhapura, Sri Lanka</p>
+									</li>
+									<li className="border-b border-[var(--rule)] py-5">
+										<p className="ed-label mb-3">Elsewhere</p>
 										<div className="flex flex-wrap gap-2.5">
 											{socials.map((s) => (
 												<a
@@ -526,8 +531,8 @@ export default function Home() {
 												</a>
 											))}
 										</div>
-									</div>
-								</div>
+									</li>
+								</ul>
 							</ScrollReveal>
 						</div>
 					</div>
