@@ -139,6 +139,14 @@
 
 	--grain-opacity: 0.5;
 	--grain-blend: multiply;
+
+	/* Salmon newsprint — the paper stock for the Background chapter (see
+	   PAPER STOCKS below). A pale warm tint in the signal's family, pushed toward
+	   peach so it reads as business-section newsprint, not as a second colour. */
+	--stock-salmon: oklch(0.918 0.034 62);
+	--stock-salmon-2: oklch(0.944 0.025 66);
+	/* The signal has to be darkened on salmon to keep 4.5:1 at 11px. */
+	--stock-salmon-signal: oklch(0.48 0.19 31);
 }
 
 /* ============================================================================
@@ -193,6 +201,78 @@
 
 	--grain-opacity: 0.22;
 	--grain-blend: screen;
+
+	--stock-salmon: oklch(0.232 0.028 48);
+	--stock-salmon-2: oklch(0.27 0.03 50);
+	--stock-salmon-signal: oklch(0.7 0.17 38);
+}
+
+/* ============================================================================
+   PAPER STOCKS — chapters
+   The publication changes paper between chapters instead of adding colours.
+   A stock re-points `--paper` (and, for salmon, the signal), then re-derives
+   the tokens that were mixed from paper at :root, because a custom property
+   that references another resolves where it is declared, not where it is used.
+
+   - `.ed-stock-salmon` — pale newsprint, the Background chapter.
+   - `.ed-stock-black` — always paired with the `dark` class, so the whole dark
+     token set applies inside it. This is the row-invert gesture scaled up to a
+     chapter: in light mode the stock is ink; in dark mode it goes one step
+     deeper than the page, so the closing chapter is the darkest in both themes.
+
+   Unlayered on purpose: these must out-rank the unlayered `.dark` block above
+   when both classes sit on the same element, which only source order can do.
+   ========================================================================== */
+
+.ed-stock {
+	--background: var(--paper);
+	--card: var(--paper-2);
+	--popover: var(--paper-2);
+	--secondary: color-mix(in oklab, var(--ink) 8%, var(--paper));
+	--muted: color-mix(in oklab, var(--ink) 8%, var(--paper));
+	--accent: color-mix(in oklab, var(--ink) 8%, var(--paper));
+	--muted-foreground: color-mix(in oklab, var(--ink) 62%, var(--paper));
+	--accent-warm: var(--signal);
+	--ring: var(--signal);
+	position: relative;
+	background-color: var(--background);
+	color: var(--foreground);
+}
+
+.ed-stock-salmon {
+	--paper: var(--stock-salmon);
+	--paper-2: var(--stock-salmon-2);
+	--signal: var(--stock-salmon-signal);
+}
+
+.ed-stock-black {
+	--paper: oklch(0.185 0.004 60);
+	--paper-2: oklch(0.232 0.005 60);
+	color-scheme: dark;
+}
+
+.dark .ed-stock-black {
+	--paper: oklch(0.118 0.004 60);
+	--paper-2: oklch(0.163 0.005 60);
+}
+
+/* The seam. The incoming stock is printed as a halftone ramp over the foot of
+   the chapter before it: dots on a 45° screen that grow until they close into
+   solid paper. One static mask, no image request, no animation. */
+.ed-stock::before {
+	content: "";
+	position: absolute;
+	inset-inline: 0;
+	bottom: 100%;
+	height: 60px;
+	background-color: var(--background);
+	-webkit-mask: var(--ed-ramp) left bottom / 10px 60px repeat-x;
+	mask: var(--ed-ramp) left bottom / 10px 60px repeat-x;
+	pointer-events: none;
+}
+
+:root {
+	--ed-ramp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='60'%3E%3Ccircle cx='7.5' cy='7.5' r='0.48'/%3E%3Ccircle cx='2.5' cy='12.5' r='0.86'/%3E%3Ccircle cx='7.5' cy='17.5' r='1.26'/%3E%3Ccircle cx='2.5' cy='22.5' r='1.68'/%3E%3Ccircle cx='7.5' cy='27.5' r='2.12'/%3E%3Ccircle cx='2.5' cy='32.5' r='2.57'/%3E%3Ccircle cx='12.5' cy='32.5' r='2.57'/%3E%3Ccircle cx='7.5' cy='37.5' r='3.03'/%3E%3Ccircle cx='-2.5' cy='37.5' r='3.03'/%3E%3Ccircle cx='2.5' cy='42.5' r='3.50'/%3E%3Ccircle cx='12.5' cy='42.5' r='3.50'/%3E%3Ccircle cx='7.5' cy='47.5' r='3.97'/%3E%3Ccircle cx='-2.5' cy='47.5' r='3.97'/%3E%3Ccircle cx='2.5' cy='52.5' r='4.46'/%3E%3Ccircle cx='12.5' cy='52.5' r='4.46'/%3E%3Ccircle cx='7.5' cy='57.5' r='4.95'/%3E%3Ccircle cx='-2.5' cy='57.5' r='4.95'/%3E%3Ccircle cx='2.5' cy='62.5' r='5.60'/%3E%3Ccircle cx='12.5' cy='62.5' r='5.60'/%3E%3C/svg%3E");
 }
 
 /* ============================================================================
@@ -447,6 +527,124 @@
 		transform-origin: left center;
 	}
 
+	/* --- oversized text link ---------------------------------------------
+	   The `.ed-link` gesture set at display size: a resting ink rule, and a
+	   signal rule that draws over it from the left while the type follows. */
+	.ed-cta {
+		position: relative;
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.3em;
+		padding-bottom: 0.16em;
+		font-family: var(--font-heading), system-ui, sans-serif;
+		font-weight: 800;
+		font-variation-settings: "wdth" 92;
+		font-size: clamp(1.5rem, 3.1vw, 2.5rem);
+		line-height: 1.05;
+		letter-spacing: -0.035em;
+		color: var(--foreground);
+		transition: color 0.32s var(--ease-out-quart);
+	}
+	.ed-cta::before,
+	.ed-cta::after {
+		content: "";
+		position: absolute;
+		inset-inline: 0;
+		bottom: 0;
+		height: 3px;
+	}
+	.ed-cta::before {
+		background: var(--foreground);
+	}
+	.ed-cta::after {
+		background: var(--signal);
+		transform: scaleX(0);
+		transform-origin: right center;
+		transition: transform 0.42s var(--ease-out-expo);
+	}
+	.ed-cta:hover,
+	.ed-cta:focus-visible {
+		color: var(--signal);
+	}
+	.ed-cta:hover::after,
+	.ed-cta:focus-visible::after {
+		transform: scaleX(1);
+		transform-origin: left center;
+	}
+	.ed-cta svg {
+		width: 0.62em;
+		height: 0.62em;
+		flex: none;
+		align-self: center;
+		transition: transform 0.42s var(--ease-out-expo);
+	}
+	.ed-cta:hover svg,
+	.ed-cta:focus-visible svg {
+		transform: translate(0.08em, -0.08em);
+	}
+
+	/* --- crop marks --------------------------------------------------------
+	   Printer's trim marks: short hairlines set *outside* each corner and
+	   offset from it, never touching the type area. Eight marks from one
+	   pseudo-element, so a spread costs no extra markup. Static — no HUD. */
+	.ed-crop {
+		--crop-len: 14px;
+		--crop-gap: 9px;
+		--crop-off: calc(var(--crop-len) + var(--crop-gap));
+		position: relative;
+	}
+	.ed-crop::before {
+		--c: var(--rule-strong);
+		content: "";
+		position: absolute;
+		inset: calc(var(--crop-off) * -1);
+		pointer-events: none;
+		background:
+			linear-gradient(var(--c), var(--c)) left 0 top var(--crop-off) / var(--crop-len) 1px no-repeat,
+			linear-gradient(var(--c), var(--c)) left var(--crop-off) top 0 / 1px var(--crop-len) no-repeat,
+			linear-gradient(var(--c), var(--c)) right 0 top var(--crop-off) / var(--crop-len) 1px
+			no-repeat,
+			linear-gradient(var(--c), var(--c)) right var(--crop-off) top 0 / 1px var(--crop-len)
+			no-repeat,
+			linear-gradient(var(--c), var(--c)) left 0 bottom var(--crop-off) / var(--crop-len) 1px
+			no-repeat,
+			linear-gradient(var(--c), var(--c)) left var(--crop-off) bottom 0 / 1px var(--crop-len)
+			no-repeat,
+			linear-gradient(var(--c), var(--c)) right 0 bottom var(--crop-off) / var(--crop-len) 1px
+			no-repeat,
+			linear-gradient(var(--c), var(--c)) right var(--crop-off) bottom 0 / 1px var(--crop-len)
+			no-repeat;
+	}
+	/* Marks must stay inside the shell's side padding (1rem on phones). */
+	@media (max-width: 40rem) {
+		.ed-crop {
+			--crop-len: 8px;
+			--crop-gap: 5px;
+		}
+	}
+
+	/* --- leader: the dotted run of a contents page ------------------------- */
+	.ed-leader {
+		flex: 1 1 auto;
+		min-width: 1.25rem;
+		height: 2px;
+		background-image: radial-gradient(circle, currentColor 0.8px, transparent 1.05px);
+		background-size: 6px 2px;
+		background-repeat: repeat-x;
+		opacity: 0.5;
+	}
+
+	/* --- statement: one sentence set as a spread --------------------------- */
+	.ed-statement {
+		font-family: var(--font-heading), system-ui, sans-serif;
+		font-weight: 800;
+		font-variation-settings: "wdth" 92;
+		font-size: clamp(2rem, 5.6vw, 4.875rem);
+		line-height: 0.98;
+		letter-spacing: -0.042em;
+		text-wrap: balance;
+	}
+
 	/* --- section number --------------------------------------------------- */
 	.ed-sec-num {
 		font-family: var(--font-mono), ui-monospace, monospace;
@@ -617,8 +815,32 @@
 	.ed-prose ul {
 		list-style: square;
 	}
+	/*
+	 * Preflight sets `list-style: none` on both `ul` and `ol`. The unordered
+	 * list opts back in above, but the ordered list must do so explicitly too —
+	 * without this, numbered steps in a blog post render with no numbers at all.
+	 */
+	.ed-prose ol {
+		list-style: decimal;
+	}
+	.ed-prose ul ul {
+		list-style: circle;
+	}
+	.ed-prose ul ul ul {
+		list-style: square;
+	}
 	.ed-prose li {
 		margin-bottom: 0.5em;
+	}
+	.ed-prose li::marker {
+		color: var(--signal);
+	}
+	/*
+	 * A "loose" Markdown list wraps each item's text in a <p>, which would
+	 * otherwise add a full paragraph margin inside every bullet.
+	 */
+	.ed-prose li > p {
+		margin: 0;
 	}
 	.ed-prose hr {
 		border: 0;
@@ -728,39 +950,12 @@
 }
 
 /*
- * Blog post markdown rendering
+ * Blog post markdown list rendering lives on `.ed-prose` — see the list rules
+ * above, next to the `.ed-prose ul` / `ol` definitions.
  *
- * Tailwind v4 Preflight resets `list-style: none` on `ul` and `ol`, which
- * strips bullets and numbers from blog post bodies rendered by
- * @uiw/react-markdown-preview. The site uses `prose prose-lg` on the slug
- * page but @tailwindcss/typography is not installed, so those classes are
- * inert. The rules below restore standard list rendering inside the
- * markdown preview wrapper without affecting any other UI surface.
+ * A remote commit introduced these rules keyed on `.markdown-preview`, but the
+ * markdown component renders `className="ed-prose"`, so nothing ever matched
+ * and the fix was dead on arrival. The intent — restoring the list markers
+ * that Preflight strips — was folded into `.ed-prose` rather than kept here as
+ * a second, competing prose vocabulary.
  */
-.markdown-preview ul,
-.markdown-preview ol {
-	margin: 1em 0;
-	padding-inline-start: 1.5em;
-}
-.markdown-preview ul {
-	list-style-type: disc;
-}
-.markdown-preview ul ul {
-	list-style-type: circle;
-}
-.markdown-preview ul ul ul {
-	list-style-type: square;
-}
-.markdown-preview ol {
-	list-style-type: decimal;
-}
-.markdown-preview li {
-	display: list-item;
-	margin: 0.35em 0;
-}
-.markdown-preview li::marker {
-	color: var(--accent-warm);
-}
-.markdown-preview li > p {
-	margin: 0;
-}

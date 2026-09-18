@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import BlogPosts from "@/components/blog-posts";
 import { PageMasthead } from "@/components/page-masthead";
 import { SiteFooter } from "@/components/site-footer";
@@ -21,10 +22,10 @@ export default function BlogPage() {
 					eyebrow="Writing"
 					note="Notes & ideas"
 					lines={[
-						<>Thinking out loud</>,
-						<>
+						<Fragment key="thinking">Thinking out loud</Fragment>,
+						<Fragment key="about">
 							about <span className="ed-accent">building.</span>
-						</>,
+						</Fragment>,
 					]}
 					lede="Notes on software engineering, platform tooling and the craft of building for the web. Written to be useful to the next person who hits the same problem."
 				/>

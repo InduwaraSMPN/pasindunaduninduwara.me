@@ -20,16 +20,20 @@ interface SiteHeaderProps {
 	activePage?: "home" | "projects" | "blog" | "contact" | "cv" | "none";
 }
 
+/**
+ * Order and numbers follow the home page's sections, so the nav, the hero's
+ * contents index and the section heads all agree on what "02" means.
+ */
 const navLinks = [
-	{ label: "About", href: "/#about", page: "home" as const, sectionId: "about", num: "01" },
 	{
 		label: "Projects",
 		href: "/projects",
 		homeHref: "#projects",
 		page: "projects" as const,
 		sectionId: "projects",
-		num: "02",
+		num: "01",
 	},
+	{ label: "About", href: "/#about", page: "home" as const, sectionId: "about", num: "02" },
 	{
 		label: "Blog",
 		href: "/blog",

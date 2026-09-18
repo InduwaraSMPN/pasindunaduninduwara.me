@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import { PageMasthead } from "@/components/page-masthead";
 import ProjectsList from "@/components/projects-list";
 import { SiteFooter } from "@/components/site-footer";
@@ -21,10 +22,10 @@ export default function ProjectsPage() {
 					eyebrow="Index"
 					note="Selected work"
 					lines={[
-						<>Things I have</>,
-						<>
+						<Fragment key="things">Things I have</Fragment>,
+						<Fragment key="built">
 							built and <span className="ed-accent">shipped.</span>
-						</>,
+						</Fragment>,
 					]}
 					lede="Full-stack applications, platform tooling and experiments — each one a link to a full write-up covering the problem, the approach and what I would do differently."
 				/>

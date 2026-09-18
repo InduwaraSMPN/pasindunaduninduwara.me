@@ -1,7 +1,7 @@
 import { ArrowUpRight, Download, Globe, Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { PageMasthead } from "@/components/page-masthead";
 import { SiteFooter } from "@/components/site-footer";
@@ -47,10 +47,17 @@ const contents = [
 	{ id: "references", num: "11", title: "References" },
 ];
 
-/** Masthead headline, split into lines for the masked reveal. */
-// biome-ignore-start lint/correctness/useJsxKeyInIterable: prop value, not a rendered child — MaskedLines assigns keys when it maps over it
-const mastheadLines = [<>Pasindu Nadun</>, <span className="ed-accent">Induwara</span>];
-// biome-ignore-end lint/correctness/useJsxKeyInIterable: end of suppression range
+/**
+ * Masthead headline, split into lines for the masked reveal. Keyed because
+ * the array crosses the server→client boundary as a prop, where the RSC
+ * serializer validates element arrays like children.
+ */
+const mastheadLines = [
+	<Fragment key="given">Pasindu Nadun</Fragment>,
+	<span key="family" className="ed-accent">
+		Induwara
+	</span>,
+];
 
 const experience = [
 	{

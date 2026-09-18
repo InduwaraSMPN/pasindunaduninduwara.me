@@ -24,18 +24,20 @@ interface PageMastheadProps {
 export function PageMasthead({ eyebrow, lines, lede, note, className }: PageMastheadProps) {
 	return (
 		<header className={cn("ed-shell pt-10 md:pt-14", className)}>
-			<div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+			<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
 				<span className="ed-eyebrow">{eyebrow}</span>
 				<span aria-hidden="true" className="h-px min-w-8 flex-1 bg-[var(--rule-strong)]" />
 				{note ? <span className="ed-eyebrow max-sm:w-full">{note}</span> : null}
 			</div>
 
-			<h1 className="ed-display">
-				<MaskedLines lines={lines} />
-			</h1>
+			<div className="ed-crop mt-10 md:mt-12">
+				<h1 className="ed-display">
+					<MaskedLines lines={lines} />
+				</h1>
+			</div>
 
 			{lede ? (
-				<p className="mt-8 max-w-[52ch] border-t border-[var(--rule-strong)] pt-8 text-base leading-relaxed text-muted-foreground md:text-lg">
+				<p className="mt-12 max-w-[52ch] border-t border-[var(--rule-strong)] pt-8 text-base leading-relaxed text-muted-foreground md:text-lg">
 					{lede}
 				</p>
 			) : null}

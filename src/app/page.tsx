@@ -1,8 +1,10 @@
-import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
-import Image from "next/image";
+import { ArrowDown, ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import Link from "next/link";
+import { Fragment, type ReactNode } from "react";
 import BlogPosts from "@/components/blog-posts";
 import ContactForm from "@/components/contact-form";
+import { HalftonePortrait } from "@/components/halftone-portrait";
+import { LocalTime } from "@/components/local-time";
 import ProjectsList from "@/components/projects-list";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -16,19 +18,29 @@ import {
 } from "@/components/ui/scroll-reveal";
 
 /**
- * Home — Editorial Brutalism.
+ * Home — Editorial Brutalism, printed edition.
  *
  * The page reads like the front section of a publication: a masthead of
- * metadata, one oversized headline, then numbered sections. Structure is
- * carried by hairline rules rather than cards and shadows.
+ * metadata, one oversized headline framed by crop marks, a contents index,
+ * then numbered sections. Chapters change paper stock — paper, salmon
+ * newsprint, paper, black — rather than adding colours, and each stock is
+ * printed onto the one before it as a halftone ramp.
  */
 
-const masthead = [
-	{ label: "Name", value: "Pasindu Nadun Induwara" },
+const masthead: { label: string; value: ReactNode; signal?: boolean }[] = [
 	{ label: "Discipline", value: "Software Engineering" },
 	{ label: "Base", value: "Anuradhapura, Sri Lanka" },
+	{ label: "Local time", value: <LocalTime /> },
 	{ label: "Status", value: "Open to work", signal: true },
 ];
+
+/** One source for the contents index and the section heads it points to. */
+const sections = {
+	work: { id: "projects", num: "01", title: "Selected work", note: "Three of many" },
+	background: { id: "about", num: "02", title: "Background", note: "Anuradhapura → Colombo" },
+	writing: { id: "blog", num: "03", title: "Latest writing", note: "Notes on building things" },
+	contact: { id: "contact", num: "04", title: "Get in touch", note: "Response within 24 h" },
+};
 
 const stats = [
 	{ value: 3.7, decimals: 1, suffix: "", label: "GPA — B.Sc. Hons IT" },
@@ -102,14 +114,18 @@ const socials = [
 /**
  * Hero headline, split into lines. Declared outside the component so the array
  * is a stable module-level value rather than a fresh literal on every render.
+ *
+ * The keys are needed even though MaskedLines assigns its own: this array
+ * crosses the server→client boundary as a prop, and the RSC serializer
+ * validates element arrays in props the same way it validates children.
  */
-// biome-ignore-start lint/correctness/useJsxKeyInIterable: these are prop values, not rendered children — MaskedLines assigns keys when it maps over them
 const heroLines = [
-	<>Crafting digital</>,
-	<>experiences with</>,
-	<span className="ed-accent">purpose.</span>,
+	<Fragment key="crafting">Crafting digital</Fragment>,
+	<Fragment key="experiences">experiences with</Fragment>,
+	<span key="purpose" className="ed-accent">
+		purpose.
+	</span>,
 ];
-// biome-ignore-end lint/correctness/useJsxKeyInIterable: end of suppression range
 
 export default function Home() {
 	return (
@@ -140,40 +156,32 @@ export default function Home() {
 				</div>
 
 				{/* ---------------------------------------------------------------
-				    HERO
+				    HERO — headline in crop marks, then a three-column deck:
+				    standfirst, contents, portrait.
 				   --------------------------------------------------------------- */}
-				<header className="ed-shell pt-12 md:pt-16">
-					<div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+				<header className="ed-shell pt-10 md:pt-14">
+					<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
 						<span className="ed-eyebrow">Software Engineer — Full Stack</span>
 						<span aria-hidden="true" className="h-px min-w-8 flex-1 bg-[var(--rule-strong)]" />
 						<span className="ed-eyebrow max-sm:w-full">Portfolio — Vol. 01</span>
 					</div>
 
-					<h1 className="ed-display">
-						<MaskedLines lines={heroLines} />
-					</h1>
+					<div className="ed-crop mt-12 md:mt-16">
+						<h1 className="ed-display">
+							<MaskedLines lines={heroLines} />
+						</h1>
+					</div>
 
-					<div className="mt-10 grid grid-cols-1 gap-10 border-t border-[var(--rule-strong)] pt-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:items-end lg:gap-14">
-						<div className="flex flex-col gap-7">
+					<div className="mt-12 grid grid-cols-1 border-t border-[var(--rule-strong)] md:mt-16 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)_minmax(0,1fr)]">
+						{/* Standfirst */}
+						<div className="flex flex-col gap-7 pt-7 md:col-start-1 md:row-start-1 md:pr-8">
 							<p className="max-w-[46ch] text-base leading-relaxed text-muted-foreground md:text-lg">
 								Software engineer and open source contributor building scalable full-stack
 								applications — with clean code and interfaces that hold up under inspection.
 							</p>
 
-							<div className="flex flex-wrap gap-2.5">
-								<Button asChild size="lg">
-									<Link href="#projects">
-										View projects
-										<ArrowRight className="size-4" />
-									</Link>
-								</Button>
-								<Button asChild variant="outline" size="lg">
-									<Link href="#contact">Get in touch</Link>
-								</Button>
-							</div>
-
-							<div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-[var(--rule)] pt-6">
-								<div className="flex items-center gap-1">
+							<div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+								<div className="-ml-2.5 flex items-center gap-1">
 									{socials.map((s) => (
 										<a
 											key={s.label}
@@ -198,25 +206,50 @@ export default function Home() {
 							</div>
 						</div>
 
-						{/* Specimen figure — framed, captioned, no rounded corners. */}
-						<ScrollReveal variant="fade-in" delay={0.35}>
-							<figure className="ed-figure group">
-								<div className="ed-hatch relative aspect-[4/5] overflow-hidden">
-									<Image
-										src="/placeholder-profile.jpg"
-										alt="Pasindu Nadun Induwara"
-										fill
-										sizes="(max-width: 1024px) 100vw, 380px"
-										className="object-cover grayscale transition-[filter] duration-700 ease-out-expo group-hover:grayscale-0"
-										priority
-									/>
-								</div>
-								<figcaption className="mt-3.5 flex items-baseline justify-between gap-3">
-									<span className="ed-label">Fig. 01 — Portrait</span>
-									<span className="ed-label">Kelaniya, LK</span>
-								</figcaption>
-							</figure>
-						</ScrollReveal>
+						{/* Contents — the section index, set the way a periodical sets it. */}
+						<nav
+							aria-labelledby="contents-label"
+							className="mt-8 border-t border-[var(--rule)] pt-6 md:col-start-1 md:row-start-2 md:pr-8 lg:col-start-2 lg:row-start-1 lg:mt-0 lg:border-t-0 lg:border-l lg:px-8 lg:pt-7"
+						>
+							<p id="contents-label" className="ed-label mb-3">
+								Contents
+							</p>
+							<ol className="ed-index">
+								{Object.values(sections).map((s) => (
+									<li key={s.id}>
+										<a
+											href={`#${s.id}`}
+											className="ed-index-row group flex items-baseline gap-3 px-1 py-3"
+										>
+											<span className="ed-index-mark font-mono text-xs font-semibold tracking-[0.14em]">
+												{s.num}
+											</span>
+											<span className="whitespace-nowrap font-heading text-lg font-bold tracking-[-0.028em]">
+												{s.title}
+											</span>
+											<span aria-hidden="true" className="ed-leader ed-index-dim" />
+											<ArrowDown
+												aria-hidden="true"
+												className="ed-index-dim size-3.5 shrink-0 self-center transition-transform duration-300 ease-out-expo group-hover:translate-y-0.5"
+											/>
+										</a>
+									</li>
+								))}
+							</ol>
+						</nav>
+
+						{/* Portrait — screened as a halftone, the photograph on request. */}
+						<div className="mt-8 border-t border-[var(--rule)] pt-6 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0 md:border-t-0 md:border-l md:pt-7 md:pl-8 lg:col-start-3 lg:row-span-1">
+							<ScrollReveal variant="fade-in" delay={0.35}>
+								<HalftonePortrait
+									src="/placeholder-profile.jpg"
+									alt="Pasindu Nadun Induwara"
+									caption="Fig. 01 — Kelaniya"
+									sizes="(max-width: 768px) 100vw, (max-width: 1024px) 40vw, 320px"
+									priority
+								/>
+							</ScrollReveal>
+						</div>
 					</div>
 				</header>
 
@@ -227,214 +260,233 @@ export default function Home() {
 				{/* ---------------------------------------------------------------
 				    01 — SELECTED WORK
 				   --------------------------------------------------------------- */}
-				<section id="projects" className="ed-shell scroll-mt-24 py-16 md:py-24">
+				<section id={sections.work.id} className="ed-shell scroll-mt-24 py-16 md:py-24">
 					<ScrollReveal>
-						<SectionHead num="01" title="Selected work" note="Three of many" />
+						<SectionHead
+							num={sections.work.num}
+							title={sections.work.title}
+							note={sections.work.note}
+						/>
 					</ScrollReveal>
 
 					<ProjectsList limit={3} isHomePage={true} />
 
 					<ScrollReveal delay={0.2}>
 						<div className="mt-12">
-							<Button asChild variant="outline" size="lg">
-								<Link href="/projects">
-									View all projects
-									<ArrowRight className="size-4" />
-								</Link>
-							</Button>
+							<Link href="/projects" className="ed-cta">
+								View all projects
+								<ArrowRight aria-hidden="true" />
+							</Link>
 						</div>
 					</ScrollReveal>
 				</section>
 
-				<div className="ed-shell">
-					<Rule />
-				</div>
-
 				{/* ---------------------------------------------------------------
-				    02 — BACKGROUND
+				    02 — BACKGROUND · salmon stock
 				   --------------------------------------------------------------- */}
-				<section id="about" className="ed-shell scroll-mt-24 py-16 md:py-24">
-					<ScrollReveal>
-						<SectionHead num="02" title="Background" note="Anuradhapura → Colombo" />
-					</ScrollReveal>
+				<section id={sections.background.id} className="ed-stock ed-stock-salmon scroll-mt-24">
+					<div className="ed-shell py-16 md:py-24">
+						<ScrollReveal>
+							<SectionHead
+								num={sections.background.num}
+								title={sections.background.title}
+								note={sections.background.note}
+							/>
+						</ScrollReveal>
 
-					<div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
-						{/* Left: narrative, numbers, chronology */}
-						<div className="flex flex-col gap-10">
-							<ScrollReveal>
-								<p className="max-w-[52ch] text-base leading-relaxed md:text-lg">
-									I care about the seam between systems and the people using them. Most of my work
-									is full-stack — designing the data model, building the API, then sweating the
-									interface until it feels inevitable.
-								</p>
-							</ScrollReveal>
+						<ScrollReveal>
+							<p className="ed-crop ed-statement mt-16 mb-16 max-w-[19ch] md:mt-20 md:mb-24">
+								I care about the seam between systems and the{" "}
+								<span className="ed-accent">people</span> using them.
+							</p>
+						</ScrollReveal>
 
-							<ScrollReveal delay={0.1}>
-								<dl className="grid grid-cols-3 border-y border-[var(--rule-strong)]">
-									{stats.map((stat) => (
-										<div key={stat.label} className="ed-stat">
-											<dt className="sr-only">{stat.label}</dt>
-											<dd>
-												<b>
-													<CountUp
-														value={stat.value}
-														decimals={stat.decimals}
-														suffix={stat.suffix}
-													/>
-												</b>
-												<span className="ed-label mt-2.5 block">{stat.label}</span>
-											</dd>
-										</div>
-									))}
-								</dl>
-							</ScrollReveal>
+						<div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-0">
+							{/* Left: narrative, numbers, chronology */}
+							<div className="flex flex-col gap-10 lg:pr-12">
+								<ScrollReveal>
+									<p className="max-w-[52ch] text-base leading-relaxed md:text-lg">
+										Most of my work is full-stack — designing the data model, building the API, then
+										sweating the interface until it feels inevitable.
+									</p>
+								</ScrollReveal>
 
-							<ScrollReveal delay={0.15}>
-								<div>
-									<h3 className="ed-label mb-4">Experience &amp; Education</h3>
-									<ol className="border-t border-[var(--rule-strong)]">
-										{experience.map((job) => (
-											<li
-												key={job.company}
-												className="grid grid-cols-1 gap-x-6 gap-y-1 border-b border-[var(--rule)] py-4 sm:grid-cols-[8rem_1fr]"
-											>
-												<span className="ed-meta pt-0.5">{job.period}</span>
-												<div>
-													<p className="font-heading text-base font-semibold tracking-[-0.022em]">
-														{job.company}
-													</p>
-													<p className="mt-0.5 text-sm text-muted-foreground">{job.role}</p>
-												</div>
-											</li>
-										))}
-									</ol>
-								</div>
-							</ScrollReveal>
-
-							<ScrollReveal delay={0.2}>
-								<div className="flex flex-wrap gap-2.5">
-									<Button asChild variant="outline">
-										<Link href="/Pasindu_Induwara_CV.pdf" download>
-											<Download className="size-4" />
-											Download CV
-										</Link>
-									</Button>
-									<Button asChild>
-										<Link href="/cv">View full CV</Link>
-									</Button>
-								</div>
-							</ScrollReveal>
-						</div>
-
-						{/* Right: skills as definition rows, then recognition */}
-						<div className="flex flex-col gap-10">
-							<ScrollReveal variant="fade-in" delay={0.1}>
-								<div>
-									<h3 className="ed-label mb-4">Skills &amp; Expertise</h3>
-									<dl className="border-t border-[var(--rule-strong)]">
-										{skills.map((group) => (
-											<div key={group.group} className="ed-defrow">
-												<dt className="ed-label pt-0.5">{group.group}</dt>
-												<dd className="text-muted-foreground">
-													{group.items.map((item, i) => (
-														<span key={item}>
-															{i > 0 ? (
-																<>
-																	<span className="px-1.5 text-[var(--rule-strong)]">/</span>
-																	{/* Adjacent inline spans offer no break opportunity, so the
-																	    whole list would be one unbreakable run and force a
-																	    ~450px min-content on the row. */}
-																	<wbr />
-																</>
-															) : null}
-															<span className="text-foreground">{item}</span>
-														</span>
-													))}
+								<ScrollReveal delay={0.1}>
+									<dl className="grid grid-cols-3 border-y border-[var(--rule-strong)]">
+										{stats.map((stat) => (
+											<div key={stat.label} className="ed-stat">
+												<dt className="sr-only">{stat.label}</dt>
+												<dd>
+													<b>
+														<CountUp
+															value={stat.value}
+															decimals={stat.decimals}
+															suffix={stat.suffix}
+														/>
+													</b>
+													<span className="ed-label mt-2.5 block">{stat.label}</span>
 												</dd>
 											</div>
 										))}
 									</dl>
-								</div>
-							</ScrollReveal>
+								</ScrollReveal>
 
-							<ScrollReveal variant="fade-in" delay={0.15}>
-								<div>
-									<h3 className="ed-label mb-4">Recognition</h3>
-									<ul className="border-t border-[var(--rule-strong)]">
-										{achievements.map((item) => (
-											<li key={item.title} className="border-b border-[var(--rule)] py-4">
-												<p className="font-heading text-base font-semibold tracking-[-0.022em]">
-													<span className="ed-accent">{item.mark}</span>
-													<span className="px-2 text-[var(--rule-strong)]">—</span>
-													{item.title}
-												</p>
-												<p className="mt-0.5 text-sm text-muted-foreground">{item.note}</p>
-											</li>
-										))}
-									</ul>
-								</div>
-							</ScrollReveal>
+								<ScrollReveal delay={0.15}>
+									<div>
+										<h3 className="ed-label mb-4">Experience &amp; Education</h3>
+										<ol className="border-t border-[var(--rule-strong)]">
+											{experience.map((job) => (
+												<li
+													key={job.company}
+													className="grid grid-cols-1 gap-x-6 gap-y-1 border-b border-[var(--rule)] py-4 sm:grid-cols-[8rem_1fr]"
+												>
+													<span className="ed-meta pt-0.5">{job.period}</span>
+													<div>
+														<p className="font-heading text-base font-semibold tracking-[-0.022em]">
+															{job.company}
+														</p>
+														<p className="mt-0.5 text-sm text-muted-foreground">{job.role}</p>
+													</div>
+												</li>
+											))}
+										</ol>
+									</div>
+								</ScrollReveal>
+
+								<ScrollReveal delay={0.2}>
+									<div className="flex flex-wrap gap-2.5">
+										<Button asChild variant="outline">
+											<Link href="/Pasindu_Induwara_CV.pdf" download>
+												<Download className="size-4" />
+												Download CV
+											</Link>
+										</Button>
+										<Button asChild>
+											<Link href="/cv">View full CV</Link>
+										</Button>
+									</div>
+								</ScrollReveal>
+							</div>
+
+							{/* Right: skills as definition rows, then recognition */}
+							<div className="flex flex-col gap-10 lg:border-l lg:border-[var(--rule)] lg:pl-12">
+								<ScrollReveal variant="fade-in" delay={0.1}>
+									<div>
+										<h3 className="ed-label mb-4">Skills &amp; Expertise</h3>
+										<dl className="border-t border-[var(--rule-strong)]">
+											{skills.map((group) => (
+												<div key={group.group} className="ed-defrow">
+													<dt className="ed-label pt-0.5">{group.group}</dt>
+													<dd className="text-muted-foreground">
+														{group.items.map((item, i) => (
+															<span key={item}>
+																{i > 0 ? (
+																	<>
+																		<span className="px-1.5 text-[var(--rule-strong)]">/</span>
+																		{/* Adjacent inline spans offer no break opportunity, so the
+																		    whole list would be one unbreakable run and force a
+																		    ~450px min-content on the row. */}
+																		<wbr />
+																	</>
+																) : null}
+																<span className="text-foreground">{item}</span>
+															</span>
+														))}
+													</dd>
+												</div>
+											))}
+										</dl>
+									</div>
+								</ScrollReveal>
+
+								<ScrollReveal variant="fade-in" delay={0.15}>
+									<div>
+										<h3 className="ed-label mb-4">Recognition</h3>
+										<ul className="border-t border-[var(--rule-strong)]">
+											{achievements.map((item) => (
+												<li key={item.title} className="border-b border-[var(--rule)] py-4">
+													<p className="font-heading text-base font-semibold tracking-[-0.022em]">
+														<span className="ed-accent">{item.mark}</span>
+														<span className="px-2 text-[var(--rule-strong)]">—</span>
+														{item.title}
+													</p>
+													<p className="mt-0.5 text-sm text-muted-foreground">{item.note}</p>
+												</li>
+											))}
+										</ul>
+									</div>
+								</ScrollReveal>
+							</div>
 						</div>
 					</div>
 				</section>
 
-				<div className="ed-shell">
-					<Rule />
-				</div>
-
 				{/* ---------------------------------------------------------------
-				    03 — WRITING
+				    03 — WRITING · back to paper
 				   --------------------------------------------------------------- */}
-				<section id="blog" className="ed-shell scroll-mt-24 py-16 md:py-24">
-					<ScrollReveal>
-						<SectionHead num="03" title="Latest writing" note="Notes on building things" />
-					</ScrollReveal>
-
-					<BlogPosts />
-
-					<ScrollReveal delay={0.2}>
-						<div className="mt-12">
-							<Button asChild variant="outline" size="lg">
-								<Link href="/blog">
-									View all posts
-									<ArrowRight className="size-4" />
-								</Link>
-							</Button>
-						</div>
-					</ScrollReveal>
-				</section>
-
-				<div className="ed-shell">
-					<Rule />
-				</div>
-
-				{/* ---------------------------------------------------------------
-				    04 — CONTACT
-				   --------------------------------------------------------------- */}
-				<section id="contact" className="ed-shell scroll-mt-24 py-16 md:py-24">
-					<ScrollReveal>
-						<SectionHead num="04" title="Get in touch" note="Response within 24 h" />
-					</ScrollReveal>
-
-					<div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-16">
+				<section id={sections.writing.id} className="ed-stock scroll-mt-24">
+					<div className="ed-shell py-16 md:py-24">
 						<ScrollReveal>
-							<ContactForm />
+							<SectionHead
+								num={sections.writing.num}
+								title={sections.writing.title}
+								note={sections.writing.note}
+							/>
 						</ScrollReveal>
 
-						<ScrollReveal variant="fade-in" delay={0.12}>
-							<div className="flex flex-col gap-10">
-								<div>
-									<h3 className="ed-label mb-4">Direct</h3>
+						<BlogPosts />
+
+						<ScrollReveal delay={0.2}>
+							<div className="mt-12">
+								<Link href="/blog" className="ed-cta">
+									View all posts
+									<ArrowRight aria-hidden="true" />
+								</Link>
+							</div>
+						</ScrollReveal>
+					</div>
+				</section>
+
+				{/* ---------------------------------------------------------------
+				    04 — CONTACT · black stock, continuous with the footer
+				   --------------------------------------------------------------- */}
+				<section id={sections.contact.id} className="dark ed-stock ed-stock-black scroll-mt-24">
+					<div className="ed-shell py-16 md:py-24">
+						<ScrollReveal>
+							<SectionHead
+								num={sections.contact.num}
+								title={sections.contact.title}
+								note={sections.contact.note}
+							/>
+						</ScrollReveal>
+
+						<div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-0">
+							<ScrollReveal className="lg:pr-12">
+								<ContactForm />
+							</ScrollReveal>
+
+							<ScrollReveal
+								variant="fade-in"
+								delay={0.12}
+								className="lg:border-l lg:border-[var(--rule)] lg:pl-12"
+							>
+								<div className="flex flex-col gap-10">
+									<div>
+										<h3 className="ed-label mb-4">Write directly</h3>
+										<a
+											href="mailto:pasindunaduninduwara@gmail.com"
+											className="ed-cta text-[clamp(1.125rem,1.9vw,1.5rem)]"
+										>
+											<span>
+												pasindunaduninduwara
+												<wbr />
+												@gmail.com
+											</span>
+											<ArrowUpRight aria-hidden="true" />
+										</a>
+									</div>
+
 									<ul className="border-t border-[var(--rule-strong)]">
-										<li className="border-b border-[var(--rule)] py-4">
-											<p className="ed-label mb-1">Email</p>
-											<a
-												href="mailto:pasindunaduninduwara@gmail.com"
-												className="ed-link text-sm transition-colors duration-200 hover:text-[var(--signal)]"
-											>
-												pasindunaduninduwara@gmail.com
-											</a>
-										</li>
 										<li className="border-b border-[var(--rule)] py-4">
 											<p className="ed-label mb-1">Phone</p>
 											<a
@@ -449,35 +501,35 @@ export default function Home() {
 											<p className="text-sm">Anuradhapura, Sri Lanka</p>
 										</li>
 									</ul>
-								</div>
 
-								<div>
-									<h3 className="ed-label mb-4">Elsewhere</h3>
-									<div className="flex flex-wrap gap-2.5">
-										{socials.map((s) => (
-											<a
-												key={s.label}
-												href={s.href}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="group inline-flex items-center gap-2 border border-[var(--rule-strong)] px-4 py-2.5 text-sm font-medium transition-colors duration-200 hover:bg-foreground hover:text-background"
-											>
-												<svg
-													className="size-4"
-													viewBox="0 0 24 24"
-													fill="currentColor"
-													aria-hidden="true"
+									<div>
+										<h3 className="ed-label mb-4">Elsewhere</h3>
+										<div className="flex flex-wrap gap-2.5">
+											{socials.map((s) => (
+												<a
+													key={s.label}
+													href={s.href}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="group inline-flex items-center gap-2 border border-[var(--rule-strong)] px-4 py-2.5 text-sm font-medium transition-colors duration-200 hover:bg-foreground hover:text-background"
 												>
-													<path d={s.path} />
-												</svg>
-												{s.label}
-												<ArrowUpRight className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-											</a>
-										))}
+													<svg
+														className="size-4"
+														viewBox="0 0 24 24"
+														fill="currentColor"
+														aria-hidden="true"
+													>
+														<path d={s.path} />
+													</svg>
+													{s.label}
+													<ArrowUpRight className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+												</a>
+											))}
+										</div>
 									</div>
 								</div>
-							</div>
-						</ScrollReveal>
+							</ScrollReveal>
+						</div>
 					</div>
 				</section>
 			</main>

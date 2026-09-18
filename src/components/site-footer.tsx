@@ -25,16 +25,21 @@ const tickerItems = [
 ];
 
 const indexLinks = [
-	{ label: "About", href: "/#about" },
 	{ label: "Projects", href: "/projects" },
+	{ label: "About", href: "/#about" },
 	{ label: "Blog", href: "/blog" },
 	{ label: "Contact", href: "/#contact" },
 	{ label: "Full CV", href: "/cv" },
 ];
 
+/**
+ * The footer is printed on black stock on every page — the closing chapter.
+ * On the home page it runs on from the contact section, which uses the same
+ * stock, so the two read as one spread.
+ */
 export function SiteFooter({ activePage: _activePage = "home" }: SiteFooterProps) {
 	return (
-		<footer className="mt-auto">
+		<footer className="dark ed-stock ed-stock-black mt-auto">
 			<Ticker items={tickerItems} />
 
 			<div className="ed-shell py-14">

@@ -1,0 +1,12 @@
+# Line endings: normalise to LF in the working tree on every platform.
+#
+# The project formats with Biome, which requires LF. With `core.autocrlf=true`
+# and no .gitattributes, a Windows checkout rewrites files to CRLF, which
+# (a) makes `biome check` fail with formatter errors that mask real ones, and
+# (b) makes `git status` report phantom modifications on files whose content is
+# identical. Pinning LF here fixes both, on every machine, without anyone having
+# to remember to set core.autocrlf correctly.
+#
+# `text=auto` lets git keep detecting binary files, so images, the PDF and the
+# lockfile are left untouched.
+* text=auto eol=lf
