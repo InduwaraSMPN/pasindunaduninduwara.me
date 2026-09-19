@@ -43,7 +43,7 @@ export function SiteFooter({ activePage: _activePage = "home" }: SiteFooterProps
 									(+94) 70 347 7582
 								</a>
 							</li>
-							<li className="ed-meta">Anuradhapura, Sri Lanka</li>
+							<li className="ed-meta">Kelaniya, Sri Lanka</li>
 						</ul>
 					</div>
 

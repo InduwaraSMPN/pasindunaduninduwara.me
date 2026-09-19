@@ -25,49 +25,71 @@ import { CountUp, MaskedLines, ScrollReveal, SectionHead } from "@/components/ui
 /** One source for the contents index and the section heads it points to. */
 const sections = {
 	work: { id: "projects", num: "01", title: "Selected work", note: "Three of many" },
-	background: { id: "about", num: "02", title: "Background", note: "Anuradhapura → Colombo" },
+	background: { id: "about", num: "02", title: "Background", note: "Kelaniya, Sri Lanka" },
 	writing: { id: "blog", num: "03", title: "Latest writing", note: "Notes on building things" },
 	contact: { id: "contact", num: "04", title: "Get in touch", note: "Response within 24 h" },
 };
 
 const stats = [
 	{ value: 3.7, decimals: 1, suffix: "", label: "GPA, B.Sc. Hons IT — University of Kelaniya" },
-	{ value: 6, decimals: 0, suffix: " mo", label: "Software engineering internship at WSO2" },
-	{ value: 2, decimals: 0, suffix: "", label: "Competition placements, 2023" },
+	{ value: 3, decimals: 0, suffix: "", label: "Open source projects contributed to" },
+	{ value: 2, decimals: 0, suffix: "", label: "Engineering roles — Marketrix and WSO2" },
 ];
 
 const skills = [
 	{
 		group: "Languages",
-		items: ["TypeScript", "JavaScript", "Python", "Java", "C/C++", "SQL", "HTML", "CSS"],
+		items: ["TypeScript", "JavaScript", "Python", "Go", "Java", "SQL", "HTML", "CSS"],
 	},
 	{
-		group: "Frameworks",
-		items: ["Next.js", "React", "Node.js", "Spring Boot", "Flutter", "Angular"],
+		group: "Backend & data",
+		items: [
+			"Node.js",
+			"Express",
+			"gRPC",
+			"FastAPI",
+			"Spring Boot",
+			"BullMQ",
+			"PostgreSQL",
+			"Redis",
+		],
 	},
 	{
-		group: "Platforms",
-		items: ["Docker", "Kubernetes", "Azure", "PostgreSQL", "MongoDB", "MySQL", "Git"],
+		group: "Frontend",
+		items: ["React", "Next.js", "Tailwind CSS", "Zod", "Socket.IO", "React Native"],
 	},
 	{
-		group: "Practice",
-		items: ["RESTful APIs", "OAuth / JWT", "Real-time messaging", "UX / UI", "Responsive design"],
+		group: "AI & evaluation",
+		items: ["LiteLLM", "LangChain", "RAG", "LLM-as-a-judge", "MLflow", "MCP", "FAISS"],
+	},
+	{
+		group: "Infrastructure",
+		items: ["Docker", "Kubernetes", "Terraform", "Helm", "Azure", "GitHub Actions"],
+	},
+	{
+		group: "Testing & QA",
+		items: ["Jest", "Pytest", "Vitest", "Selenium", "Postman"],
 	},
 ];
 
 const experience = [
+	{
+		period: "Jan 2026 — present",
+		company: "Marketrix Inc.",
+		role: "Software Engineer — AI agents and QA automation, San Francisco (remote)",
+	},
 	{
 		period: "Jul — Dec 2025",
 		company: "WSO2",
 		role: "Software Engineer Intern — Internal Developer Portals",
 	},
 	{
-		period: "2023 — present",
+		period: "2023 — Oct 2026",
 		company: "University of Kelaniya",
 		role: "B.Sc. Honours in Information Technology · GPA 3.7",
 	},
 	{
-		period: "2024",
+		period: "Professional",
 		company: "University of Moratuwa — CODL",
 		role: "Trainee Full Stack Developer",
 	},
@@ -75,14 +97,14 @@ const experience = [
 
 const achievements = [
 	{
-		mark: "1st Runners-Up",
+		mark: "First Runner-Up",
 		title: "J'PURA EXPO 2023",
 		note: "Inter-University Export-Oriented Innovation Competition",
 	},
 	{
 		mark: "Semi-Finalist",
-		title: "Venture Verse Startup Challenge",
-		note: "Ceylon Treasure project",
+		title: "VentureVerse Startup Challenge",
+		note: "Sabaragamuwa University — the “Ceylon Treasure” project",
 	},
 ];
 
@@ -144,7 +166,7 @@ export default function Home() {
 							<span className="ed-eyebrow ed-knockout">Software Engineer — Full Stack</span>
 							<span aria-hidden="true" className="h-px min-w-8 flex-1 bg-[var(--rule-strong)]" />
 							<p className="ed-eyebrow flex flex-wrap items-center gap-x-3.5 gap-y-2 max-sm:w-full">
-								<span className="ed-knockout">Anuradhapura, LK</span>
+								<span className="ed-knockout">Kelaniya, LK</span>
 								<span aria-hidden="true" className="h-3 w-px bg-[var(--rule-strong)]" />
 								<LocalTime className="ed-knockout" />
 								<span
@@ -153,7 +175,7 @@ export default function Home() {
 								/>
 								<span className="ed-knockout inline-flex items-center gap-2 text-[var(--signal)]">
 									<span aria-hidden="true" className="size-1.5 bg-[var(--signal)]" />
-									Open to work
+									Now at Marketrix
 								</span>
 							</p>
 						</div>
@@ -170,9 +192,9 @@ export default function Home() {
 							{/* Standfirst */}
 							<div className="flex flex-col gap-7 pt-7 md:col-start-1 md:row-start-1 md:pr-8">
 								<p className="max-w-[44ch] text-base leading-relaxed text-muted-foreground md:text-lg">
-									Full-stack engineer and open source contributor. Most recently an intern on
-									WSO2&apos;s Choreo team, rebuilding catalog ingestion for OpenChoreo&apos;s
-									Backstage portal.
+									Software engineer at Marketrix, building AI agents and QA automation end to end.
+									Previously at WSO2, and still contributing to OpenChoreo, an open source internal
+									developer platform.
 								</p>
 
 								<div className="flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -343,8 +365,10 @@ export default function Home() {
 							<div className="flex flex-col gap-12 lg:pr-14">
 								<ScrollReveal>
 									<p className="max-w-[46ch] text-lg leading-relaxed md:text-xl">
-										Most of my work is full-stack — designing the data model, building the API, then
-										sweating the interface until it feels inevitable.
+										My work has moved from platform infrastructure into agentic systems — from
+										Backstage plugins and paginated APIs at WSO2 to AI user research and a
+										self-repairing QA loop at Marketrix. My final-year research takes the same line
+										into autonomous incident response for cloud-native systems.
 									</p>
 								</ScrollReveal>
 
@@ -518,7 +542,7 @@ export default function Home() {
 									</li>
 									<li className="border-b border-[var(--rule)] py-5">
 										<p className="ed-label mb-1.5">Based in</p>
-										<p className="text-base">Anuradhapura, Sri Lanka</p>
+										<p className="text-base">Kelaniya, Sri Lanka</p>
 									</li>
 									<li className="border-b border-[var(--rule)] py-5">
 										<p className="ed-label mb-3">Elsewhere</p>

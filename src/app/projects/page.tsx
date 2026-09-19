@@ -26,7 +26,7 @@ export default function ProjectsPage() {
 							built and <span className="ed-accent">shipped.</span>
 						</Fragment>,
 					]}
-					lede="Full-stack applications, platform tooling and experiments — each one a link to a full write-up covering the problem, the approach and what I would do differently."
+					lede="Products, platform tooling, coursework and experiments — the lead work first, then everything else newest first. Each one links to a write-up and its source."
 				/>
 
 				<section className="ed-shell pt-16 pb-20 md:pt-20 md:pb-28">
