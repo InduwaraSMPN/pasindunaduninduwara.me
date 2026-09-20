@@ -1,9 +1,9 @@
 "use client";
 
 import { ArrowUpRight, FolderOpen } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
-import { HalftoneImage } from "@/components/halftone-image";
 import { repoPath, sourceUrl, splitTitle } from "@/lib/project-links";
 import { useProjects } from "@/lib/project-service";
 import { cn } from "@/lib/utils";
@@ -85,13 +85,15 @@ function Plate({ project, index, maxTags }: { project: Project; index: number; m
 				<div className={cn("lg:col-span-7", flip && "lg:order-2")}>
 					<div className="ed-figure">
 						{project.image ? (
-							<HalftoneImage
-								src={project.image}
-								alt=""
-								sizes="(max-width: 1024px) 100vw, 680px"
-								screen="fine"
-								className="aspect-[16/10]"
-							/>
+							<div className="relative aspect-[16/10] overflow-hidden">
+								<Image
+									src={project.image}
+									alt=""
+									fill
+									sizes="(max-width: 1024px) 100vw, 680px"
+									className="object-cover grayscale transition-[filter] duration-700 ease-out-expo group-hover:grayscale-0"
+								/>
+							</div>
 						) : (
 							<TitleCover project={project} name={name} />
 						)}

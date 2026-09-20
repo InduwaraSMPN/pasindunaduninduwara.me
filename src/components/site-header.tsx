@@ -138,7 +138,7 @@ export function SiteHeader({ showAvatar = true, activePage = "home" }: SiteHeade
 					: "border-[var(--rule)] bg-background/70 backdrop-blur-md",
 			)}
 		>
-			<div className="ed-shell flex items-center justify-between gap-6 py-3">
+			<div className="flex w-full items-center justify-between gap-6 p-3">
 				{/* Brand — the name alone; it is the mark. */}
 				<Link href="/" className="group leading-none">
 					<span className="block font-heading text-[0.9375rem] font-bold tracking-[-0.03em] group-hover:text-[var(--signal)]">
@@ -230,7 +230,7 @@ export function SiteHeader({ showAvatar = true, activePage = "home" }: SiteHeade
 						transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
 						className="overflow-hidden border-t border-[var(--rule)] bg-background md:hidden"
 					>
-						<nav aria-label="Primary mobile" className="ed-shell py-3">
+						<nav aria-label="Primary mobile" className="p-3">
 							<ul>
 								{navLinks.map((link, i) => {
 									const href = isHome && link.homeHref ? link.homeHref : link.href;

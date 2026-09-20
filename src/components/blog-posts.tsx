@@ -1,8 +1,8 @@
 "use client";
 
 import { ArrowUpRight, FileText } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { HalftoneImage } from "@/components/halftone-image";
 import { StaggerContainer, StaggerItem } from "@/components/ui/scroll-reveal";
 import { useBlogPosts } from "@/lib/blog-service";
 
@@ -87,13 +87,13 @@ export default function BlogPosts() {
 							className="group flex h-full flex-col border-t border-[var(--rule-strong)] py-7"
 						>
 							{post.thumbnail ? (
-								<div className="mb-6 border border-[var(--rule)]">
-									<HalftoneImage
+								<div className="relative mb-6 aspect-[16/9] overflow-hidden border border-[var(--rule)]">
+									<Image
 										src={post.thumbnail}
 										alt=""
+										fill
 										sizes="(max-width: 768px) 100vw, 560px"
-										screen="fine"
-										className="aspect-[16/9]"
+										className="object-cover grayscale transition-[filter] duration-700 ease-out-expo group-hover:grayscale-0"
 									/>
 								</div>
 							) : null}
