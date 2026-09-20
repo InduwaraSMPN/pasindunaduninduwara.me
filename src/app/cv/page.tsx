@@ -12,7 +12,7 @@ import { Rule, ScrollReveal, SectionHead } from "@/components/ui/scroll-reveal";
 export const metadata: Metadata = {
 	title: "Curriculum Vitae — Pasindu Nadun Induwara",
 	description:
-		"Curriculum vitae: software engineer at Marketrix, formerly WSO2 — experience, research, open source contributions, education and projects.",
+		"Curriculum vitae: software engineer with experience at Marketrix and WSO2 — research, open source contributions, education, projects and recognition.",
 };
 
 /* ---------------------------------------------------------------------------
@@ -75,12 +75,12 @@ const experience: {
 	bullets: Point[];
 }[] = [
 	{
-		period: "Jan 2026 — present",
+		period: "Jan — Sep 2026",
 		role: "Software Engineer",
 		org: "Marketrix Inc.",
 		place: "San Francisco (remote)",
 		intro:
-			"Marketrix builds an AI user-research and QA platform that runs web products through simulated users. I own features end to end, from architectural alignment through implementation and testing to production rollout.",
+			"Marketrix builds an AI user-research and QA platform that runs web products through simulated users. I owned features end to end, from architectural alignment through implementation and testing to production rollout.",
 		bullets: [
 			{
 				label: "Persona simulation",
@@ -189,6 +189,11 @@ const projects = [
 ];
 
 const recognition = [
+	{
+		mark: "Finalist",
+		title: "AI Buildathon 2026",
+		note: "IMSSA, University of Kelaniya, with Alibaba Cloud — for the project “Axiōma”",
+	},
 	{
 		mark: "First runner-up",
 		title: "J'PURA EXPO 2023",
@@ -348,8 +353,8 @@ export default function CVPage() {
 					lines={mastheadLines}
 					lede={
 						<>
-							Software engineer at Marketrix, building AI agents and QA automation end to end.
-							Previously at WSO2, and a continuing contributor to OpenChoreo.
+							Software engineer building AI agents and QA automation end to end — at Marketrix until
+							September 2026, before that at WSO2. A continuing contributor to OpenChoreo.
 						</>
 					}
 				/>
@@ -387,7 +392,7 @@ export default function CVPage() {
 						</Button>
 						<span className="ed-meta inline-flex items-center gap-1.5">
 							<MapPin className="size-3.5" aria-hidden="true" />
-							Kelaniya, Sri Lanka — working remotely with Marketrix, San Francisco
+							Kelaniya, Sri Lanka — available from October 2026
 						</span>
 					</div>
 				</div>
@@ -421,12 +426,12 @@ export default function CVPage() {
 						<Section id="profile" num="01" title="Profile" note="Summary">
 							<ScrollReveal delay={0.08}>
 								<p className="max-w-[68ch] text-base leading-relaxed md:text-lg">
-									Software Engineer at Marketrix Inc., building AI agents and QA automation products
-									end to end, from architecture through to production. Previously a Software
-									Engineer Intern at WSO2, and a continuing contributor to OpenChoreo, an open
-									source Internal Developer Platform. My work has moved from platform infrastructure
-									into agentic systems, and my final-year research extends that line into autonomous
-									incident response for cloud-native environments.
+									Software Engineer at Marketrix Inc. until September 2026, building AI agents and
+									QA automation products end to end, from architecture through to production.
+									Previously a Software Engineer Intern at WSO2, and a continuing contributor to
+									OpenChoreo, an open source Internal Developer Platform. My work has moved from
+									platform infrastructure into agentic systems, and my final-year research extends
+									that line into autonomous incident response for cloud-native environments.
 								</p>
 							</ScrollReveal>
 						</Section>

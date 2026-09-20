@@ -39,12 +39,12 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
 	title: "Pasindu Nadun Induwara — Software Engineer",
 	description:
-		"Software engineer at Marketrix building AI agents and QA automation end to end. Formerly at WSO2, and a contributor to OpenChoreo.",
+		"Software engineer building AI agents and QA automation end to end — at Marketrix until September 2026, before that at WSO2. A contributor to OpenChoreo and an AI Buildathon 2026 finalist.",
 	metadataBase: new URL("https://pasindunaduninduwara.me"),
 	openGraph: {
 		title: "Pasindu Nadun Induwara — Software Engineer",
 		description:
-			"Software engineer at Marketrix building AI agents and QA automation. Formerly at WSO2, and a contributor to OpenChoreo.",
+			"Software engineer building AI agents and QA automation — at Marketrix until September 2026, before that at WSO2, and a contributor to OpenChoreo.",
 		type: "website",
 	},
 };

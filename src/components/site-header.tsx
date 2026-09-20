@@ -122,8 +122,10 @@ export function SiteHeader({ showAvatar = true, activePage = "home" }: SiteHeade
 		return () => window.removeEventListener("keydown", onKey);
 	}, [mobileOpen]);
 
+	// On the home page the mark follows the section in view, and nothing is
+	// marked above the first one — the hero belongs to no section.
 	const getIsActive = (link: (typeof navLinks)[number]) => {
-		if (isHome && activeSection) return link.sectionId === activeSection;
+		if (isHome) return link.sectionId === activeSection;
 		return activePage === link.page;
 	};
 
@@ -137,23 +139,12 @@ export function SiteHeader({ showAvatar = true, activePage = "home" }: SiteHeade
 			)}
 		>
 			<div className="ed-shell flex items-center justify-between gap-6 py-3">
-				{/* Brand — a square seal, not a rounded avatar. */}
-				<Link href="/" className="group flex items-center gap-3">
-					<span
-						className={cn(
-							"grid size-9 shrink-0 place-items-center border font-heading text-[0.8125rem] font-bold tracking-[-0.03em] transition-colors duration-300",
-							scrolled ? "border-foreground/70" : "border-foreground/40",
-							"group-hover:bg-foreground group-hover:text-background",
-						)}
-					>
-						PI
+				{/* Brand — the name alone; it is the mark. */}
+				<Link href="/" className="group leading-none">
+					<span className="block font-heading text-[0.9375rem] font-bold tracking-[-0.03em] group-hover:text-[var(--signal)]">
+						Pasindu Nadun Induwara
 					</span>
-					<span className="leading-none">
-						<span className="block font-heading text-[0.9375rem] font-bold tracking-[-0.03em]">
-							Pasindu Nadun Induwara
-						</span>
-						{showAvatar ? <span className="ed-label mt-1.5 block">Software Engineer</span> : null}
-					</span>
+					{showAvatar ? <span className="ed-label mt-1.5 block">Software Engineer</span> : null}
 				</Link>
 
 				{/* Desktop nav */}

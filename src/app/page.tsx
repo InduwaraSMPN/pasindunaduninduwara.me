@@ -74,7 +74,7 @@ const skills = [
 
 const experience = [
 	{
-		period: "Jan 2026 — present",
+		period: "Jan — Sep 2026",
 		company: "Marketrix Inc.",
 		role: "Software Engineer — AI agents and QA automation, San Francisco (remote)",
 	},
@@ -96,6 +96,11 @@ const experience = [
 ];
 
 const achievements = [
+	{
+		mark: "Finalist",
+		title: "AI Buildathon 2026",
+		note: "IMSSA, University of Kelaniya, with Alibaba Cloud — for “Axiōma”",
+	},
 	{
 		mark: "First Runner-Up",
 		title: "J'PURA EXPO 2023",
@@ -175,7 +180,7 @@ export default function Home() {
 								/>
 								<span className="ed-knockout inline-flex items-center gap-2 text-[var(--signal)]">
 									<span aria-hidden="true" className="size-1.5 bg-[var(--signal)]" />
-									Now at Marketrix
+									Open to work
 								</span>
 							</p>
 						</div>
@@ -192,9 +197,9 @@ export default function Home() {
 							{/* Standfirst */}
 							<div className="flex flex-col gap-7 pt-7 md:col-start-1 md:row-start-1 md:pr-8">
 								<p className="max-w-[44ch] text-base leading-relaxed text-muted-foreground md:text-lg">
-									Software engineer at Marketrix, building AI agents and QA automation end to end.
-									Previously at WSO2, and still contributing to OpenChoreo, an open source internal
-									developer platform.
+									Software engineer building AI agents and QA automation end to end — at Marketrix
+									until September, before that at WSO2. Still contributing to OpenChoreo, an open
+									source internal developer platform.
 								</p>
 
 								<div className="flex flex-wrap items-center gap-x-5 gap-y-3">

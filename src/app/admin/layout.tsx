@@ -59,16 +59,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 				    without it the scroller's min-content width would size the
 				    whole column and push the page past the viewport. */}
 				<aside className="min-w-0 lg:sticky lg:top-12 lg:h-fit">
-					<Link href="/" className="group flex items-center gap-3">
-						<span className="grid size-9 shrink-0 place-items-center border border-foreground/50 font-heading text-[0.8125rem] font-bold tracking-[-0.03em] transition-colors duration-300 group-hover:bg-foreground group-hover:text-background">
-							PI
+					<Link href="/" className="group block leading-none">
+						<span className="block font-heading text-[0.9375rem] font-bold tracking-[-0.03em] group-hover:text-[var(--signal)]">
+							Pasindu Nadun Induwara
 						</span>
-						<span className="leading-none">
-							<span className="block font-heading text-[0.9375rem] font-bold tracking-[-0.03em]">
-								Pasindu Nadun Induwara
-							</span>
-							<span className="ed-label mt-1.5 block">Admin console</span>
-						</span>
+						<span className="ed-label mt-1.5 block">Admin console</span>
 					</Link>
 
 					<div className="mt-8">
